@@ -171,7 +171,7 @@
                         <div class="row">
                           <div class="col-lg-7 col-md-9 col-12 order-2 order-md-1" >
                           <h5 class="text-white mb-0 mt-2">SCM Analytics</h5>
-                            <small>Total {{ Totalpos() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}% Conversion Rate</small>
+                            <small>Total {{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}% Conversion Rate</small>
                             <h6 class="text-white mt-0 mt-md-3 mb-3">Purchase Orders</h6>
                             <div class="row">
                               <div class="col-6">
@@ -260,7 +260,7 @@
                             <p class="mb-0">POs</p>
                             <span class="badge bg-label-primary p-1 rounded"><i class="ti ti-link ti-xs"></i></span>
                           </div>
-                          <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ Totalpos() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}%</h5>
+                          <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}%</h5>
                           <small class="text-muted">{{ Totalpos() }}</small>
                         </div>
                       </div>
@@ -277,8 +277,8 @@
                           <div
                             class="progress-bar bg-primary"
                             role="progressbar"
-                            style="width: {{ Totalpos() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}%"
-                            aria-valuenow="{{ Totalpos() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}"
+                            style="width: {{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}%"
+                            aria-valuenow="{{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}"
                             aria-valuemin="0"
                             aria-valuemax="100"
                           ></div>
