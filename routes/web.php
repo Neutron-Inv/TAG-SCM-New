@@ -36,9 +36,9 @@ Route::get('/logout', "UserLoginController@logout")->name('admin.logout');
 Route::get('/email/resend', "Auth\VerificationController@resend");
 
 Auth::routes(['verify' => true]);
-Route::group(["prefix" => "dashboard", "middleware" => "verified"], function () {
+Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], function () {
 
-    Route::group(['middleware' => ['role:SuperAdmin|Admin|Employer|HOD|Contact|Shipper|Client|Supplier|Warehouse User']], function () {
+    Route::group(['middleware' => ['web','role:SuperAdmin|Admin|Employer|HOD|Contact|Shipper|Client|Supplier|Warehouse User']], function () {
 
         Route::get("/", "DashboardController@index")->name("dashboard.index");
 
