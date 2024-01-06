@@ -860,7 +860,7 @@ class ClientRFQController extends Controller
         ]);
 
         $date = date('dmy');
-        $former_number = RfqNumbers::max('numbers')->first();
+        //$former_number = RfqNumbers::max('numbers')->first();
         //$new_ref = $former_number + 1;
         $new_rfq = ClientRfq::count();
         $new_ref = $new_rfq + 1;
@@ -1507,7 +1507,7 @@ class ClientRFQController extends Controller
                             return redirect()->back()->with("error", "The Selected file $filenameWithExt is not an image");
                         }
                     }
-                    $log->save();
+                    ->save();
                 }
 
                 $conc = ClientContact::where('contact_id', $request->input("contact_id"))->first();
