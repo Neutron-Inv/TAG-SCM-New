@@ -652,7 +652,7 @@ class ClientRFQController extends Controller
                     $when = now()->addMinutes(1);
                     $company_id = $rfq->company_id;
 
-                    Mail::to('emmanuel@enabledgroup.net')->cc(str_replace(" ","",$users))->send( new Quotation ($data));                                    
+                    Mail::to($rec_mail)->cc(str_replace(" ","",$users))->send( new Quotation ($data));                                    
                     $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Send Quotation  to '. $rec_mail . ' and changed the status to Quotation Submitted <br/><br/>'.$rfq->note;
                     DB::table('client_rfqs')->where(['rfq_id' => $rfq_id])->update(['note' => $newNote, 'status' => 'Quotation Submitted']);
                     $his = new RfqHistory([
@@ -858,7 +858,8 @@ class ClientRFQController extends Controller
             'vendor_id' => ['required', 'string'],
             'online_submission' => ['required', 'string'],
         ]);
-
+        
+        $new = 1;
         $date = date('dmy');
         //$former_number = RfqNumbers::max('numbers')->first();
         //$new_ref = $former_number + 1;
@@ -892,7 +893,7 @@ class ClientRFQController extends Controller
         }
 
         $cli = Clients::where('client_id', $request->input('client_id'))->first();
-        $refrence_number = ($cli->short_code.''.$date.$conc);
+        $refrence_number = $request->input("refrence_number");
         
         $data = new ClientRfq([
             "client_id" => $request->input("client_id"),
@@ -937,7 +938,7 @@ class ClientRFQController extends Controller
             "shipper_currency" => 'NGN',  'freight_cost_option' => 'NO',
             'end_user' => 'N/A', 
             'clearing_agent' => 'N/A',
-            'short_code' =>$date.$conc,
+            'short_code' =>$date.$new_ref,
         ]);
 
         $log = new Log([
@@ -1004,8 +1005,16 @@ class ClientRFQController extends Controller
             ]);
             $sups->save();
             // dd($savedRfq);
-            $dir = mkdir(base_path("email/rfq/$refrence_number/"));
-            $dil = mkdir(base_path("email/po/$refrence_number/", 0777, true, true));
+            $rfqDir = base_path("email/rfq/$refrence_number/");
+            $poDir = base_path("email/po/$refrence_number/");
+            
+            if (!is_dir($rfqDir)) {
+                mkdir($rfqDir, 0777, true);
+            }
+            
+            if (!is_dir($poDir)) {
+                mkdir($poDir, 0777, true);
+            }
             return redirect()->route("line.create",[$rfq->rfq_id])->with("success", "You Have Added The RQF Successfully, Please Kindly Create the Line Item Below");
 
         } else {
@@ -1507,7 +1516,7 @@ class ClientRFQController extends Controller
                             return redirect()->back()->with("error", "The Selected file $filenameWithExt is not an image");
                         }
                     }
-                    ->save();
+                    $log->save();
                 }
 
                 $conc = ClientContact::where('contact_id', $request->input("contact_id"))->first();

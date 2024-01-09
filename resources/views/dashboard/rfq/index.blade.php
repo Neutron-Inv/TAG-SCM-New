@@ -180,9 +180,11 @@
                                                                     {{-- <a href="mailto:{{ $rfqs->employee->email}}?subject='Status Of Inquiry For RFQ'" target="_blank" style="color:blue"> {{ $rfqs->employee->full_name ?? 'N/A'   }}</a> --}}
                                                                 </td>
                                                             @endif
-                                                            <td>{{ $rfqs->rfq_date ?? '' }}</td>
-                                                            <td>{{ $rfqs->shipper_submission_date ?? '' }}</td>
-                                                            <td>
+                                                            <td>{{ isset($rfqs->rfq_date) ? date('d-M-Y, H:i', strtotime($rfqs->rfq_date)) : '' }}</td>
+                                                            <td style=" {{ (date('Y-m-d', strtotime($rfqs->delivery_due_date)) === now()->format('Y-m-d')) ? 'color:red;' : '' }}">
+    {{ isset($rfqs->delivery_due_date) ? date('d-M-Y, H:i', strtotime($rfqs->delivery_due_date)) : '' }}
+                                                </td>
+                                                <td>
                                                                 @if (file_exists('document/rfq/'.$rfqs->rfq_id.'/'))
                                                                     <?php
                                                                     $dir = 'document/rfq/'.$rfqs->rfq_id.'/';

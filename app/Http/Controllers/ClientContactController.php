@@ -112,7 +112,7 @@ class ClientContactController extends Controller
      */
     public function store(Request $request)
     {
-        if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('Client'))){
+        if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('Employer')) OR (Auth::user()->hasRole('HOD')) OR (Auth::user()->hasRole('Client'))){
 
             $this->validate($request, [
                 'client_id' => ['required', 'string', 'max:199'],
