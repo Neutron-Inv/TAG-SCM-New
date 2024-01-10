@@ -1,4 +1,4 @@
-<aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0" style="z-index:5000 !important;">
+<aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0" style="position: relative; width:96.5%; margin:auto;">
     <div class="container-xxl d-flex">
         <ul class="menu-inner">
         <li class="menu-item">

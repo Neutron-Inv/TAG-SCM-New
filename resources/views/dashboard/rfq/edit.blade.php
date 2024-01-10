@@ -2309,6 +2309,7 @@ label {
                                                                     {{ $items->email ?? 'N/A' }}
                                                                 </option>
                                                             @endforeach
+                                                            <option value="emmanuel.idowu@tagenergygroup.net">Emmanuel.idowu@tagenergygroup.net</option>
                                                         </select>
 
                                                         @if ($errors->has('email'))

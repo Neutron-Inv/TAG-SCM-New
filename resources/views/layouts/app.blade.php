@@ -88,6 +88,26 @@ data-template="horizontal-menu-template">
             .table td,.table th{padding:.75rem ; vertical-align:top;border-top:1px solid #dee2e6;}
         </style>
     @endif
+    <style>
+        select {
+            z-index: 1001;
+            overflow: hidden !important;
+        }
+
+        .page-header, .content-wrapper{
+          width:96.6%;
+          margin:auto;
+        }
+
+        .content-wrapper{
+          padding-right:0.6%;
+          padding-left:0.6%;
+        }
+
+        .table-container{
+          width:100%;
+        }
+      </style>
     {{-- <link rel="stylesheet" href="{{asset('admin/printer.css')}}" type="text/css" media="print" /> --}}
 <head>
 
@@ -119,48 +139,48 @@ data-template="horizontal-menu-template">
 
             <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
               <ul class="navbar-nav flex-row align-items-center ms-auto">
-                <!-- User -->
-                <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                    <div class="avatar avatar-online">
-                    <span class="avatar" style="font-size: 28px;">  {{substr(Auth::user()->first_name, 0, 1)}}{{substr(Auth::user()->last_name, 0, 1)}}<span class="status online"></span></span>
-                    </div>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end" style="z-index: 2000000 !important;">
-                    <li>
-                      <div class="d-flex">
-                          <div class="flex-shrink-0 me-3">
-                            <span class="avatar">{{substr(Auth::user()->first_name, 0, 1)}}{{substr(Auth::user()->last_name, 0, 1)}}<span class="status online"></span></span>
+                  <!-- User -->
+                  <li class="nav-item navbar-dropdown dropdown">
+                      <a class="nav-link dropdown-toggle hide-arrow" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <div class="avatar avatar-online">
+                              <span class="avatar" style="font-size: 28px;">{{substr(Auth::user()->first_name, 0, 1)}}{{substr(Auth::user()->last_name, 0, 1)}}<span class="status online"></span></span>
                           </div>
-                          <div class="flex-grow-1">
-                            <span class="fw-semibold d-block">{{Auth::user()->first_name}} {{Auth::user()->last_name}}</span>
-                            <small class="text-muted">{{Auth::user()->role}}</small>
-                          </div>
-                        </div>
-                    </li>
-                    <li>
-                      <div class="dropdown-divider"></div>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="{{route('get-issues')}}">
-                        <i class="ti ti-lifebuoy me-2 ti-sm"></i>
-                        <span class="align-middle">Help</span>
                       </a>
-                    </li>
-                    <li>
-                      <div class="dropdown-divider"></div>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="{{ route('admin.logout') }}">
-                        <i class="ti ti-logout me-2 ti-sm"></i>
-                        <span class="align-middle">Log Out</span>
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                <!--/ User -->
+                      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-right" aria-labelledby="userDropdown" style="min-width:60px;">
+                        <li>
+                            <div class="d-flex">
+                                <div class="flex-shrink-0 me-3">
+                                    <span class="avatar">{{substr(Auth::user()->first_name, 0, 1)}}{{substr(Auth::user()->last_name, 0, 1)}}<span class="status online"></span></span>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <span class="fw-semibold d-block">{{Auth::user()->first_name}} {{Auth::user()->last_name}}</span>
+                                    <small class="text-muted">{{Auth::user()->role}}</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown-divider"></div>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{route('get-issues')}}">
+                                <i class="ti ti-lifebuoy me-2 ti-sm"></i>
+                                <span class="align-middle">Help</span>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="dropdown-divider"></div>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('admin.logout') }}">
+                                <i class="ti ti-logout me-2 ti-sm"></i>
+                                <span class="align-middle">Log Out</span>
+                            </a>
+                        </li>
+                    </ul>
+                  </li>
+                  <!--/ User -->
               </ul>
-            </div>
+          </div>
 
             <!-- Search Small Screens -->
           </div>
@@ -196,9 +216,9 @@ data-template="horizontal-menu-template">
             <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <script src="{{asset('admin/assets/vendor/libs/popper/popper.js')}}"></script>
-    <script src="{{asset('admin/assets/vendor/js/bootstrap.js')}}"></script>
-    <script src="{{asset('admin/assets/vendor/libs/select2/select2.js')}}"></script>
-    <script src="{{asset('admin/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js')}}"></script>
+    <!-- <script src="{{asset('admin/assets/vendor/js/bootstrap.js')}}"></script> -->
+    <!-- <script src="{{asset('admin/assets/vendor/libs/select2/select2.js')}}"></script> -->
+    <!-- <script src="{{asset('admin/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js')}}"></script> -->
     <!--<script src="{{asset('admin/assets/vendor/libs/node-waves/node-waves.js')}}"></script>-->
 
     <!--<script src="{{asset('admin/assets/vendor/libs/hammer/hammer.js')}}"></script>-->
@@ -211,11 +231,11 @@ data-template="horizontal-menu-template">
     <!-- Vendors JS -->
     <script src="{{asset('admin/assets/vendor/libs/apex-charts/apexcharts.js')}}"></script>
     <script src="{{asset('admin/assets/vendor/libs/swiper/swiper.js')}}"></script>
-    <script src="{{asset('admin/assets/vendor/libs/datatables/jquery.dataTables.js')}}"></script>
+    <!-- <script src="{{asset('admin/assets/vendor/libs/datatables/jquery.dataTables.js')}}"></script>
     <script src="{{asset('admin/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
     <script src="{{asset('admin/assets/vendor/libs/datatables-responsive/datatables.responsive.js')}}"></script>
     <script src="{{asset('admin/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.js')}}"></script>
-    <script src="{{asset('admin/assets/vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.js')}}"></script>
+    <script src="{{asset('admin/assets/vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.js')}}"></script> -->
 
     <!-- Main JS -->
     <script src="{{asset('admin/assets/js/main.js')}}"></script>
