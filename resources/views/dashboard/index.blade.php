@@ -923,22 +923,22 @@
                                                 <th>#</th>
                                                 <th>Status</th>
                                                 <th>Client</th>
-                                                <th hidden>Client RFQ No</th>
+                                                <th>Client RFQ No</th>
                                                 <th>Our Ref No</th>
                                                 <th>Description</th>
                                                 <th>Total Quote (USD) <br />
                                                     @if(Auth::user()->hasRole('SuperAdmin'))
                                                     (${{ number_format(sumNgnClientRFQ(),2) ?? 0.00 }})
                                                     @else
-                                                    (${{ number_format(sumNgnClientRFQCompany($company->company_id),2) ?? 0.00 }})
+                                                    (${{ number_format(sumUsdClientRFQCompany($company->company_id),2) ?? 0.00 }})
                                                     @endif
 
                                                 </th>
                                                 <th>Total Quote (NGN) <br />
                                                     @if(Auth::user()->hasRole('SuperAdmin'))
-                                                        (${{ number_format(sumNgnClientRFQNgn(),2) ?? 0.00 }})
+                                                        (₦{{ number_format(sumNgnClientRFQNgn(),2) ?? 0.00 }})
                                                     @else
-                                                        (${{ number_format(sumNgnClientRFQCompanyNgn($company->company_id),2) ?? 0.00 }})
+                                                        (₦{{ number_format(sumNgnClientRFQCompanyNgn($company->company_id),2) ?? 0.00 }})
                                                     @endif
                                                 </th>
                                                 <th>Buyer</th>
@@ -1000,25 +1000,24 @@
                                                     </td>
 
                                                     <td>{{ substr($rfqs->client->client_name, 0,22 ) ?? '' }}</td>
-                                                    <td style="width: 50px" hidden>{{ $rfqs->rfq_number ?? '' }}</td>
+                                                    <td style="width: 50px">{{ $rfqs->rfq_number ?? '' }}</td>
                                                     <td style="width: 50px"><a href="{{ route('rfq.edit', $rfqs->refrence_no) }}" style="color:blue">
                                                         {{ $rfqs->refrence_no ?? '' }} </a>
                                                     </td>
                                                     <td> {{ substr($rfqs->description,0, 50) ?? '' }} </td>
                                                     <td style="width: 50px">
-                                                        @if($rfqs->value_of_quote_usd < 2)
-
-                                                            {{ 'TBD' ?? '0.00'}}
-                                                        @else
-                                                            ${{ number_format((int) $rfqs->value_of_quote_usd,2) ?? '' }}
-                                                        @endif
+       @if($rfqs->currency == 'NGN' || (float) $rfqs->total_quote < 2)
+            {{ 'TBD' ?? '0.00'}}
+        @else
+            ${{ number_format((float) $rfqs->total_quote, 2) ?? '0.00' }}
+        @endif
                                                     </td>
                                                     <td>
-                                                        @if($rfqs->value_of_quote_ngn < 2)
-                                                            {{ 'TBD' ?? '0.00'}}
-                                                        @else
-                                                            &#36;{{ number_format((int) $rfqs->value_of_quote_ngn,2) ?? '' }}
-                                                        @endif
+        @if($rfqs->currency != 'NGN' || (float) $rfqs->total_quote < 2)
+            {{ 'TBD' ?? '0.00'}}
+        @else
+            ₦{{ number_format((float) $rfqs->total_quote, 2) ?? '0.00' }}
+        @endif
                                                     </td>
                                                     @if (Gate::allows('SuperAdmin', auth()->user()))
 
@@ -1052,18 +1051,15 @@
         <td style=" {{ (date('Y-m-d', strtotime($rfqs->delivery_due_date)) === now()->format('Y-m-d')) ? 'color:red;' : '' }}">
     {{ isset($rfqs->delivery_due_date) ? date('d-M-Y, H:i', strtotime($rfqs->delivery_due_date)) : '' }}
 </td>
-                                                    <td>
-                                                        @if (file_exists('document/rfq/'.$rfqs->rfq_id.'/'))
-                                                            <?php
-                                                            $dir = 'document/rfq/'.$rfqs->rfq_id.'/';
-                                                            $files = scandir($dir);
-                                                            $total = count($files) - 2; ?>
-                                                            {{ $total ?? 0 }}
-
-                                                        @else
-                                                            0
-                                                        @endif
-                                                    </td>
+        <td>
+            @if (file_exists('document/rfq/' . $rfqs->rfq_id . '/'))
+                <a class="open-file-modal" data-rfqid="{{ $rfqs->rfq_id }}" href="#">
+                    {{ count(scandir('document/rfq/' . $rfqs->rfq_id . '/')) - 2 }}
+                </a>
+            @else
+                0
+            @endif
+        </td>
                                                     <td>
                                                         <?php $co = countLineItems($rfqs->rfq_id) ?>
                                                         @if($co > 0 )
@@ -1075,11 +1071,8 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <?php $note = getnotes($rfqs->rfq_id); ?>
-                                                        <a href="" data-toggle="modal" data-target=".bd-example-modal-lx-{{ $rfqs->rfq_id }}">
-                                                        Notes
-                                                        </a>
-                                                    </td>
+    <a href="#" class="open-note-modal" data-rfqid="{{ $rfqs->rfq_id }}">Notes</a>
+</td>
                                                     <td hidden>
                                                         <?php $mesc = getMescCodes($rfqs->rfq_id) ?>
                                                         <p>
@@ -1095,27 +1088,43 @@
                                         </tbody>
                                     </table>
 
-                                    @foreach ($rfq as $rfqs)
-                                    <?php $note = getnotes($rfqs->rfq_id); ?>
-                                        <div class="modal fade bd-example-modal-lx-{{ $rfqs->rfq_id }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel-{{ $rfqs->rfq_id }}" aria-hidden="true">
-                                            <div class="modal-dialog modal-lx-{{ $rfqs->rfq_id }}">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="myLargeModalLabel-{{ $rfqs->rfq_id }}">Notes</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        {!! $note->note ?? 'N/A' !!}
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                      @endforeach
+<div class="modal fade" id="commonModal" tabindex="-1" role="dialog" aria-labelledby="commonModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commonModalLabel">Notes</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be dynamically updated here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileModalLabel">Files</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="fileModalBody">
+                <!-- Content will be dynamically updated here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
                                 </div>
 
                             </div>
@@ -1342,5 +1351,79 @@
 
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $('.open-note-modal').on('click', function(e) {
+            e.preventDefault();
 
+            var rfqId = $(this).data('rfqid');
+            var modal = $('#commonModal');
+            var getNoteUrl = 'https://scm.tagenergygroup.net/getnote.php';
+
+            // Make an Ajax request to fetch the note content from the endpoint
+            $.ajax({
+                url: getNoteUrl, 
+                type: 'POST',
+                data: { rfq_id: rfqId },
+                success: function(data) {
+                    // Update the modal body with the fetched note content
+                    modal.find('.modal-body').html(data);
+                },
+                error: function() {
+                    // Handle error if needed
+                },
+                complete: function() {
+                    // Open the modal after content is loaded
+                    modal.modal('show');
+                }
+            });
+        });
+    });
+</script>
+<script>
+    // Wait for the document to be ready 
+    $(document).ready(function() {
+        // Attach a click event handler to elements with the class 'open-file-modal'
+        $('.open-file-modal').on('click', function(e) {
+            // Prevent the default click behavior
+            e.preventDefault();
+    
+            // Get the value of 'rfqid' attribute from the clicked element
+            var rfqId = $(this).data('rfqid');
+    
+            // Get a reference to the modal element with the ID 'fileModal'
+            var modal = $('#fileModal');
+    
+            // Specify the URL for the Ajax request
+            var getFilesUrl = 'https://scm.tagenergygroup.net/getfile.php';
+    
+            // Make an Ajax request to fetch the files content from the endpoint
+            $.ajax({
+                url: getFilesUrl,
+                type: 'POST',
+                data: { rfq_id: rfqId },
+                dataType: 'json', // Specify the expected data type
+                success: function(response) {
+                    // Update the modal body with the fetched files content
+                    modal.find('.modal-body').html('');
+                    modal.find('.modal-body').append('<p>Directory: ' + response.directory + '</p><ul>');
+                    
+                    // Iterate through the 'files' array in the response and append links
+                    $.each(response.files, function(index, file) {
+                        modal.find('.modal-body').append('<li><a href="' + response.directory + file + '" target="_blank">' + file + '</a></li>');
+                    });
+                    
+                    modal.find('.modal-body').append('</ul>');
+                },
+                error: function() {
+                    // Handle error if needed
+                },
+                complete: function() {
+                    // Open the modal after content is loaded
+                    modal.modal('show');
+                }
+            });
+        });
+    });
+</script>
 @endsection

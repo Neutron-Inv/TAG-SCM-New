@@ -54,7 +54,7 @@
         }
     </style>
 </head>
-<body>
+<body style="background-color:white !important;">
     <div class="container">
         <p class="email-text">Good Day Sir,</p>
         <p class="email-text">I trust this mail meets you well.</p>
@@ -83,8 +83,8 @@
                     @foreach ($saipem as $saipem_details)
                         <tr>
                             <td>{{ $num++}}</td>
-                            <td>{{ $saipem_details->rfq_number}}</td>
                             <td>{{ $saipem_details->refrence_no}}</td>
+                            <td>{{ $saipem_details->rfq_number}}</td>
                             <td class="nowrap">{{ fbuyers($saipem_details->contact_id)->first_name . ' ' . fbuyers($saipem_details->contact_id)->last_name }}</td>
                             <td>{{ $saipem_details->product}}</td>
                             <td>{{ $saipem_details->description}}</td>

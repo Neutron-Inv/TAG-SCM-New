@@ -84,6 +84,10 @@
                                                 <p style="font-size: 10.0pt; color: black !important;">  Buyer: <strong> {{ $rfq->contact->first_name . ' '. $rfq->contact->last_name ?? ' '}} </strong> </p>
                                                 <p style="font-size: 10.0pt; color: black !important;">  Supplier: <strong>  {{ $rfq->vendor->vendor_name }} </strong> </p>
                                                 <p style="font-size: 10.0pt; color: black !important;">  Description: <strong>  {!! $rfq->description !!} </strong> </p>
+                                                <p style="font-size: 10.0pt; color: black !important;">  Estimated Package Weight: <strong>  {!! $rfq->estimated_package_weight !!} </strong> </p>
+                                                <p style="font-size: 10.0pt; color: black !important;">  Estimated Package Dimension: <strong>  {!! $rfq->estimated_package_dimension !!} </strong> </p>
+                                                <p style="font-size: 10.0pt; color: black !important;">  Oversized Cargo: <strong>  {!! $rfq->oversized !!} </strong> </p>
+                                                <p style="font-size: 10.0pt; color: black !important;">  HS Code: <strong>  {!! $rfq->hs_codes !!} </strong> </p>
                                                 <p style="font-size: 10.0pt; color: black !important;">  Incoterm: <strong> {{ $rfq->incoterm ?? ''}} </strong> </p>
                                                 <p style="font-size: 10.0pt; color: black !important;">  Currency: <strong>  {{ $rfq->currency ?? ''}} </strong> </p>
                                                 
@@ -116,23 +120,23 @@
                                                         $sumTotalMiscSupplier = 0;
                                                         $shipper = getSh($rfq->shipper_id);
                                                     @endphp
-                                                    @if(!empty(json_decode($rfq->misc_cost_supplier, true) && array_key_exists('amount', json_decode($rfq->misc_cost_supplier, true))))
-                                                    @foreach(json_decode($rfq->misc_cost_supplier, true) as $item)
-                                                        <tr>
-                                                            <td style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
-                                                            @if($iteml['amount'] != "" && $iteml['amount'] > 0)
-                                                            {{number_format((float)$item['amount'] ,2) ?? 0 }}
-                                                            @endif
-                                                            </td>
-                                                            <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
-                                                                {{ $item['desc'] }}
-                                                            </td>
-                                                        </tr>
-                                                        @php
-                                                            $sumTotalMiscSupplier += $item['amount'];
-                                                        @endphp
-                                                    @endforeach
-                                                    @endif
+                        @if(!empty(json_decode($rfq->misc_cost_supplier, true)))
+                                    @foreach(json_decode($rfq->misc_cost_supplier, true) as $item)
+                                        <tr>
+                                            <td style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
+                                                @if(isset($item['amount']) && is_numeric($item['amount']) && $item['amount'] > 0)
+                                                    {{ number_format((float)$item['amount'], 2) }}
+                                                @endif
+                                            </td>
+                                            <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
+                                                {{ $item['desc'] ?? '' }}
+                                            </td>
+                                        </tr>
+                                        @php
+                                            $sumTotalMiscSupplier += isset($item['amount']) && is_numeric($item['amount']) ? (float)$item['amount'] : 0;
+                                        @endphp
+                                    @endforeach
+                                @endif
                                                     <tr>
                                                         <td  style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;">
@@ -152,7 +156,7 @@
                                                             </td>
                                                             <td  style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                                 font-size: 10.0pt;font-family: Calibri, sans-serif; ">
-                                                                {{ $shiname }} Lump Sum
+                                                                {{ $shiname }} Freight Charges
                                                             </td>
                                                         </tr>
                                                         @else
@@ -209,24 +213,23 @@
                                                     @php
                                                         $sumTotalMiscLogistics = 0;
                                                     @endphp
-                                                    @if(!empty(json_decode($rfq->misc_cost_logistics, true) && array_key_exists('amount', json_decode($rfq->misc_cost_logistics, true))))
-                                                    @foreach(json_decode($rfq->misc_cost_logistics, true) as $iteml)
-                                                        <tr>
-                                                            <td style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
-                                                            @if($iteml['amount'] != "" && $iteml['amount'] > 0)
-                                                            {{number_format((float)$iteml['amount'] ,2) ?? 0 }}
-                                                            @endif
-                                                            </td>
-                                                            <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
-                                                                {{ $iteml['desc'] }}
-                                                            </td>
-                                                        </tr>
-
-                                                        @php
-                                                            $sumTotalMiscLogistics += $iteml['amount'];
-                                                        @endphp
-                                                    @endforeach
-                                                    @endif
+            @if(!empty(json_decode($rfq->misc_cost_logistics, true)))
+                @foreach(json_decode($rfq->misc_cost_logistics, true) as $iteml)
+                    <tr>
+                        <td style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
+                            @if(isset($iteml['amount']) && is_numeric($iteml['amount']) && $iteml['amount'] > 0)
+                                {{ number_format((float)$iteml['amount'], 2) }}
+                            @endif
+                        </td>
+                        <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
+                            {{ $iteml['desc'] ?? '' }}
+                        </td>
+                    </tr>
+                    @php
+                        $sumTotalMiscLogistics += isset($iteml['amount']) && is_numeric($iteml['amount']) ? (float)$iteml['amount'] : 0;
+                    @endphp
+                @endforeach
+            @endif
                                                     <tr>
                                                         <td  style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;">
@@ -268,7 +271,15 @@
                                                         </td>
                                                         <td  style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;">
-                                                            Cost of funds (Subtotal * 1.3% * 4 Months)
+            @php
+            $duration = $rfq->duration;
+                $duration_1 = $rfq->duration_1;
+                $duration_2 = $rfq->duration_2;
+                
+                // Use the max() function to get the highest value
+                $highest_duration = max($duration, $duration_1, $duration_2);
+            @endphp
+                                                            Cost of funds (Subtotal * 1.3% * {{ $highest_duration }} Months)
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -461,12 +472,12 @@
                                                             <td class="o_btn o_bg-primary o_br o_heading o_text" align="center" data-bgcolor="Bg Primary" data-size="Text Default" data-min="12" data-max="20"
                                                                 style="font-family: Helvetica, Arial, sans-serif;font-weight: bold;margin-top: 0px;margin-bottom: 0px;font-size: 16px;line-height: 24px;mso-padding-alt: 12px 24px;
                                                                 background-color: #28a745;border-radius: 4px;">
-                                                                <?php $url = 'https://test.ebsl.enabledjobs.com/dashboard/request-for-quotation/approve-breakdown/'.$rfq->refrence_no; ?>
+                                                                <?php $url = 'https://scm.tagenergygroup.net/dashboard/request-for-quotation/approve-breakdown/'.$rfq->refrence_no; ?>
                                                                 <a class="o_text-white" href="{{ $url }}" data-color="White" style="text-decoration: none;outline: none;color: #ffffff;
                                                                     display: block;padding: 12px 24px;mso-text-raise: 3px;">
                                                                     Approve </a>
                                                             </td>
-                                                            <?php $url2 = 'https://test.ebsl.enabledjobs.com/dashboard/request-for-quotation/decline-breakdown/'.$rfq->refrence_no; ?>
+                                                            <?php $url2 = 'https://scm.tagenergygroup.net/dashboard/request-for-quotation/decline-breakdown/'.$rfq->refrence_no; ?>
                                                             <td class="o_btn o_bg-dark o_br o_heading o_text" align="center" data-bgcolor="Bg Dark" data-size="Text Default" data-min="12" data-max="20" style="font-family: Helvetica, Arial, sans-serif;font-weight: bold;margin-top: 0px;
                                                                 margin-bottom: 0px;font-size: 16px;line-height: 24px;mso-padding-alt: 12px 24px;background-color: #242b3d;border-radius: 4px;">
                                                                 <a class="o_text-white" href="{{ $url2 }}" data-color="White" style="background-color: #dc3545;text-decoration: none;outline: none;color: #ffffff;display: block;padding: 12px 24px;mso-text-raise: 3px; padding-left; -10px">

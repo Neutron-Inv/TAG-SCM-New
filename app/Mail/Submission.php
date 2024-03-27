@@ -33,6 +33,8 @@ class Submission extends Mailable
         $tq = $this->data['tq'];
         $shiname = $this->data['shiname'];
         $tempFilePath = $this->data['tempFilePath'];
+        $tempFileDirs = $this->data['tempFileDirs'];
+        $fileNames = $this->data['fileNames'];
         $company_id = $rfq->company_id;
         if($company_id == 1){
             $sender =  'contact@enabledsolutions.net';
@@ -54,11 +56,11 @@ class Submission extends Mailable
             $sender = $name->email;
             $reply = $name->email;
         }
-        $mail = $this->replyTo($reply, $company->company_name)->subject("QUOTATION BREAKDOWN APPROVAL FOR RFX " .$rfq->rfq_number.': '. $rfq->refrence_no . ', '. strtoupper($rfq->product))->markdown('emails.rfq.approval')
+        $mail = $this->replyTo($reply, $company->company_name)->subject("Quotation Breakdown Approval For RFX " .$rfq->rfq_number.': '. $rfq->refrence_no . ', '. ucwords($rfq->description))->markdown('emails.rfq.approval')
         ->with(compact('rfq', 'sender', 'reply', 'tq', 'shiname'));
         // $mail = $this->subject("QUOTATION BREAKDOWN APPROVAL FOR RFX " .$rfq->rfq_number.': '. $rfq->refrence_no . ', '. strtoupper($rfq->product))->markdown('emails.rfq.approval')->with(compact('rfq', 'sender'));
         if($rfq->send_image == 'YES'){
-            $dir = 'document/rfq/files/' .$rfq->rfq_id.'/';
+            $dir = 'document/rfq/' .$rfq->rfq_id.'/';
             $list = array_values(array_diff(scandir($dir, 0), array('..', '.')));
             if (count($list) > 0) {
                 foreach ($list as $key) {
@@ -78,6 +80,13 @@ class Submission extends Mailable
         if($tempFilePath != ""){
             $mail->attach($tempFilePath);
             }
+        
+        if($tempFileDirs != ""){
+            // Attach files to the email
+            for ($i = 0; $i < count($tempFileDirs); $i++) {
+                $mail->attach($tempFileDirs[$i], ['as' => $fileNames[$i]]);
+            }
+        }
         
         
         // $mail->from($sender);

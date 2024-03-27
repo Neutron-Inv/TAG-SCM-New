@@ -181,6 +181,7 @@
                                                 <th> DELIVERY DATE </th>
 
                                                 <th>ACTUAL DELIVERY DATE</th>
+                                                <th>TOTAL NUMBER OF DAYS FROM PO TO DELIVERY</th>
                                                 <th> ONTIME DELIVERY ? </th>
 
                                                 <th>OEM</th>
@@ -198,10 +199,22 @@
                                                     <td> {{ $rfqs->rfq->refrence_no ?? 'Null' }}</td>
                                                     <td> {{ $rfqs->description ?? '' }}</td>
 
-                                                    <td>{{ $rfqs->po_receipt_date ?? ' ' }} </td>
+                                                    <td>{{ $rfqs->po_date ?? ' ' }} </td>
                                                     <td>{{ $rfqs->delivery_due_date  ?? ' ' }} </td>
                                                     <td> {{ $rfqs->actual_delivery_date ?? '' }}</td>
-                                                    <td>{{ $rfqs->timely_delivery ?? ' ' }}</td>
+                                                    <td> @if($rfqs->po_date && $rfqs->actual_delivery_date)
+                                                        {{ \Carbon\Carbon::parse($rfqs->po_date)->diffInDays(\Carbon\Carbon::parse($rfqs->actual_delivery_date)) }}
+                                                    @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($rfqs->actual_delivery_date && $rfqs->delivery_due_date)
+                                                        @if(\Carbon\Carbon::parse($rfqs->actual_delivery_date)->greaterThan(\Carbon\Carbon::parse($rfqs->delivery_due_date)))
+                                                            No
+                                                        @else
+                                                            Yes
+                                                        @endif
+                                                    @endif
+                                                </td>
                                                     <td> {{ $rfqs->rfq->vendor->vendor_name ?? 'Null' }}</td>
                                                     <td>{{ $rfqs->rfq->shipper->shipper_name ?? 'Null' }}</td>
                                                     
@@ -263,11 +276,58 @@
 
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-12">
                     <div class="form-group">
-                        <A href="{{ route('po.report.sendReport') }}" class="btn btn-primary" style="float: right;">Send Report</a>
+                        <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#customModals">Send YTD Report</button> 
                             
                     </div>
                 </div>
             </div>
          </div>
+    </div>
+
+    <div class="modal fade bd-example-modal-lg" id="customModals" tabindex="-1" role="dialog" aria-labelledby="customModalTwoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customModalTwoLabel">Send monthly RFQs and POs Report</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('po.report.sendReport') }}" class="" method="POST" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="modal-body">
+    
+                        <div class="row gutters">
+                            <div class="col-md-4 col-sm-4 col-4">
+                                <label for="recipient-name" class="col-form-label">Recipient:</label>
+                                <input type="email" class="form-control" id="recipient-email" name="rec_email"
+                                value="contact@tagenergygroup.net">
+                                @if ($errors->has('rec_email'))
+                                    <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
+                                @endif
+                            </div>
+                            
+                            <div class="col-md-8 col-sm-8 col-8">
+                                <label for="recipient-name" class="col-form-label">CC Email:</label>
+                                <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="sales@tagenergygroup.net; mary.nwaogwugwu@tagenergygroup.net">
+                                @if ($errors->has('report_recipient'))
+                                    <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer custom">
+    
+                        <div class="left-side">
+                            <button type="button" class="btn btn-link danger" data-dismiss="modal">Cancel</button>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="right-side">
+                            <button type="submit" class="btn btn-link success">Send Report</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 @endsection

@@ -17,115 +17,116 @@
 
          <div class="content-wrapper">
             <div class="row gutters">
+                @include('layouts.alert')
 
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="card-header">
-								<div class="card-title">Please fill the below form to generate report </div>
-							</div>
-                            <form action="{{ route('po.report.year') }}" class="" method="POST">
-                                {{ csrf_field() }}
-                                @include('layouts.alert')
-                                <div class="row gutters">
-                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                                        <div class="form-group"><label> Report Year </label>
-                                            <div class="input-group">
+       <!--         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">-->
+       <!--             <div class="card">-->
+       <!--                 <div class="card-body">-->
+       <!--                     <div class="card-header">-->
+							<!--	<div class="card-title">Please fill the below form to generate report </div>-->
+							<!--</div>-->
+       <!--                     <form action="{{ route('po.report.year') }}" class="" method="POST">-->
+       <!--                         {{ csrf_field() }}-->
+       <!--                         @include('layouts.alert')-->
+       <!--                         <div class="row gutters">-->
+       <!--                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">-->
+       <!--                                 <div class="form-group"><label> Report Year </label>-->
+       <!--                                     <div class="input-group">-->
                                                 
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1"><i class="icon-calendar" style="color:#28a745"></i></span>
-                                                </div>
-                                                <select class="form-control selectpicker" data-live-search="true" required name="year">
-                                                    <option value="{{ old('year') }}"> {{ old('year') ?? '-- Select Start Year --' }} </option>
-                                                    <option value=""> </option>
-                                                    @for ($i=2016; $i<=date('Y'); $i++)
-                                                        <option value="{{ $i }}">{{ $i }}</option>
-                                                    @endfor
-                                                </select>
-                                            </div>
+       <!--                                         <div class="input-group-prepend">-->
+       <!--                                             <span class="input-group-text" id="basic-addon1"><i class="icon-calendar" style="color:#28a745"></i></span>-->
+       <!--                                         </div>-->
+       <!--                                         <select class="form-control selectpicker" data-live-search="true" required name="year">-->
+       <!--                                             <option value="{{ old('year') }}"> {{ old('year') ?? '-- Select Start Year --' }} </option>-->
+       <!--                                             <option value=""> </option>-->
+       <!--                                             @for ($i=2016; $i<=date('Y'); $i++)-->
+       <!--                                                 <option value="{{ $i }}">{{ $i }}</option>-->
+       <!--                                             @endfor-->
+       <!--                                         </select>-->
+       <!--                                     </div>-->
 
-                                            @if ($errors->has('year'))
-                                                <div class="" style="color:red">{{ $errors->first('year') }}</div>
-                                            @endif
+       <!--                                     @if ($errors->has('year'))-->
+       <!--                                         <div class="" style="color:red">{{ $errors->first('year') }}</div>-->
+       <!--                                     @endif-->
 
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label> Start Month </label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1"><i class="icon-calendar" style="color:#28a745"></i></span>
-                                                </div>
+       <!--                                 </div>-->
+       <!--                             </div>-->
+       <!--                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">-->
+       <!--                                 <div class="form-group">-->
+       <!--                                     <label> Start Month </label>-->
+       <!--                                     <div class="input-group">-->
+       <!--                                         <div class="input-group-prepend">-->
+       <!--                                             <span class="input-group-text" id="basic-addon1"><i class="icon-calendar" style="color:#28a745"></i></span>-->
+       <!--                                         </div>-->
                                                 
-                                                <select class="form-control selectpicker" data-live-search="true" required name="start_month">
-                                                    <option value="{{ old('start_month') }}"> {{ old('start_month') ?? '-- Select The Month --' }} </option>
-                                                    <option value=""> </option>
-                                                    <option value="01">January</option>
-                                                    <option value="02">February</option>
-                                                    <option value="03">March</option>
-                                                    <option value="04">April</option>
-                                                    <option value="05">May</option>
-                                                    <option value="06">June</option>
-                                                    <option value="07">July</option>
-                                                    <option value="08">August</option>
-                                                    <option value="09">September</option>
-                                                    <option value="10">October</option>
-                                                    <option value="11">November</option>
-                                                    <option value="12">December</option>
-                                                </select>
-                                            </div>
+       <!--                                         <select class="form-control selectpicker" data-live-search="true" required name="start_month">-->
+       <!--                                             <option value="{{ old('start_month') }}"> {{ old('start_month') ?? '-- Select The Month --' }} </option>-->
+       <!--                                             <option value=""> </option>-->
+       <!--                                             <option value="01">January</option>-->
+       <!--                                             <option value="02">February</option>-->
+       <!--                                             <option value="03">March</option>-->
+       <!--                                             <option value="04">April</option>-->
+       <!--                                             <option value="05">May</option>-->
+       <!--                                             <option value="06">June</option>-->
+       <!--                                             <option value="07">July</option>-->
+       <!--                                             <option value="08">August</option>-->
+       <!--                                             <option value="09">September</option>-->
+       <!--                                             <option value="10">October</option>-->
+       <!--                                             <option value="11">November</option>-->
+       <!--                                             <option value="12">December</option>-->
+       <!--                                         </select>-->
+       <!--                                     </div>-->
 
-                                            @if ($errors->has('start_month'))
-                                                <div class="" style="color:red">{{ $errors->first('start_month') }}</div>
-                                            @endif
+       <!--                                     @if ($errors->has('start_month'))-->
+       <!--                                         <div class="" style="color:red">{{ $errors->first('start_month') }}</div>-->
+       <!--                                     @endif-->
 
-                                        </div>
-                                    </div>
+       <!--                                 </div>-->
+       <!--                             </div>-->
 
-                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label> End Month</label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1"><i class="icon-calendar" style="color:#28a745"></i></span>
-                                                </div>
-                                                <select class="form-control selectpicker" data-live-search="true" required name="end_month">
-                                                    <option value="{{ old('end_month') }}"> {{ old('end_month') ?? '-- Select End Month --' }} </option>
-                                                    <option value=""> </option>
-                                                    <option value="01">January</option>
-                                                    <option value="02">February</option>
-                                                    <option value="03">March</option>
-                                                    <option value="04">April</option>
-                                                    <option value="05">May</option>
-                                                    <option value="06">June</option>
-                                                    <option value="07">July</option>
-                                                    <option value="08">August</option>
-                                                    <option value="09">September</option>
-                                                    <option value="10">October</option>
-                                                    <option value="11">November</option>
-                                                    <option value="12">December</option>
-                                                </select>
-                                            </div>
+       <!--                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">-->
+       <!--                                 <div class="form-group">-->
+       <!--                                     <label> End Month</label>-->
+       <!--                                     <div class="input-group">-->
+       <!--                                         <div class="input-group-prepend">-->
+       <!--                                             <span class="input-group-text" id="basic-addon1"><i class="icon-calendar" style="color:#28a745"></i></span>-->
+       <!--                                         </div>-->
+       <!--                                         <select class="form-control selectpicker" data-live-search="true" required name="end_month">-->
+       <!--                                             <option value="{{ old('end_month') }}"> {{ old('end_month') ?? '-- Select End Month --' }} </option>-->
+       <!--                                             <option value=""> </option>-->
+       <!--                                             <option value="01">January</option>-->
+       <!--                                             <option value="02">February</option>-->
+       <!--                                             <option value="03">March</option>-->
+       <!--                                             <option value="04">April</option>-->
+       <!--                                             <option value="05">May</option>-->
+       <!--                                             <option value="06">June</option>-->
+       <!--                                             <option value="07">July</option>-->
+       <!--                                             <option value="08">August</option>-->
+       <!--                                             <option value="09">September</option>-->
+       <!--                                             <option value="10">October</option>-->
+       <!--                                             <option value="11">November</option>-->
+       <!--                                             <option value="12">December</option>-->
+       <!--                                         </select>-->
+       <!--                                     </div>-->
 
-                                            @if ($errors->has('end_month'))
-                                                <div class="" style="color:red">{{ $errors->first('end_month') }}</div>
-                                            @endif
+       <!--                                     @if ($errors->has('end_month'))-->
+       <!--                                         <div class="" style="color:red">{{ $errors->first('end_month') }}</div>-->
+       <!--                                     @endif-->
 
-                                        </div>
-                                    </div>
+       <!--                                 </div>-->
+       <!--                             </div>-->
                                     
-                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <button class="btn btn-primary" type="submit" title="Click the button to create report" style="float: right;">Create Report</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+       <!--                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-12">-->
+       <!--                                 <div class="form-group">-->
+       <!--                                     <button class="btn btn-primary" type="submit" title="Click the button to create report" style="float: right;">Create Report</button>-->
+       <!--                                 </div>-->
+       <!--                             </div>-->
+       <!--                         </div>-->
+       <!--                     </form>-->
 
-                        </div>
-                    </div>
-                </div>
+       <!--                 </div>-->
+       <!--             </div>-->
+       <!--         </div>-->
 
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div class="card">
@@ -338,14 +339,14 @@
                                         <td style="font-weight:bold;text-align:left;">OTHERS (REGULATOR, TUBE, SLABS, ETC)</td>
                                         <td>{{ count(getOtherRfq('114')) ?? 0 }}</td>
                                         <td>{{ count(getOtherPo('114')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('148')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('148')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('2')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('167')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherRfq('148')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherPo('148')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherRfq('2')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherPo('2')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherRfq('266')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherPo('266')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherRfq('167')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherPo('167')) ?? 0 }}</td>
                                         </tr>
                                         <tr>
                                         <td style="font-weight:bold;text-align:left;">FLANGE MANAGEMENT SERVICES</td>
@@ -368,18 +369,18 @@
                                         <td>{{ count(getTotalPo('148')) ?? 0 }}</td>
                                         <td>{{ count(getTotalRfq('2')) ?? 0 }}</td>
                                         <td>{{ count(getTotalPo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSPo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSPo('167')) ?? 0 }}</td>
+                                        <td>{{ count(getTotalRfq('266')) ?? 0 }}</td>
+                                        <td>{{ count(getTotalPo('266')) ?? 0 }}</td>
+                                        <td>{{ count(getTotalRfq('167')) ?? 0 }}</td>
+                                        <td>{{ count(getTotalPo('167')) ?? 0 }}</td>
                                         </tr>
                                         <tr>
                                         <td style="font-weight:bold;text-align:left;">PO Conversion Rate</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('114')) > 0) ? (count(getTotalPo('114')) / count(getTotalRfq('114')) * 100) : 0 }}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('148')) > 0) ? (count(getTotalPo('148')) / count(getTotalRfq('148')) * 100) : 0 }}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('2')) > 0) ? (count(getTotalPo('2')) / count(getTotalRfq('2')) * 100) : 0 }}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('266')) > 0) ? (count(getTotalPo('266')) / count(getTotalRfq('266')) * 100) : 0 }}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('167')) > 0) ? (count(getTotalPo('167')) / count(getTotalRfq('167')) * 100) : 0 }}%</td>
+                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('114')) > 0) ? number_format((count(getTotalPo('114')) / count(getTotalRfq('114')) * 100), 2) : 0.00 }}%</td>
+                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('148')) > 0) ? number_format((count(getTotalPo('148')) / count(getTotalRfq('148')) * 100), 2) : 0.00 }}%</td>
+                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('2')) > 0) ? number_format((count(getTotalPo('2')) / count(getTotalRfq('2')) * 100), 2) : 0.00}}%</td>
+                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('266')) > 0) ? number_format((count(getTotalPo('266')) / count(getTotalRfq('266')) * 100), 2) : 0.00 }}%</td>
+                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('167')) > 0) ? number_format((count(getTotalPo('167')) / count(getTotalRfq('167')) * 100), 2) : 0.00 }}%</td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -476,10 +477,8 @@
                     <div class="row gutters">
                         <div class="col-md-4 col-sm-4 col-4">
                             <label for="recipient-name" class="col-form-label">Recipient:</label>
-                            <!-- <input type="email" class="form-control" id="recipient-email" name="rec_email"
-                            value="bidadmin@tagenergygroup.net" readonly> -->
                             <input type="email" class="form-control" id="recipient-email" name="rec_email"
-                            value="emmanuel.idowu@tagenergygroup.net" readonly>
+                            value="contact@tagenergygroup.net">
                             @if ($errors->has('rec_email'))
                                 <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
                             @endif
@@ -487,8 +486,7 @@
                         
                         <div class="col-md-8 col-sm-8 col-8">
                             <label for="recipient-name" class="col-form-label">CC Email:</label>
-                            <!-- <input type="text" class="form-control" id="recipient-email" name="quotation_recipient" value="contact@tagenergygroup.net; sales@tagenergygroup.net" readonly> -->
-                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="emmanuel@enabledgroup.net; jackomega.idnoble@gmail.com">
+                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="sales@tagenergygroup.net; mary.nwaogwugwu@tagenergygroup.net">
                             @if ($errors->has('report_recipient'))
                                 <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
                             @endif
@@ -528,10 +526,8 @@
                     <div class="row gutters">
                         <div class="col-md-4 col-sm-4 col-4">
                             <label for="recipient-name" class="col-form-label">Recipient:</label>
-                            <!-- <input type="email" class="form-control" id="recipient-email" name="rec_email"
-                            value="bidadmin@tagenergygroup.net" readonly> -->
                             <input type="email" class="form-control" id="recipient-email" name="rec_email"
-                            value="emmanuel.idowu@tagenergygroup.net" readonly>
+                            value="contact@tagenergygroup.net">
                             @if ($errors->has('rec_email'))
                                 <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
                             @endif
@@ -539,8 +535,7 @@
                         
                         <div class="col-md-8 col-sm-8 col-8">
                             <label for="recipient-name" class="col-form-label">CC Email:</label>
-                            <!-- <input type="text" class="form-control" id="recipient-email" name="quotation_recipient" value="contact@tagenergygroup.net; sales@tagenergygroup.net" readonly> -->
-                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="emmanuel@enabledgroup.net; jackomega.idnoble@gmail.com">
+                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="sales@tagenergygroup.net; mary.nwaogwugwu@tagenergygroup.net">
                             @if ($errors->has('report_recipient'))
                                 <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
                             @endif

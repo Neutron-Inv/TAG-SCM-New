@@ -202,12 +202,12 @@ class LineItemController extends Controller
                     }
 
                     $name = cops($rfq->company_id);
-                    $fileName = "$name->company_name Quotation " .$rfq->refrence_no . ", ". $rfq->description.'.pdf';
-                    $pdf->getDomPDF()->set_option("enable_php", true);
-                    $output = $pdf->output();
-                    $dir = base_path("email/rfq/".$rfq->refrence_no."/");
-                    !file_exists(File::makeDirectory($dir, $mode = 0777, true, true));		        
-                    $pdf->save($dir .'/'.$fileName);
+                    // $fileName = "$name->company_name Quotation " .$rfq->refrence_no . ", ". $rfq->description.'.pdf';
+                    // $pdf->getDomPDF()->set_option("enable_php", true);
+                    // $output = $pdf->output();
+                    // $dir = base_path("email/rfq/".$rfq->refrence_no."/");
+                    // !file_exists(File::makeDirectory($dir, $mode = 0777, true, true));		        
+                    // $pdf->save($dir .'/'.$fileName);
 
                 }
                 return redirect()->route("line.preview",[$rfq->rfq_id])->with(["success" => 'You Have Created Line Item for RFQ  ' . $request->input('refrence_no'). " Successfully"]);
@@ -388,13 +388,13 @@ class LineItemController extends Controller
                             $pdf = PDF::loadView('dashboard.printing.check', compact('rfq', 'line_items'))->setPaper('ledger', 'portrait');
                         }
                         $name = cops($rfq->company_id);
-                        $fileName = "$name->company_name Quotation " .$rfq->refrence_no . ", ". $rfq->description.'.pdf';
-                        $pdf->getDomPDF()->set_option("enable_php", true);
-                        $output = $pdf->output();
+                        // $fileName = "$name->company_name Quotation " .$rfq->refrence_no . ", ". $rfq->description.'.pdf';
+                        // $pdf->getDomPDF()->set_option("enable_php", true);
+                        // $output = $pdf->output();
 
-                        $dir = base_path("email/rfq/".$rfq->refrence_no."/");
-                        !file_exists(File::makeDirectory($dir, $mode = 0777, true, true));		                     
-                        $pdf->save($dir .'/'.$fileName);
+                        // $dir = base_path("email/rfq/".$rfq->refrence_no."/");
+                        // !file_exists(File::makeDirectory($dir, $mode = 0777, true, true));		                     
+                        // $pdf->save($dir .'/'.$fileName);
 
                     }
                     return redirect()->back()->with("success", 'You Have Duplicated Line Item Successfully');
@@ -569,13 +569,13 @@ class LineItemController extends Controller
                     }
                     $name = cops($rfq->company_id);
                     // dd($name);
-                    $fileName = "$name->company_name Quotation " .$rfq->refrence_no . ", ". $rfq->description.'.pdf';
-                    $pdf->getDomPDF()->set_option("enable_php", true);
-                    $output = $pdf->output();
+                    // $fileName = "$name->company_name Quotation " .$rfq->refrence_no . ", ". $rfq->description.'.pdf';
+                    // $pdf->getDomPDF()->set_option("enable_php", true);
+                    // $output = $pdf->output();
 
-                    $dir = base_path("email/rfq/".$rfq->refrence_no."/");
-                    !file_exists(File::makeDirectory($dir, $mode = 0777, true, true));		           
-                    $pdf->save($dir .'/'.$fileName);
+                    // $dir = base_path("email/rfq/".$rfq->refrence_no."/");
+                    // !file_exists(File::makeDirectory($dir, $mode = 0777, true, true));		           
+                    // $pdf->save($dir .'/'.$fileName);
 
                 }
                 return redirect()->route("line.preview",[$request->input("rfq_id")])->with([

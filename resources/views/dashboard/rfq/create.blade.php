@@ -111,8 +111,15 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text" id="basic-addon2"><i class="icon-documents" style="color:#28a745"></i></span>
                                                                 </div>
-                                                                <input class="form-control" name="product" value="{{old('product')}}" id="lastName" required placeholder="Enter Product Name" type="text"
-                                                                aria-describedby="basic-addon2">
+                                        @php
+                                        $products = getproducts();
+                                        @endphp
+                                        <select class="form-control selectpicker" data-live-search="true" required name="product">
+                                        @foreach($products as $product)
+                                        <option value="{{$product->product_name}}">{{$product->product_name}} </option>
+                                        @endforeach
+
+                                                                </select>
                                                             </div>
                                                             @if ($errors->has('product'))
                                                                 <div class="" style="color:red">{{ $errors->first('product') }}</div>

@@ -719,7 +719,12 @@
 
     function sumNgnClientRFQCompany($company_id)
     {
-        return \DB::table('client_rfqs')->where('company_id', $company_id)->sum('value_of_quote_usd');
+        return \DB::table('client_rfqs')->where('company_id', $company_id)->where('currency', 'NGN')->sum('total_quote');;
+    }
+    
+    function sumUsdClientRFQCompany($company_id)
+    {
+        return \DB::table('client_rfqs')->where('company_id', $company_id)->where('currency', 'USD')->sum('total_quote');
     }
 
     function sumNgnClientRFQNgn()
@@ -841,7 +846,8 @@
     {
         return \DB::table('client_rfqs')
         ->where(["client_id" => $client_id])
-        ->where('description', 'like', '%bolts and nuts%')
+        ->where('description', 'like', '%bolt%')
+        ->where('description', 'like', '%nut%')
         ->whereYear('rfq_date', now()->year)
         ->get();
     }
@@ -850,7 +856,8 @@
     {
         return \DB::table('client_pos')
         ->where(["client_id" => $client_id])
-        ->where('description', 'like', '%bolts and nuts%')
+        ->where('description', 'like', '%bolt%')
+        ->where('description', 'like', '%nut%')
         ->whereYear('po_date', now()->year)
         ->get();
     }
@@ -898,7 +905,7 @@
         return \DB::table('client_rfqs')
         ->where(["client_id" => $client_id])
         ->where('description', 'like', '%rotork%')
-        ->where('description', 'like', '%actuator%')
+        ->orwhere('description', 'like', '%actuator%')
         ->whereYear('rfq_date', now()->year)
         ->get();
     }
@@ -908,7 +915,7 @@
         return \DB::table('client_pos')
         ->where(["client_id" => $client_id])
         ->where('description', 'like', '%rotork%')
-        ->where('description', 'like', '%actuator%')
+        ->orwhere('description', 'like', '%actuator%')
         ->whereYear('po_date', now()->year)
         ->get();
     }
@@ -917,11 +924,13 @@
     {
         return \DB::table('client_rfqs')
         ->where(["client_id" => $client_id])
-        ->where('description', 'not like','%valve%')
-        ->where('description', 'not like', '%gasket%')
-        ->where('description','not like', '%bolts and nuts%')
+        ->where('description','not like','%valve%')
+        ->where('description','not like', '%gasket%')
+        ->where('description','not like', '%bolt%')
+        ->where('description','not like', '%nut%')
         ->where('description','not like', '%flange%')
-        ->where('description','not like', '%pipe fittings%')
+        ->where('description','not like', '%pipe%')
+        ->where('description','not like', '%fitting%')
         ->where('description','not like', '%rotork%')
         ->where('description','not like', '%actuator%')
         ->where('description','not like', '%flange management service%')
@@ -935,9 +944,11 @@
         ->where(["client_id" => $client_id])
         ->where('description', 'not like', '%valve%')
         ->where('description', 'not like', '%gasket%')
-        ->where('description', 'not like', '%bolts and nuts%')
+        ->where('description','not like', '%bolt%')
+        ->where('description','not like', '%nut%')
         ->where('description', 'not like', '%flange%')
-        ->where('description', 'not like', '%pipe fittings%')
+        ->where('description', 'not like', '%pipe%')
+        ->where('description', 'not like', '%fitting%')
         ->where('description', 'not like', '%rotork%')
         ->where('description', 'not like', '%actuator%')
         ->where('description', 'not like', '%flange management service%')
@@ -1249,14 +1260,20 @@ function getTotalPoc($client_id, $start_date = null, $end_date = null)
         return $query->get();
     }
 
-        function getnotes($rfq_id)
-        {
-            // Assuming the "client_rfqs" table has a "description" column
-            $query = DB::table('client_rfqs')
-                ->select('note')
-                ->where('rfq_id', $rfq_id)
-                ->first();
-    
-            return $query;
-        }
+    function getnotes($rfq_id)
+    {
+        // Assuming the "client_rfqs" table has a "description" column
+        $query = DB::table('client_rfqs')
+            ->select('note')
+            ->where('rfq_id', $rfq_id)
+            ->first();
+
+        return $query;
+    }
+        
+    function getproducts()
+    {
+        return \DB::table('products')->orderBy('product_name')
+        ->get();
+    }
 ?>

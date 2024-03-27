@@ -1,7 +1,10 @@
 
 
 <?php
-    $title = "QUOTATION" . $rfq->refrence_no . ", ". $rfq->description;
+$cli_title = clis($rfq->client_id);
+$result = json_decode($cli_title, true);
+
+    $title = "TAG Energy Quotation TE-" . $result[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no) . ", " . $rfq->description;
     set_time_limit(900);
 ?>
 @extends('layouts.print')
@@ -22,40 +25,49 @@
 
                             @if(Auth::user()->hasRole('SuperAdmin'))
                                 @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
+                                    @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                     <img src="{{$log}}" style="width: 101px;" alt="{{$log}}">
                                 @endforeach
                             @elseif(Auth::user()->hasRole('Admin'))
                                 @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
+                                    @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                     <img src="{{$log}}" style="width: 101px;" alt="">
                                 @endforeach
 
                             @elseif(Auth::user()->hasRole('Employer'))
                                 @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
+                                    @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
+                                    <img src="{{ $log }}" style="width: 101px;" alt="">
+                                @endforeach
+                                
+                            @elseif(Auth::user()->hasRole('HOD'))
+                                @foreach (getLogo($rfq->company_id) as $item)
+                                    @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                     <img src="{{ $log }}" style="width: 101px;" alt="">
                                 @endforeach
 
                             @elseif(Auth::user()->hasRole('Contact'))
                                 @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
+                                    @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                     <img src="{{ $log }}" style="width: 101px;" alt="">
                                 @endforeach
 
                             @elseif(Auth::user()->hasRole('Client'))
                                 @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
+                                    @php $log = 'https://scm.tagenergygroup.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                     <img src="{{ $log }}" style="width: 101px;" alt="">
                                 @endforeach
 
                             @elseif(Auth::user()->hasRole('Supplier'))
                                 @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
+                                    @php $log = 'https://scm.tagenergygroup.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                     <img src="{{ $log }}" style="width: 101px;" alt="">
                                 @endforeach
                             @else
-                                <img src="{{asset('admin/img/img1.jpeg')}}" alt="SCM Solutions" style="height:40px" />
+                                @foreach (getLogo($rfq->company_id) as $item)
+                                    @php $log = 'https://scm.tagenergygroup.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
+                                    <img src="{{ $log }}" style="width: 101px;" alt="">
+                                @endforeach
                             @endif
                         </div>
                         <br>
@@ -91,8 +103,15 @@
                                         <br/>
                                         <h6 class="producttag" style=" color:black; width:500px;font-size: 5pt !important;margin-top: -20px;margin-bottom: .2rem;font-weight: 700;line-height: 180%;font-weight: 400;">
                                         @foreach (comp($rfq->company_id) as $comp)
-
-                                        {{ $comp->company_name. ' Quotation for the PURCHASE OF '. strtoupper($rfq->product)  ?? ' Rfx: '. $rfq->rfq_number}}
+                                        
+                                        <?php 
+                                        if($comp->company_name == "TAG Energy Nigeria Limited"){
+                                            $company_name = "TAG Energy";
+                                        }else{
+                                            $company_name = $comp->company_name; 
+                                        }
+                                        ?>
+                                        {{ $company_name. ' Quotation for the PURCHASE OF '. strtoupper($rfq->description)  ?? ' Rfx: '. $rfq->rfq_number}}
                                         
                                         @endforeach
                                     @endforeach 
@@ -103,7 +122,7 @@
                     <div class="col-lg-8 col-md-8 col-sm-8 offset-lg-4 offset-md-4 offset-sm-4" style="text-align: right !important;">
 
                         <p style="font-size: 5pt;font-family: Calibri,sans-serif;margin-bottom: -5px;widows: 1;line-height: 10%;font-weight: 400;">{{ $rfq->client->client_name ?? ' ' }} </p>
-                        <p style="font-size: 5pt;font-family: Calibri,sans-serif;margin-top: 0;widows: 1;line-height: 180%;font-weight: 400;"><strong style="font-weight: bolder;">Ref No: {{ $rfq->refrence_no ?? ' ' }} </strong></p><br/>
+                        <p style="font-size: 5pt;font-family: Calibri,sans-serif;margin-top: 0;widows: 1;line-height: 180%;font-weight: 400;"><strong style="font-weight: bolder;">Ref No: TE-{{ $cli->short_code }}-RFQ{{ preg_replace('/[^0-9]/', '', $rfq->refrence_no ?? '') }} </strong></p><br/>
                         <div class="line" style="width: 170px;height: 0.7px;background-color: #000;float:right;margin-top:-27px;margin-right:-10px;"></div>
                         <img src="https://scm.enabledjobs.com/img/price.png" width="125" style="margin-top:-8.5px;vertical-align: middle;border-style: none;page-break-inside: avoid;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;margin-right:-2px;" alt="Certification">
                         <br>
@@ -255,6 +274,15 @@
                                
                             @endif
                             
+                            <style>
+                                .no-page-break {
+                                    display: block;
+                                    position: relative;
+                                    page-break-inside: avoid !important;
+                                }
+                            </style>
+                            
+                        <div style="page-break-inside: avoid;">
                             <p style="font-size: 5pt !important; font-family: Calibri, sans-serif !important; margin-left:0px; font-weight:400;"><b style="color:red;">Notes to Pricing: </b><br/>
                             1. Delivery: {{ $rfq->estimated_delivery_time ?? '17-19 weeks' }}.<br/>
                             2. Mode of transportation: {{ $rfq->transport_mode ?? ''}}
@@ -271,14 +299,13 @@
                             10. Oversized Cargo: {{ $rfq->oversized ?? 'NO' }} <br/>
                             11. Payment Term: {{ $rfq->payment_term ?? '' }} <br/><br/>
                             <b>Best Regards </b> <br/>
-                            </p>                        
-                            <div style="page-break-after: avoid !important;">
+                            </p> 
                                 @foreach (getLogo($rfq->company_id) as $item)
                                     @php $logsign = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->signature; @endphp
                                     <img src="{{ $logsign }}" width="80" style="margin-left:0px; margin-top:5px;padding-bottom:10px;" alt="SCM Solutions">
                                 @endforeach
                              <br/><br/>
-                            <div class="line" style="page-break-after: avoid;width: 100px;height: 0.7px;background-color: #000;float:left;margin-top:-27px;margin-right:-10px;"></div>
+                            <div class="line" style="width: 100px;height: 0.7px;background-color: #000;float:left;margin-top:-27px;margin-right:-10px;"></div>
                             <div style="margin-top:-25px;">
                             <p style="margin-top:0px; margin-left:0px; color:black; font-size:5pt !important;">
                                 @foreach (emps($rfq->employee_id) as $emp)
@@ -290,17 +317,13 @@
                                 @endforeach
                             </p>
                             <p style="margin-top: -5px; font-size:5pt !important;"></p>
-                                <p style="margin-top: -8px; font-size:5pt !important; page-break-after:avoid;"><b>
+                                <p style="margin-top: -8px; font-size:5pt !important;"><b>
                                  @foreach (comp($rfq->company_id) as $comps) {{ 'For: '. $comps->company_name ?? ' Company Name' }} @endforeach </b>
                             </p>
                             </div>
                             </div>
                         </div>
                     </div>
-                    @foreach (getLogo($rfq->company_id) as $item)
-                        @php $logsign = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->footer; @endphp
-                        <img src="{{ $logsign }}" style="width: 80%; position: fixed; bottom: 0; left: 50%; transform: translateX(-55%);" alt="SCM Solutions">
-                    @endforeach
                     <script type="text/php">
                         if (isset($pdf)) {
                             $x = 1190;
@@ -315,6 +338,24 @@
                             $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
                         }
                     </script>
+                    <script type="text/javascript">
+    // Script to position the image at the bottom of each page
+    function numberPages() {
+        var img = document.getElementById("fixedLogo");
+
+        if (img) {
+            var yOffset = img.y;
+
+            function jump() {
+                window.scroll(0, yOffset);
+            }
+
+            jump();
+        }
+    }
+
+    numberPages();
+</script>
                 </div>
 
             </div>

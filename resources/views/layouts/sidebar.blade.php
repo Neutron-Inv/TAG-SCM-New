@@ -151,6 +151,9 @@
                                 <a class="menu-link" href="{{ route('unit.index') }}">Unit of Measurements</a>
                             </li>
                             <li class="menu-item">
+                                <a class="menu-link" href="{{ route('product.index') }}">Products</a>
+                            </li>
+                            <li class="menu-item">
                                 <a class="menu-link" href="{{ route('users.index') }}">Super Users</a>
                             </li>
                         </ul>
@@ -258,6 +261,12 @@
                         <a class="menu-link" href="{{ route('po.index') }}">
                             <i class="icon-shopping_cart nav-icon"></i>
                             POs
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('product.index') }}">
+                            <i class="icon-list nav-icon"></i>
+                            Products
                         </a>
                     </li>
                     <li class="menu-item">

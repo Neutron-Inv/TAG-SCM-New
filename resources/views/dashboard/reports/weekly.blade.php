@@ -1,4 +1,7 @@
 <?php $title = 'Generate Yearly Report'; ?>
+@php
+    use Carbon\Carbon;
+@endphp
 @extends('layouts.app')
 
 @section('content')
@@ -17,6 +20,7 @@
 
          <div class="content-wrapper">
             <div class="row gutters">
+                @include('layouts.alert')
 
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card">
@@ -24,92 +28,42 @@
                             <div class="card-header">
 								<div class="card-title">Please fill the below form to generate report </div>
 							</div>
-                            <form action="{{ route('po.report.year') }}" class="" method="POST">
+                    <form action="{{ route('po.report.weekly.fetch') }}" class="" method="GET">
                                 {{ csrf_field() }}
                                 @include('layouts.alert')
                                 <div class="row gutters">
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                                        <div class="form-group"><label> Report Year </label>
+                                        <div class="form-group"><label> Start Date </label>
                                             <div class="input-group">
                                                 
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text" id="basic-addon1"><i class="icon-calendar" style="color:#28a745"></i></span>
                                                 </div>
-                                                <select class="form-control selectpicker" data-live-search="true" required name="year">
-                                                    <option value="{{ old('year') }}"> {{ old('year') ?? '-- Select Start Year --' }} </option>
-                                                    <option value=""> </option>
-                                                    @for ($i=2016; $i<=date('Y'); $i++)
-                                                        <option value="{{ $i }}">{{ $i }}</option>
-                                                    @endfor
+                                                <input type="text" class="form-control datepicker-date-format2" required name="start_date"
+                                                value="{{ session('start_date', Carbon::parse($start_date)->format('jS F, Y')) }}" placeholder="Start Date">
                                                 </select>
                                             </div>
 
-                                            @if ($errors->has('year'))
-                                                <div class="" style="color:red">{{ $errors->first('year') }}</div>
+                                            @if ($errors->has('start_date'))
+                                                <div class="" style="color:red">{{ $errors->first('start_date') }}</div>
                                             @endif
 
                                         </div>
                                     </div>
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label> Start Month </label>
+                                        <div class="form-group"><label> End Date </label>
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1"><i class="icon-calendar" style="color:#28a745"></i></span>
-                                                </div>
                                                 
-                                                <select class="form-control selectpicker" data-live-search="true" required name="start_month">
-                                                    <option value="{{ old('start_month') }}"> {{ old('start_month') ?? '-- Select The Month --' }} </option>
-                                                    <option value=""> </option>
-                                                    <option value="01">January</option>
-                                                    <option value="02">February</option>
-                                                    <option value="03">March</option>
-                                                    <option value="04">April</option>
-                                                    <option value="05">May</option>
-                                                    <option value="06">June</option>
-                                                    <option value="07">July</option>
-                                                    <option value="08">August</option>
-                                                    <option value="09">September</option>
-                                                    <option value="10">October</option>
-                                                    <option value="11">November</option>
-                                                    <option value="12">December</option>
-                                                </select>
-                                            </div>
-
-                                            @if ($errors->has('start_month'))
-                                                <div class="" style="color:red">{{ $errors->first('start_month') }}</div>
-                                            @endif
-
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label> End Month</label>
-                                            <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text" id="basic-addon1"><i class="icon-calendar" style="color:#28a745"></i></span>
                                                 </div>
-                                                <select class="form-control selectpicker" data-live-search="true" required name="end_month">
-                                                    <option value="{{ old('end_month') }}"> {{ old('end_month') ?? '-- Select End Month --' }} </option>
-                                                    <option value=""> </option>
-                                                    <option value="01">January</option>
-                                                    <option value="02">February</option>
-                                                    <option value="03">March</option>
-                                                    <option value="04">April</option>
-                                                    <option value="05">May</option>
-                                                    <option value="06">June</option>
-                                                    <option value="07">July</option>
-                                                    <option value="08">August</option>
-                                                    <option value="09">September</option>
-                                                    <option value="10">October</option>
-                                                    <option value="11">November</option>
-                                                    <option value="12">December</option>
+                                                <input type="text" class="form-control datepicker-date-format2" required name="end_date"
+                                                value="{{ session('end_date', Carbon::parse($end_date)->format('jS F, Y')) }}" placeholder="End Date">
                                                 </select>
                                             </div>
 
-                                            @if ($errors->has('end_month'))
-                                                <div class="" style="color:red">{{ $errors->first('end_month') }}</div>
+                                            @if ($errors->has('end_date'))
+                                                <div class="" style="color:red">{{ $errors->first('end_date') }}</div>
                                             @endif
 
                                         </div>
@@ -132,7 +86,7 @@
                         <div class="card-body">
                             
                             <div class="table-container">
-                            <h6 style="text-align:center; padding:1%;"><b> RFQs for <?php echo now()->startOfWeek()->format('jS F, Y'); ?> to <?php echo now()->startOfWeek()->addDays(4)->format('jS F, Y'); ?> </b></h6>
+                            <h6 style="text-align:center; padding:1%;"><b> RFQs for {{ date('jS F, Y', strtotime($start_date)) }} to {{ date('jS F, Y', strtotime($end_date)) }} </b></h6>
                                 <div class="table-responsive">
 									<table class="table m-0">
                                         <thead class="text-white">
@@ -171,7 +125,7 @@
                         <div class="card-body">
                             
                             <div class="table-container">
-                            <h6 style="text-align:center; padding:1%;"><b> POs for <?php echo now()->startOfWeek()->format('jS F, Y'); ?> to <?php echo now()->startOfWeek()->addDays(4)->format('jS F, Y'); ?> </b></h6>
+                            <h6 style="text-align:center; padding:1%;"><b> POs for {{ date('jS F, Y', strtotime($start_date)) }} to {{ date('jS F, Y', strtotime($end_date)) }} </b></h6>
                                 <div class="table-responsive">
 									<table class="table m-0">
                                         <thead class="text-white">
@@ -255,7 +209,7 @@
                                             <th>PO NO. </th>
                                             <th>CLIENT</th>
                                             <th>DELIVERY DATE</th>
-                                            <th>EXPECTED DELIVERY</th>
+                                            <th>EXPECTED DATE OF GRN</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -265,8 +219,8 @@
                                                     <td>{{ $count++ }}</td>
                                                     <td> {{ $item->po_number }}</td>
                                                     <td> {{ $item->client->client_name }}</td>
-                                                    <td> {{ \Carbon\Carbon::parse($item->delivery_due_date)->format('d-m-Y') }}</td>
                                                     <td> {{ \Carbon\Carbon::parse($item->actual_delivery_date)->format('d-m-Y') }}</td>
+                                                    <td> {{ \Carbon\Carbon::parse($item->actual_delivery_date)->addDays(14)->format('d-m-Y') }}</td>
                                                 </tr>
                                             @endforeach
                                             
@@ -308,7 +262,7 @@
                             <!-- <input type="email" class="form-control" id="recipient-email" name="rec_email"
                             value="bidadmin@tagenergygroup.net" readonly> -->
                             <input type="email" class="form-control" id="recipient-email" name="rec_email"
-                            value="emmanuel.idowu@tagenergygroup.net" readonly>
+                            value="contact@tagenergygroup.net">
                             @if ($errors->has('rec_email'))
                                 <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
                             @endif
@@ -316,8 +270,7 @@
                         
                         <div class="col-md-8 col-sm-8 col-8">
                             <label for="recipient-name" class="col-form-label">CC Email:</label>
-                            <!-- <input type="text" class="form-control" id="recipient-email" name="quotation_recipient" value="contact@tagenergygroup.net; sales@tagenergygroup.net" readonly> -->
-                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="emmanuel@enabledgroup.net; jackomega.idnoble@gmail.com">
+                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="sales@tagenergygroup.net; mary.nwaogwugwu@tagenergygroup.net">
                             @if ($errors->has('report_recipient'))
                                 <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
                             @endif

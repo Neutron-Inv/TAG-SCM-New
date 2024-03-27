@@ -95,10 +95,10 @@
                                             <div style="font-size: 24px; line-height: 24px; height: 24px;">&nbsp; </div>
                                             <div class="o_px-xs o_sans o_text o_left o_xs-center" data-size="Text Default" data-min="12" data-max="20" style="font-family: Helvetica, Arial, sans-serif;margin-top: 0px;margin-bottom: 0px;font-size: 16px;
                                                 line-height: 24px;text-align: left;padding-left: 8px;padding-right: 8px;">
-                                                <p style="margin-top: 0px;margin-bottom: 0px;"><a class="o_text-white" href="https://scm.enabledjobs.com/dashboard" data-color="White" style="text-decoration: none;outline: none;color: #ffffff;">
+                                                <p style="margin-top: 0px;margin-bottom: 0px;"><a class="o_text-white" href="https://scm.tagenergygroup.net/dashboard" data-color="White" style="text-decoration: none;outline: none;color: #ffffff;">
                                                    
                                                     @foreach (getLogo($rfq->company_id) as $item)
-                                                        @php $log = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
+                                                        @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                                         <img src="{{$log}}" width="46" height="26" alt="SCM"
                                                         style="max-width: 136px;-ms-interpolation-mode: bicubic;vertical-align: middle;border: 0;line-height: 100%;height: auto;
                                                         outline: none;text-decoration: none; margin-left:50px;" data-crop="false" alt="Logo" align="center" 
@@ -158,7 +158,15 @@
                                             <a href="https://test.ebsl.enabledjobs.com/dashboard/request-for-quotation/edit/{{ $rfq->refrence_no }}" style="color: blue"> 
                                                 View RFQ Details</a>
                                         </p>
-                                        <p style="font-size: 7.5pt;font-family: Arial,sans-serif; color: #1F497D;">Best Regards,<br> {{ Auth::user()->first_name . ' '. strtoupper(Auth::user()->last_name) }}, <br> SCM Specialist II <br>
+                                        <p style="font-size: 7.5pt;font-family: Arial,sans-serif; color: #1F497D;">Best Regards,<br> {{ Auth::user()->first_name . ' '. strtoupper(Auth::user()->last_name) }}, <br> @if(Auth::user()->role == 'HOD' ) 
+                                        {{ 'SCM Lead' }} 
+                                        @elseif(Auth::user()->role == 'Employer' )
+                                        {{ 'Procurement Associate' }} 
+                                        @elseif(Auth::user()->role == 'SuperAdmin' )
+                                        {{ 'SCM Admin' }}
+                                        @else
+                                        {{ 'Procurement Associate' }}
+                                        @endif <br>
                                             PHONE</span></b><span style="font-size:7.5pt; font-family:&quot;Arial&quot;,sans-serif; color:#1F3864; mso-fareast-language:ZH-CN">
                                                 : +234 1 342 8420&nbsp;| </span>
                                                 <span style="font-size:7.5pt; font-family:&quot;Arial&quot;,sans-serif; color:#1F4E79; mso-fareast-language:EN-GB">

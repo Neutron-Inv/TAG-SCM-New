@@ -465,7 +465,7 @@
                             <!-- <input type="email" class="form-control" id="recipient-email" name="rec_email"
                             value="bidadmin@tagenergygroup.net" readonly> -->
                             <input type="email" class="form-control" id="recipient-email" name="rec_email"
-                            value="emmanuel.idowu@tagenergygroup.net" readonly>
+                            value="contact@tagenergygroup.net" >
                             @if ($errors->has('rec_email'))
                                 <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
                             @endif

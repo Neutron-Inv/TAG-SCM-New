@@ -32,6 +32,19 @@ class ClientRFQController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+     
+    public function getnote(Request $request)
+    {  
+        $rfq_id = $request->input('rfq_id');
+
+            $query = ClientRfq::select('note')
+                ->where('rfq_id', $rfq_id)
+                ->first();
+    
+            return $query;
+
+    }
+    
     public function chart()
     {  
         if (Gate::allows('SuperAdmin', auth()->user())) {
@@ -526,6 +539,9 @@ class ClientRFQController extends Controller
 
         $rec_mail = $request->input("rec_email");
         $quotation_recipient = $request->input("quotation_recipient");
+        
+
+        
         $file = $request->quotation_file;
         $arrFile = array();
         $number = rand(1,200);
@@ -542,9 +558,16 @@ class ClientRFQController extends Controller
     
             if (count($line_items) > 0) {
                 $pdf = PDF::loadView('dashboard.printing.check', compact('rfq', 'line_items'))->setPaper('a4', 'portrait');
-    
+                
+            $cli_title = clis($rfq->client_id);
+            $resultt = json_decode($cli_title, true);
+            $pdfname = "TAG Energy Quotation TE-" . $resultt[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no) . ", " . $rfq->description;
+            
+            // Replace "/" with "-"
+            $pdfname = str_replace("/", "-", $pdfname);
+     
                 // Temporary file path to store the PDF
-                $tempFilePath = storage_path('app\\temp\\' . uniqid() . '.pdf');
+                $tempFilePath = storage_path($pdfname . '.pdf');
     
                 // Save the PDF temporarily
                 $pdf->save($tempFilePath);
@@ -558,12 +581,38 @@ class ClientRFQController extends Controller
             $users[$key] = (object)$ua;
         }
         try{
+            
+            if ($request->hasFile('quotation_file')) { // Change to 'files' which corresponds to the input field name
+                $files = $request->file('quotation_file'); // Get uploaded files
+        
+                // Array to store temporary file paths
+                $tempFileDirs = [];
+                // Array to store original file names
+                $fileNames = [];
+        
+            // Save uploaded files temporarily and get file paths
+            foreach ($files as $file) {
+                // Generate a unique file name
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                // Move uploaded file to temporary storage path
+                $tempFileDir = storage_path('temp') . '/' . $fileName;
+                $file->move(storage_path('temp'), $fileName);
+                // Store temporary file path in array
+                $tempFileDirs[] = $tempFileDir;
+                // Store original file name in array
+                $fileNames[] = $file->getClientOriginalName();
+                }
+            }else{
+                $tempFileDirs = "";
+                $fileNames = "";
+            }
+            
             $line_items = LineItem::where('rfq_id', $rfq_id)->get();
             $tq = 0;
             foreach($line_items as $line){
                 $tq = ($line->quantity * $line->unit_cost) + $tq;
             }
-            $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tq' => $tq, 'shi' => $shi, 'shiname' => $shiname, 'tempFilePath' => $tempFilePath];
+            $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tq' => $tq, 'shi' => $shi, 'shiname' => $shiname, 'tempFilePath' => $tempFilePath, 'tempFileDirs' => $tempFileDirs, 'fileNames' => $fileNames];
             $when = now()->addMinutes(1);
             Mail::to($rec_mail)->cc(str_replace(" ","",$users))->send( new Submission ($data));        
 	        $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Send Request Approval to '. $rec_mail . ' and changed the status to Awaiting Approval <br/>'.$rfq->note;
@@ -573,7 +622,15 @@ class ClientRFQController extends Controller
                 "rfq_id" => $rfq_id,
                 "action" => "Send Request Approval to $rec_mail",
             ]); $his->save();
+            
             unlink($tempFilePath);
+            
+            // Delete temporary files after email is sent
+            if($tempFileDirs != ""){
+                foreach ($tempFileDirs as $tempFileDir) {
+                    unlink($tempFileDir);
+                }
+            }
             return redirect()->back()->with("success", "You have sent the approval Successfully.");
         }catch(\Exception $e){
 
@@ -701,7 +758,7 @@ class ClientRFQController extends Controller
     public function approveReason($refrence_no)
     {
         if(ClientRfq::where('refrence_no', $refrence_no)->exists()){
-            if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin'))){
+            if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('HOD'))){
                 $rfq = ClientRfq::where('refrence_no', $refrence_no)->first();
                 return view('dashboard.rfq.approve')->with([
                     'refrence_no' => $refrence_no, 'rfq' => $rfq,
@@ -729,8 +786,9 @@ class ClientRFQController extends Controller
         $refrence_no = $request->input('refrence_no');
         $reason = $request->input('reason');
         if(ClientRfq::where('refrence_no', $refrence_no)->exists()){
-            if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin'))){
+            if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('HOD'))){
                 $rfq = ClientRfq::where('refrence_no', $refrence_no)->first();
+                $emp = Employers::where('employee_id', $rfq->employee_id)->first();
                 $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name. " Changed the Status to Breakdown Approved, The Reason for Approval: <b> $reason  </b>" . ' <br>'.$rfq->note;
                 DB::table('client_rfqs')->where(['rfq_id' => $rfq->rfq_id])->update(['note' => $newNote, "status" => 'Breakdown Approved',]);
                 $his = new RfqHistory([
@@ -740,7 +798,7 @@ class ClientRFQController extends Controller
                 ]); $his->save();
                 $data = ['rfq' => $rfq, 'reason' => $reason, 'status' => 'APPROVED', 'company' => Companies::where('company_id', $rfq->company_id)->first()];
                 // dd($data);
-                Mail::to('emmanuel@enabledgroup.net')->cc(['jackomega.idnoble@gmail.com'])->send( new ApproveBreakdown ($data));   
+                Mail::to($emp->email)->cc(['sales@tagenergygroup.net'])->send( new ApproveBreakdown ($data));   
                 return redirect()->route('rfq.edit', [$refrence_no])->with([
                     'refrence_no' => $refrence_no,
                     'success' => 'You have approved the breakdown for approval successfully',
@@ -760,7 +818,7 @@ class ClientRFQController extends Controller
     public function disapproveReason($refrence_no)
     {
         if(ClientRfq::where('refrence_no', $refrence_no)->exists()){
-            if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin'))){
+            if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('HOD'))){
                 $rfq = ClientRfq::where('refrence_no', $refrence_no)->first();
                 return view('dashboard.rfq.disapprove')->with([
                     'refrence_no' => $refrence_no, 'rfq' => $rfq,
@@ -788,8 +846,9 @@ class ClientRFQController extends Controller
         $refrence_no = $request->input('refrence_no');
         $reason = $request->input('reason');
         if(ClientRfq::where('refrence_no', $refrence_no)->exists()){
-            if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin'))){
+            if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('HOD'))){
                 $rfq = ClientRfq::where('refrence_no', $refrence_no)->first();
+                $emp = Employers::where('employee_id', $rfq->employee_id)->first();
                 $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name. " Changed the Status to Breakdown Declined, The Reason for Disapproval: <b> $reason  </b>" . ' <br>'.$rfq->note;
                 DB::table('client_rfqs')->where(['rfq_id' => $rfq->rfq_id])->update(['note' => $newNote, "status" => 'Breakdown Declined',]);
                 $his = new RfqHistory([
@@ -798,7 +857,7 @@ class ClientRFQController extends Controller
                     "action" => "Declined Breakdown for ".$refrence_no,
                 ]); $his->save();
                 $data = ['rfq' => $rfq, 'reason' => $reason, 'status' => 'DECLINED', 'company' => Companies::where('company_id', $rfq->company_id)->first()];
-                Mail::to('emmanuel@enabledgroup.net')->cc(['jackomega.idnoble@gmail.com'])->send( new ApproveBreakdown ($data));   
+                Mail::to($emp->email)->cc(['sales@tagenergygroup.net'])->send( new ApproveBreakdown ($data));   
                 return redirect()->route('rfq.edit', [$refrence_no])->with([
                     'refrence_no' => $refrence_no,
                     'success' => 'You have Declined the breakdown successfully',
@@ -1339,6 +1398,17 @@ class ClientRFQController extends Controller
 
             $Json_supplier = json_encode($data_supplier);
             $Json_logistics = json_encode($data_logistics);
+            
+            if($request->input("currency") == 'USD'){
+                $total_dollar_quote = $request->input("total_quote");
+                $total_naira_quote = 0;
+            }elseif($request->input("currency") == 'NGN'){
+                $total_dollar_quote = 0;
+                $total_naira_quote = $request->input("total_quote");
+            }else{
+                $total_dollar_quote = $request->input("total_quote");
+                $total_naira_quote = 0;
+            }
 
             $data = ([
                 "rfq" => $this->model->show($refrence->rfq_id),
@@ -1353,8 +1423,8 @@ class ClientRFQController extends Controller
                 "is_lumpsum" => $lumpsum_checkbox,
                 "lumpsum" => $request->input("lumpsum"),
                 "description" => $request->input("description"),
-                "value_of_quote_usd" => $request->input("total_quote") * $request->input("rate"),
-                "value_of_quote_ngn" => $request->input("total_quote"),
+                "value_of_quote_usd" => $total_dollar_quote,
+                "value_of_quote_ngn" => $total_naira_quote,
 
                 "freight_charges" => $request->input("freight_charges"),
                 "local_delivery" => $loc,
@@ -1377,7 +1447,7 @@ class ClientRFQController extends Controller
                 "percent_net" => $request->input("net_percentage_margin"),
                 "shipper_mail" => $request->input("shipper_mail"),
                 "shipper_submission_date" => $request->input("shipper_submission_date"),
-                "supplier_quote_usd" => $request->input("total_quote"),
+                "supplier_quote_usd" => $request->input("supplier_quote"),
                 "transport_mode" => $request->input("transport_mode"),
                 "estimated_package_weight" => $request->input("estimated_package_weight"),
                 "estimated_package_dimension" => $request->input("estimated_package_dimension"),
@@ -1427,6 +1497,7 @@ class ClientRFQController extends Controller
                 'short_code' =>$refrence->short_code,
                 'mark_up' =>$request->input("mark_up"),
                 'auto_calculate' =>$request->input("auto_calculate") ?? 0,
+                'ncd_others' =>$request->input("ncd_others") ?? 0,
             ]);
             // dd($data);
 
@@ -1450,7 +1521,12 @@ class ClientRFQController extends Controller
                 $lok = LineItem::where('rfq_id', $details->rfq_id)->get();
                 $oldNote = $request->input('note');
                 $auto_calculate = $request->input('auto_calculate');
-                $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Changed the RFQ Status to '. $request->input('status') . ' <br> <br/>'. $oldNote;
+                
+                if($refrence->status != $request->input('status')){
+                $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Changed the RFQ Status to '. $request->input('status') . '. <br> <br/>'. $oldNote;
+                }else{
+                    $newNote = $oldNote;
+                }
                 DB::table('client_rfqs')->where(['rfq_id' => $rfq_id])->update(['note' => $newNote]);
 
                 if ($auto_calculate == 1){
@@ -1521,7 +1597,7 @@ class ClientRFQController extends Controller
 
                 $conc = ClientContact::where('contact_id', $request->input("contact_id"))->first();
                 $emp = Employers::where('employee_id', $request->input("employee_id"))->first();
-
+                $vendor = '';
                 $ship = Shippers::where("shipper_id", $request->input("shipper_id"))->first();
 
                 if ($ship) {
@@ -1545,7 +1621,6 @@ class ClientRFQController extends Controller
                     }
 
                 } else {
-
                     $ship = "";
                 }
 
@@ -1697,7 +1772,6 @@ class ClientRFQController extends Controller
                             "description" => $details->description,
                             "po_date" => date('Y-m-d'),
                             "po_number" => $po_number,
-                            "delivery_due_date" => 'Null',
                             "delivery_location" => 'Null',
                             "delivery_terms" => 'Null',
                             "contact_id" => $details->contact_id,
@@ -1737,7 +1811,6 @@ class ClientRFQController extends Controller
                             'survey_completion_date' => date('Y-m-d'),
                             'supplier_ref_number' => 'Null',
                             'tag_comment' => 'Test Comment',
-                            'actual_delivery_date'  => 'Null', 
                             'timely_delivery' => 'NO',
                             "shipper_id" => $request->input("shipper_id"),
 

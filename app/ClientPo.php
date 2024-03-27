@@ -24,7 +24,7 @@ class ClientPo extends Model
         'tag_comment', 'supplier_ref_number', 'actual_delivery_date', 'timely_delivery', 'shipper_id',
 
         'delivery', 'technical_notes', 'hs_codes', 'total_packaged_weight', 'estimated_packaged_dimensions', 
-        'hs_codes_po', 'delivery_location_po', 'port_of_discharge', 'payment_terms_client', 'freight_charges_suplier'
+        'hs_codes_po', 'delivery_location_po', 'port_of_discharge', 'payment_terms_client', 'freight_charges_suplier', 'schedule'
 
     ];
 

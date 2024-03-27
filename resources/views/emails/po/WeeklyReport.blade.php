@@ -129,7 +129,7 @@
                     <th>PO NO. </th>
                     <th>CLIENT</th>
                     <th>DELIVERY DATE</th>
-                    <th>EXPECTED DELIVERY</th>
+                    <th>EXPECTED DATE OF GRN</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -139,8 +139,8 @@
                             <td>{{ $count++ }}</td>
                             <td> {{ $item->po_number }}</td>
                             <td> {{ $item->client->client_name }}</td>
-                            <td> {{ \Carbon\Carbon::parse($item->delivery_due_date)->format('d-m-Y') }}</td>
                             <td> {{ \Carbon\Carbon::parse($item->actual_delivery_date)->format('d-m-Y') }}</td>
+                            <td> {{ \Carbon\Carbon::parse($item->actual_delivery_date)->addDays(14)->format('d-m-Y') }}</td>
                         </tr>
                     @endforeach
                     

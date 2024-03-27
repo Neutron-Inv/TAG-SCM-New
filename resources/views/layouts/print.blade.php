@@ -77,35 +77,36 @@
         }
         /*.page { size: 10cm 50cm landscape; }*/
         
+        footer {
+                position: fixed; 
+                bottom: -60px; 
+                left: 0px; 
+                right: 0px;
+                height: 50px; 
+                font-size: 20px !important;
+
+                /** Extra personal styles **/
+                text-align: center;
+                line-height: 35px;
+            }
+        
         #footer { position: fixed; left: 20px; bottom: 30px; right: 0px; height: 46px; }
         #footer .page:after { content: counter(page, upper-roman); }
     </style>
     <body class="po" style="border-box;margin: 0;font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #333333;text-align: left;background-color: #fff;padding: 0;font: normal .875rem 'Open Sans', sans-serif;-webkit-print-color-adjust: exact;background: ;min-height: 100%;position: relative;min-width: 992px!important;">
-     <!--   <div id="footer">-->
-	    <!--  <img src="https://scm.enabledjobs.com/pat/footing.jpeg" style="width:1390px; height:45px; margin-bottom:165px;"  alt="SCM" class="center" />-->
-    	<!--</div>-->
-	<!--<div style="position: fixed;">
-        <div style="margin-left: 200px;  align-items: center;display: flex;justify-content: center;right: 0px;position: relative;top: 0px;height: 100%;width: 100%;">
-            <div style="margin-top: 70px; color: rgba(0, 0, 0, 0.2); font-size: 2rem; font-weight: bold; text-transform: uppercase;
-                transform: rotate(-55deg);user-select: none;">
-               @foreach (comp($rfq->company_id) as $comps) 
-        			@if($comps->company_name  ==  'TAG Lines Nigeria Limited')
-        				TAG Lines
-        			@elseif($comps->company_name  ==  'Enabled Contractors West Africa')
-        				Enabled Contractors	
-        			@elseif($comps->company_name  ==  'TAG Energy Limited')
-        				TAG Energy
-        			@else  
-        				{{$comps->company_name ?? ''}}
-        			@endif
-        	 		QUOTATION 
-        		@endforeach
-            </div> 
-        </div>
-    </div>-->
+        
+    @foreach (getLogo($rfq->company_id) as $item)
+    @php $logsign = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->footer; @endphp
+    <footer>
+    <img id="fixedLogo" src="{{ $logsign }}" style="width: 80%; position: fixed; bottom: 0; left: 50%; transform: translateX(-55%); page-break-inside: avoid !important;" alt="SCM Solutions">
+    </footer>
+@endforeach
+        
+        <main>
     <div class="card-body p-0">
         @yield('content')
     </div>
+    </main>
 
     </div>
 

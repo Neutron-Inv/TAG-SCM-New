@@ -211,14 +211,14 @@
                                         <td style="font-weight:bold;text-align:left;padding: 3px 7px;">OTHERS (REGULATOR, TUBE, SLABS, ETC)</td>
                                         <td>{{ count(getOtherRfq('114')) ?? 0 }}</td>
                                         <td>{{ count(getOtherPo('114')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('148')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('148')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('2')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('167')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherRfq('148')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherPo('148')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherRfq('2')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherPo('2')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherRfq('266')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherPo('266')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherRfq('167')) ?? 0 }}</td>
+                                        <td>{{ count(getOtherPo('167')) ?? 0 }}</td>
                                         </tr>
                                         <tr style="color:black;">
                                         <td style="font-weight:bold;text-align:left;padding: 3px 7px;">FLANGE MANAGEMENT SERVICES</td>
@@ -241,10 +241,10 @@
                                         <td>{{ count(getTotalPo('148')) ?? 0 }}</td>
                                         <td>{{ count(getTotalRfq('2')) ?? 0 }}</td>
                                         <td>{{ count(getTotalPo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSPo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSPo('167')) ?? 0 }}</td>
+                                        <td>{{ count(getTotalRfq('266')) ?? 0 }}</td>
+                                        <td>{{ count(getTotalPo('266')) ?? 0 }}</td>
+                                        <td>{{ count(getTotalRfq('167')) ?? 0 }}</td>
+                                        <td>{{ count(getTotalPo('167')) ?? 0 }}</td>
                                         </tr>
                                         <tr style="color:black;">
                                         <td style="font-weight:bold;text-align:left;padding: 3px 7px;">PO Conversion Rate</td>

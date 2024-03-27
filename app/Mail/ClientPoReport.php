@@ -32,6 +32,6 @@ class ClientPoReport extends Mailable
         $client = $this->data['client'];
         $client_id = $this->data['client_id'];
         $clients_det = $this->data['clients_det'];
-        $mail = $this->subject("Client PO Report")->markdown('emails.po.clientporeport')->with(compact('clients','client','client_id','clients_det'));
+        $mail = $this->subject($clients_det->client_name.' ' ."PO STATUS UPDATE")->markdown('emails.po.clientporeport')->with(compact('clients','client','client_id','clients_det'));
     }
 }

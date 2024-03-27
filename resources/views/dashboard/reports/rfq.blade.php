@@ -776,7 +776,7 @@
                             <!-- <input type="email" class="form-control" id="recipient-email" name="rec_email"
                             value="bidadmin@tagenergygroup.net" readonly> -->
                             <input type="email" class="form-control" id="recipient-email" name="rec_email"
-                            value="emmanuel.idowu@tagenergygroup.net">
+                            value="contact@tagenergygroup.net">
                             @if ($errors->has('rec_email'))
                                 <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
                             @endif
@@ -784,8 +784,7 @@
                         
                         <div class="col-md-8 col-sm-8 col-8">
                             <label for="recipient-name" class="col-form-label">CC Email:</label>
-                            <!-- <input type="text" class="form-control" id="recipient-email" name="quotation_recipient" value="contact@tagenergygroup.net; sales@tagenergygroup.net" readonly> -->
-                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="emmanuel@enabledgroup.net; jackomega.idnoble@gmail.com">
+                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="sales@tagenergygroup.net; mary.nwaogwugwu@tagenergygroup.net">
                             @if ($errors->has('report_recipient'))
                                 <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
                             @endif

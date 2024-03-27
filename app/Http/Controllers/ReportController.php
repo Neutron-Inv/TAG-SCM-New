@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use App\Http\Controllers\Controller;
-use App\{Companies, User,Log,ClientRfq, ClientPo, Clients, Shippers, ShipperQuote, LineItem};
+use App\{Companies, User,Log,ClientRfq, ClientPo, Clients, Shippers, ShipperQuote, LineItem, Employers};
 use Illuminate\Support\Facades\Auth;
 use DB; 
 use Illuminate\Support\Facades\Mail;
@@ -22,7 +23,7 @@ class ReportController extends Controller
     protected $model;
     public function createReport()
     {
-        $po = ClientPo::where('status', 'Delivered')->orderBy('created_at','desc')->get();
+        $po = ClientPo::whereIn('status', ['Delivered', 'Partial Delivery', 'Awaiting GRN', 'Invoicing', 'Invoiced', 'Paid'])->whereYear('po_date',2024)->orderBy('created_at','desc')->get();
         $shipper = ClientPo::select('shipper_id')->groupBy('shipper_id')->get();
         return view('dashboard.reports.index')->with([
             'po' => $po, 'shipper' => $shipper
@@ -31,9 +32,13 @@ class ReportController extends Controller
 
     public function weekly()
     {
+        if (Gate::allows('SuperAdmin', auth()->user())) {
         // Calculate the dates for the current week's Monday and Friday
         $currentWeekMonday = now()->startOfWeek(); // Monday of the current week
         $currentWeekFriday = now()->startOfWeek()->addDays(4); // Friday of the current week
+        
+        $currentWeekMonday = Carbon::now()->startOfWeek()->format('Y-m-d H:i:s');
+        $currentWeekFriday = Carbon::now()->endOfWeek()->format('Y-m-d H:i:s');
        
         $po = ClientPo::whereBetween('po_date', [$currentWeekMonday, $currentWeekFriday])
         ->select('client_id', \DB::raw('count(*) as count'))
@@ -64,10 +69,155 @@ class ReportController extends Controller
             'rfqtotal' => $rfqtotal,
             'pototal' => $pototal,
             'nlng' => $nlng,
-            'grn' => $grn
+            'grn' => $grn,
+            'start_date' => $currentWeekMonday,
+            'end_date' => $currentWeekFriday
+        ]);
+    }else{
+        $employee = Employers::where('email', Auth::user()->email)->first();
+        $company_id = $employee->company_id;
+        // Calculate the dates for the current week's Monday and Friday
+        $currentWeekMonday = now()->startOfWeek(); // Monday of the current week
+        $currentWeekFriday = now()->startOfWeek()->addDays(4); // Friday of the current week
+        
+        $currentWeekMonday = Carbon::now()->startOfWeek()->format('Y-m-d H:i:s');
+        $currentWeekFriday = Carbon::now()->endOfWeek()->format('Y-m-d H:i:s');
+       
+        $po = ClientPo::whereBetween('po_date', [$currentWeekMonday, $currentWeekFriday])
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->where('company_id', $company_id)
+        ->groupBy('client_id')
+        ->get();
+
+        $pototal = ClientPo::whereBetween('po_date', [$currentWeekMonday, $currentWeekFriday])
+        ->where('company_id', $company_id)
+        ->count();
+
+        $rfq = ClientRfq::whereBetween('rfq_date', [$currentWeekMonday, $currentWeekFriday])
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->where('company_id', $company_id)
+        ->groupBy('client_id')
+        ->get();
+
+        $grn = ClientPo::where('status', 'Awaiting GRN')
+        ->where('company_id', $company_id)
+        ->get();
+
+        $rfqtotal = ClientRfq::whereBetween('rfq_date', [$currentWeekMonday, $currentWeekFriday])->where('company_id', $company_id)->count();
+
+        $nlng = ClientPo::where('client_id', '114')
+        ->whereYear('po_date', now()->year)
+        ->orderBy('po_number', 'asc')
+        ->get();
+
+        return view('dashboard.reports.weekly')->with([
+            'po' => $po, 
+            'rfq' => $rfq, 
+            'rfqtotal' => $rfqtotal,
+            'pototal' => $pototal,
+            'nlng' => $nlng,
+            'grn' => $grn,
+            'start_date' => $currentWeekMonday,
+            'end_date' => $currentWeekFriday
         ]);
     }
+    }
 
+
+    public function weeklyedit(Request $request)
+    {
+        if (Gate::allows('SuperAdmin', auth()->user())) {
+        // Calculate the dates for the current week's Monday and Friday
+        $currentWeekMonday = $request->input('start_date'); // Monday of the current week
+        $currentWeekFriday = $request->input('end_date'); // Friday of the current week
+        
+        $currentWeekMonday = $request->input('start_date');
+        $currentWeekFriday = $request->input('end_date');
+       
+        $po = ClientPo::whereBetween('po_date', [$currentWeekMonday, $currentWeekFriday])
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->groupBy('client_id')
+        ->get();
+
+        $pototal = ClientPo::whereBetween('po_date', [$currentWeekMonday, $currentWeekFriday])
+        ->count();
+
+        $rfq = ClientRfq::whereBetween('rfq_date', [$currentWeekMonday, $currentWeekFriday])
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->groupBy('client_id')
+        ->get();
+
+        $grn = ClientPo::where('status', 'Awaiting GRN')
+        ->get();
+
+        $rfqtotal = ClientRfq::whereBetween('rfq_date', [$currentWeekMonday, $currentWeekFriday])->count();
+
+        $nlng = ClientPo::where('client_id', '114')
+        ->whereYear('po_date', now()->year)
+        ->orderBy('po_number', 'asc')
+        ->get();
+
+        return view('dashboard.reports.weekly')->with([
+            'po' => $po, 
+            'rfq' => $rfq, 
+            'rfqtotal' => $rfqtotal,
+            'pototal' => $pototal,
+            'nlng' => $nlng,
+            'grn' => $grn,
+            'start_date' => $currentWeekMonday,
+            'end_date' => $currentWeekFriday
+        ]);
+    }else{
+        $employee = Employers::where('email', Auth::user()->email)->first();
+        $company_id = $employee->company_id;
+        // Calculate the dates for the current week's Monday and Friday
+        $currentWeekMonday = $request->input('start_date'); // Monday of the current week
+        $currentWeekFriday = $request->input('end_date'); // Friday of the current week
+        
+        $currentWeekMonday = $request->input('start_date');
+        $currentWeekFriday = $request->input('end_date');
+       
+        $po = ClientPo::whereBetween('po_date', [$currentWeekMonday, $currentWeekFriday])
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->where('company_id', $company_id)
+        ->groupBy('client_id')
+        ->get();
+
+        $pototal = ClientPo::whereBetween('po_date', [$currentWeekMonday, $currentWeekFriday])
+        ->where('company_id', $company_id)
+        ->count();
+
+        $rfq = ClientRfq::whereBetween('rfq_date', [$currentWeekMonday, $currentWeekFriday])
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->where('company_id', $company_id)
+        ->groupBy('client_id')
+        ->get();
+
+        $grn = ClientPo::where('status', 'Awaiting GRN')
+        ->where('company_id', $company_id)
+        ->get();
+
+        $rfqtotal = ClientRfq::whereBetween('rfq_date', [$currentWeekMonday, $currentWeekFriday])->where('company_id', $company_id)->count();
+
+        $nlng = ClientPo::where('client_id', '114')
+        ->whereYear('po_date', now()->year)
+        ->orderBy('po_number', 'asc')
+        ->get();
+
+        return view('dashboard.reports.weekly')->with([
+            'po' => $po, 
+            'rfq' => $rfq, 
+            'rfqtotal' => $rfqtotal,
+            'pototal' => $pototal,
+            'nlng' => $nlng,
+            'grn' => $grn,
+            'start_date' => $currentWeekMonday,
+            'end_date' => $currentWeekFriday
+        ]);
+    }
+    }
+    
+    
     public function clientPo()
     {
         $clients = Clients::get();
@@ -92,6 +242,7 @@ public function ClientPoEdit(Request $request)
     $clients_det = Clients::where('client_id', $client_id)
     ->first();
     $client = ClientPo::where('client_id', $client_id)
+    ->whereNotIn('status', ['paid', 'invoicing', 'invoiced','declined', 'PO Cancelled' ])
     ->orderBy('created_at', 'desc')
     ->get();
 
@@ -115,6 +266,7 @@ public function ClientPoEdit(Request $request)
     $clients_det = Clients::where('client_id', $client_id)
     ->first();
     $client = ClientPo::where('client_id', $client_id)
+    ->whereNotIn('status', ['paid', 'invoicing', 'invoiced','declined', 'PO Cancelled' ])
     ->orderBy('created_at', 'desc')
     ->get();
 
@@ -328,6 +480,7 @@ public function ClientPoEdit(Request $request)
 
     public function monthly()
     {
+        if (Gate::allows('SuperAdmin', auth()->user())) {
         // Calculate the dates for the current week's Monday and Friday
         $currentWeekMonday = now()->startOfWeek(); // Monday of the current week
         $currentWeekFriday = now()->startOfWeek()->addDays(4); // Friday of the current week
@@ -347,6 +500,7 @@ public function ClientPoEdit(Request $request)
 
         $rfqtotal = ClientRfq::whereyear('rfq_date', now()->year)->count();
         $saipem = ClientRfq::where('client_id', '266')
+        ->whereyear('rfq_date', now()->year)
         ->get();
 
         $nlng = ClientPo::where('client_id', '114')
@@ -362,6 +516,51 @@ public function ClientPoEdit(Request $request)
             'nlng' => $nlng,
             'saipem' => $saipem
         ]);
+    }else{
+        
+        $employee = Employers::where('email', Auth::user()->email)->first();
+        $company_id = $employee->company_id;
+        
+        // Calculate the dates for the current week's Monday and Friday
+        $currentWeekMonday = now()->startOfWeek(); // Monday of the current week
+        $currentWeekFriday = now()->startOfWeek()->addDays(4); // Friday of the current week
+       
+        $po = ClientPo::whereYear('po_date', now()->year )
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->where('company_id', $company_id)
+        ->groupBy('client_id')
+        ->get();
+
+        $pototal = ClientPo::whereYear('po_date', now()->year)
+        ->where('company_id', $company_id)
+        ->count();
+
+        $rfq = ClientRfq::whereYear('rfq_date', now()->year)
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->where('company_id', $company_id)
+        ->groupBy('client_id')
+        ->get();
+
+        $rfqtotal = ClientRfq::whereyear('rfq_date', now()->year)->where('company_id', $company_id)->count();
+        
+        $saipem = ClientRfq::where('client_id', '266')
+        ->whereyear('rfq_date', now()->year)
+        ->get();
+
+        $nlng = ClientPo::where('client_id', '114')
+        ->whereYear('po_date', now()->year)
+        ->orderBy('po_number', 'asc')
+        ->get();
+
+        return view('dashboard.reports.monthly')->with([
+            'po' => $po, 
+            'rfq' => $rfq, 
+            'rfqtotal' => $rfqtotal,
+            'pototal' => $pototal,
+            'nlng' => $nlng,
+            'saipem' => $saipem
+        ]);
+    }
     }
 
     public function rfq(Request $request)
@@ -578,10 +777,10 @@ public function ClientPoEdit(Request $request)
     }
 
 
-    public function sendReport()
+    public function sendReport(Request $request)
     {
-        
-        $po = ClientPo::where('status', 'Delivered')->orderBy('created_at','desc')->get();
+        $year = $request->input('year');
+        $po = ClientPo::where('status', 'Delivered')->whereYear('po_date',$year)->orderBy('created_at','desc')->get();
         $shipper = ClientPo::select('shipper_id')->groupBy('shipper_id')->get();
         // return view('emails.po.yearly')->with([
         //     'po' => $po, 'shipper' => $shipper
@@ -619,6 +818,7 @@ public function ClientPoEdit(Request $request)
 
     public function sendRfqPoMonthlyReport(Request $request)
     {
+        if (Gate::allows('SuperAdmin', auth()->user())) {
         $this->validate($request, [
             'rec_email' => ['required', 'string'],
             'report_recipient' => ['required']
@@ -673,6 +873,68 @@ public function ClientPoEdit(Request $request)
         }catch(\Exception $e){
             return redirect()->back()->with("error", "Email not sent, ". $e->getMessage());
         }
+    }else{
+        $employee = Employers::where('email', Auth::user()->email)->first();
+        $company_id = $employee->company_id;
+        
+        $this->validate($request, [
+            'rec_email' => ['required', 'string'],
+            'report_recipient' => ['required']
+        ]);
+        
+        $po = ClientPo::whereYear('po_date', now()->year )
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->where('company_id', $company_id)
+        ->groupBy('client_id')
+        ->get();
+
+        $pototal = ClientPo::whereYear('po_date', now()->year)
+        ->where('company_id', $company_id)
+        ->count();
+
+        $rfq = ClientRfq::whereYear('rfq_date', now()->year)
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->where('company_id', $company_id)
+        ->groupBy('client_id')
+        ->get();
+
+        $rfqtotal = ClientRfq::whereyear('rfq_date', now()->year)->where('company_id', $company_id)->count();
+        $saipem = ClientRfq::where('client_id', '266')
+        ->get();
+
+        $nlng = ClientPo::where('client_id', '114')
+        ->whereYear('po_date', now()->year)
+        ->orderBy('po_number', 'asc')
+        ->get();
+
+        $rec_mail = $request->input("rec_email");
+        $report_recipient = $request->input("report_recipient");
+        $cut = explode("; ", $report_recipient);
+        $users = [];
+        foreach($cut as $key => $ut){
+            $ua = [];
+            $ua['email'] = $ut;
+            $split = $cut = explode("@", $ut);
+            $ua['name'] = strtoupper(str_replace(".","",$split[0]));
+            $users[$key] = (object)$ua;
+        }
+        try{
+            $data = ["po" => $po, 'rfq'=> $rfq];
+            $when = now()->addMinutes(1);
+            Mail::to($rec_mail)->cc(str_replace(" ","",$users))->send( new RfqPoMonthlyReport ($data));    
+            return redirect()->back()->with([
+                'po' => $po, 
+                'rfq' => $rfq, 
+                'rfqtotal' => $rfqtotal,
+                'pototal' => $pototal,
+                'nlng' => $nlng,
+                'saipem' => $saipem,
+                'success' => 'Email Sent Successfully'
+            ]);
+        }catch(\Exception $e){
+            return redirect()->back()->with("error", "Email not sent, ". $e->getMessage());
+        }
+    }
     }
 
     public function sendSaipemReport(Request $request)
@@ -697,6 +959,7 @@ public function ClientPoEdit(Request $request)
 
         $rfqtotal = ClientRfq::whereyear('rfq_date', now()->year)->count();
         $saipem = ClientRfq::where('client_id', '266')
+        ->whereyear('rfq_date', now()->year)
         ->get();
 
         $nlng = ClientPo::where('client_id', '114')
@@ -735,14 +998,15 @@ public function ClientPoEdit(Request $request)
 
     public function sendWeeklyReport(Request $request)
     {
+        if (Gate::allows('SuperAdmin', auth()->user())) {
         $this->validate($request, [
             'rec_email' => ['required', 'string'],
             'report_recipient' => ['required']
         ]);
         
         // Calculate the dates for the current week's Monday and Friday
-        $currentWeekMonday = now()->startOfWeek(); // Monday of the current week
-        $currentWeekFriday = now()->startOfWeek()->addDays(4); // Friday of the current week
+        $currentWeekMonday = Carbon::now()->startOfWeek()->format('Y-m-d H:i:s');
+        $currentWeekFriday = Carbon::now()->endOfWeek()->format('Y-m-d H:i:s');
        
         $po = ClientPo::whereBetween('po_date', [$currentWeekMonday, $currentWeekFriday])
         ->select('client_id', \DB::raw('count(*) as count'))
@@ -794,6 +1058,77 @@ public function ClientPoEdit(Request $request)
         }catch(\Exception $e){
             return redirect()->back()->with("error", "Email not sent, ". $e->getMessage());
         }
+    }else{
+        
+        $employee = Employers::where('email', Auth::user()->email)->first();
+        $company_id = $employee->company_id;
+        
+        $this->validate($request, [
+            'rec_email' => ['required', 'string'],
+            'report_recipient' => ['required']
+        ]);
+        
+    // Calculate the dates for the current week's Monday and Friday
+    // Calculate the dates for the current week's Monday and Friday
+    $currentWeekMonday = Carbon::now()->startOfWeek()->format('Y-m-d H:i:s');
+    $currentWeekFriday = Carbon::now()->endOfWeek()->format('Y-m-d H:i:s');
+       
+        $po = ClientPo::whereBetween('po_date', [$currentWeekMonday, $currentWeekFriday])
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->where('company_id', $company_id)
+        ->groupBy('client_id')
+        ->get();
+
+        $pototal = ClientPo::whereBetween('po_date', [$currentWeekMonday, $currentWeekFriday])
+        ->where('company_id', $company_id)
+        ->count();
+
+        $rfq = ClientRfq::whereBetween('rfq_date', [$currentWeekMonday, $currentWeekFriday])
+        ->select('client_id', \DB::raw('count(*) as count'))
+        ->where('company_id', $company_id)
+        ->groupBy('client_id')
+        ->get();
+
+        $rfqtotal = ClientRfq::whereBetween('rfq_date', [$currentWeekMonday, $currentWeekFriday])->where('company_id', $company_id)->count();
+
+        $nlng = ClientPo::where('client_id', '114')
+        ->whereYear('po_date', now()->year)
+        ->orderBy('po_number', 'asc')
+        ->get();
+
+        $grn = ClientPo::where('status', 'Awaiting GRN')
+        ->where('company_id', $company_id)
+        ->get();
+
+        $rec_mail = $request->input("rec_email");
+        $report_recipient = $request->input("report_recipient");
+        $cut = explode("; ", $report_recipient);
+        $users = [];
+        foreach($cut as $key => $ut){
+            $ua = [];
+            $ua['email'] = $ut;
+            $split = $cut = explode("@", $ut);
+            $ua['name'] = strtoupper(str_replace(".","",$split[0]));
+            $users[$key] = (object)$ua;
+        }
+        try{
+            $data = ['rfq'=> $rfq, 'rfqtotal' => $rfqtotal, 'po' => $po, 'pototal' => $pototal, 'monday'=> $currentWeekMonday ,'friday' => $currentWeekFriday, 'grn' => $grn];
+            $when = now()->addMinutes(1);
+            Mail::to($rec_mail)->cc(str_replace(" ","",$users))->send( new WeeklyReport($data));    
+            return redirect()->back()->with([
+                'po' => $po, 
+                'rfq' => $rfq, 
+                'rfqtotal' => $rfqtotal,
+                'pototal' => $pototal,
+                'nlng' => $nlng,
+                'grn' => $grn,
+                'success' => 'Email Sent Successfully'
+            ]);
+        }catch(\Exception $e){
+            return redirect()->back()->with("error", "Email not sent, ". $e->getMessage());
+        }
+        
+    }
     }
 
     public function searchReport(Request $request)

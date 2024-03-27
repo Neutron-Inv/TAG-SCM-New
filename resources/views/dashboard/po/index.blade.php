@@ -128,7 +128,10 @@
                                                                                     {{ $rfqs->po_number }}
                                                                                 </a>
                                                                             </td>
-                                                                            <td><span class="icon-dollar-sign"></span> {{ number_format($rfqs->po_value_foreign,2) ?? '0.00'}}</td>
+                        <td>
+                            <span class="icon-dollar-sign"></span> 
+                            {{ is_numeric($rfqs->po_value_foreign) ? number_format($rfqs->po_value_foreign, 2) : '0.00' }}
+                        </td>
                                                                             <td>&#8358;{{ number_format($rfqs->po_value_naira,2) ?? '0.00'}}</td>
 
 

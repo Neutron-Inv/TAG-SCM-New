@@ -26,7 +26,7 @@ label {
 
 #floatingInputContainer {
     width: 100%;
-    z-index: 1000; /* Adjust the z-index based on your layout */
+     /* Adjust the z-index based on your layout */
 }
 
 .floating {
@@ -348,8 +348,17 @@ label {
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text" id="basic-addon2"><i class="icon-documents" style="color:#28a745"></i></span>
                                                                 </div>
-                                                                <input class="form-control" name="product" value="{{ $details->product}}" id="lastName" required placeholder="Enter Product" type="text"
-                                                                aria-describedby="basic-addon2">
+                                                                
+                                @php
+                                $products = getproducts();
+                                @endphp
+                                <select class="form-control selectpicker" data-live-search="true" required name="product">
+                                    @foreach($products as $product)
+                                        <option value="{{ $product->product_name }}" @if($product->product_name == $details->product) selected @endif>
+                                            {{ $product->product_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                                                             </div>
                                                             @if ($errors->has('product'))
                                                                 <div class="" style="color:red">{{ $errors->first('product') }}</div>
@@ -513,7 +522,7 @@ label {
                                                             <span class="input-group-text" id="basic-addon2"><i class="icon-plus" style="color:#28a745"></i></span>
                                                         </div>
                                                         @php $mode = array('NGN', 'USD', 'EUR'); @endphp
-                                                        <select class="form-control" name="shipper_currency" required>
+                                                        <select class="form-control selectpicker" name="shipper_currency" required style="z-index:100 !important;">
                                                             <option value="{{ $shipCurrency }}"> {{ $shipCurrency ?? old('shipper_currency') }} </option>
                                                             <option value=""> </option>
                                                             @foreach ($mode as $modes)
@@ -1149,8 +1158,11 @@ label {
                                                 // Increment the clone count and append it to class names
                                                 logisticsCloneCount++;
                                                 clonedForm.find("[id^='percent_logistics']").attr('id','percent_logistics_' + length2);
+                                                clonedForm.find("[id^='percent_logistics']").attr('name','percent_logistics_' + length2);
                                                 clonedForm.find("[id^='intrest_logistics']").attr('id','intrest_logistics_' + length2);
+                                                clonedForm.find("[id^='intrest_logistics']").attr('name','intrest_logistics_' + length2);
                                                 clonedForm.find("[id^='duration_logistics']").attr('id','duration_logistics_' + length2);
+                                                clonedForm.find("[id^='duration_logistics']").attr('name','duration_logistics_' + length2);
                                                 
                                                 clonedForm.find("[id^='percent_logistics']").addClass('cloned_logistics_percent');
 
@@ -1485,11 +1497,7 @@ label {
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-check" style="color:#28a745"></i></span>
                                                         </div>
 @php
-    if ($details->supplier_quote_usd != 0 && $details->supplier_quote_usd !== NULL && $details->supplier_quote_usd !== '') {
-        $supplier_quote = $details->supplier_quote_usd;
-    } else {
         $supplier_quote = $tq;
-    }
 @endphp
                                                         <input class="form-control" name="supplier_quote" id="supplier_quote" value="{{ round($supplier_quote,2) ?? '0'}}" placeholder="Enter Quote for Naira" type="text"
                                                             aria-describedby="basic-addon3" readonly>
@@ -1734,16 +1742,40 @@ label {
 
                                             </div>
 
-                                            @php
-                                                $tot_quo = sumTotalQuote($details->rfq_id);
-                                                // $tot_ddp = $details->net_percentage;
-                                                $subTotalCost =  $tq + $details->freight_charges + $details->other_cost + $loc;
-                                                $tot_ddp = $subTotalCost + $details->cost_of_funds + $details->fund_transfer;
-                                                $net_margin = ($sumTotalQuote - $tot_ddp) - ($details->wht + $details->ncd);
-                                                //$net = ($tot_quo - ($tot_ddp + $details->wht + $details->ncd));
-                                                $net = ($tot_quo -($tot_ddp+($details->wht + $details->ncd)));
-						                        
-                                            @endphp                            
+        @php
+            // Ensure $tot_quo is numeric
+            $tot_quo = is_numeric(sumTotalQuote($details->rfq_id)) ? sumTotalQuote($details->rfq_id) : 0;
+        
+            // Ensure $tq is numeric
+            $tq = is_numeric($tq) ? $tq : 0;
+        
+            // Ensure $loc is numeric
+            $loc = is_numeric($loc) ? $loc : 0;
+        
+            // Ensure $details->freight_charges is numeric
+            $freight_charges = is_numeric($details->freight_charges) ? $details->freight_charges : 0;
+        
+            // Ensure $details->other_cost is numeric
+            $other_cost = is_numeric($details->other_cost) ? $details->other_cost : 0;
+        
+            // Ensure $details->cost_of_funds is numeric
+            $cost_of_funds = is_numeric($details->cost_of_funds) ? $details->cost_of_funds : 0;
+        
+            // Ensure $details->fund_transfer is numeric
+            $fund_transfer = is_numeric($details->fund_transfer) ? $details->fund_transfer : 0;
+        
+            // Ensure $details->wht is numeric
+            $wht = is_numeric($details->wht) ? $details->wht : 0;
+        
+            // Ensure $details->ncd is numeric
+            $ncd = is_numeric($details->ncd) ? $details->ncd : 0;
+        
+            // Perform calculations
+            $subTotalCost = $tq + $freight_charges + $other_cost + $loc;
+            $tot_ddp = $subTotalCost + $cost_of_funds + $fund_transfer;
+            $net_margin = ($tot_quo - $tot_ddp) - ($wht + $ncd);
+            $net = ($tot_quo - ($tot_ddp + $wht + $ncd));
+        @endphp                            
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                                 <div class="form-group">
                                                     <label for="net_percentage">Net Margin</label><div class="input-group">
@@ -2271,6 +2303,29 @@ label {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                                <div class="form-group">
+                                                    <label for="ncd">NCD?</label>
+                                                    <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                                <span class="input-group-text" id="basic-addon3"><i class="icon-check" style="color:#28a745"></i></span>
+                                                            </div>
+                                                        <input name="has_ncd" value="1" class="ml-2" type="checkbox" id="has_ncd" @if($details->ncd > 0) checked @endif>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                                <div class="form-group">
+                                                    <label for="ncd_others">NCD Others</label>
+                                                    <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                                <span class="input-group-text" id="basic-addon3"><i class="icon-check" style="color:#28a745"></i></span>
+                                                            </div>
+                                                        <input name="ncd_others" value="1" class="ml-2" type="checkbox" id="ncd_others" @if($details->ncd_others > 0) checked @endif>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             </div>
                                             </div>
 
@@ -2361,56 +2416,62 @@ label {
                             </div>
 
                             <div class="modal fade bd-example-modal-lg" id="customModals" tabindex="-1" role="dialog" aria-labelledby="customModalTwoLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="customModalTwoLabel">Request Approval</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <form action="{{ route('breakdown.submit') }}" class="" method="POST" enctype="multipart/form-data">
-                                            {{ csrf_field() }}
-                                            <div class="modal-body">
-
-                                                <div class="row gutters">
-                                                    <div class="col-md-4 col-sm-4 col-4">
-                                                        <label for="recipient-name" class="col-form-label">Recipient:</label>
-                                                        <!-- <input type="email" class="form-control" id="recipient-email" name="rec_email"
-                                                        value="bidadmin@tagenergygroup.net" readonly> -->
-                                                        <input type="email" class="form-control" id="recipient-email" name="rec_email"
-                                                        value="emmanuel.idowu@tagenergygroup.net" readonly>
-                                                        @if ($errors->has('rec_email'))
-                                                            <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
-                                                        @endif
-                                                    </div>
-                                                    
-                                                    <div class="col-md-8 col-sm-8 col-8">
-                                                        <label for="recipient-name" class="col-form-label">CC Email:</label>
-                                                        <!-- <input type="text" class="form-control" id="recipient-email" name="quotation_recipient" value="contact@tagenergygroup.net; sales@tagenergygroup.net" readonly> -->
-                                                        <input type="text" class="form-control" id="recipient-email" name="quotation_recipient" value="emmanuel@enabledgroup.net; jackomega.idnoble@gmail.com">
-                                                        @if ($errors->has('quotation_recipient'))
-                                                            <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
-                                                        @endif
-                                                    </div>
-                                                    <input type="hidden" name="rfq_id" value="{{ $details->rfq_id }}">
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer custom">
-
-                                                <div class="left-side">
-                                                    <button type="button" class="btn btn-link danger" data-dismiss="modal">Cancel</button>
-                                                </div>
-                                                <div class="divider"></div>
-                                                <div class="right-side">
-                                                    <button type="submit" class="btn btn-link success">Request Approval</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="customModalTwoLabel">Request Approval</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('breakdown.submit') }}" class="" method="POST" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <div class="modal-body">
+        
+                            <div class="row gutters">
+                                <div class="col-md-4 col-sm-4 col-4">
+                                    <label for="recipient-name" class="col-form-label">Recipient:</label>
+                                    <input type="email" class="form-control" id="recipient-email" name="rec_email" value="contact@tagenergygroup.net">
+                                    @if ($errors->has('rec_email'))
+                                        <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
+                                    @endif
+                                </div>
+                                
+                                <div class="col-md-8 col-sm-8 col-8">
+                                    <label for="recipient-name" class="col-form-label">CC Email:</label>
+                                    <input type="text" class="form-control" id="recipient-email" name="quotation_recipient" value="sales@tagenergygroup.net; mary.nwaogwugwu@tagenergygroup.net">
+                                    @if ($errors->has('quotation_recipient'))
+                                        <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
+                                    @endif
                                 </div>
                             </div>
+        
+                            <!-- File upload field -->
+                            <div class="form-group">
+                                <label for="file-upload" class="col-form-label">Upload Files to send with Breakdown:</label>
+                                <input type="file" class="form-control-file" id="file-upload" name="quotation_file[]" multiple>
+                                @if ($errors->has('files'))
+                                    <div class="" style="color:red">{{ $errors->first('files') }}</div>
+                                @endif
+                            </div>
+        
+                            <input type="hidden" name="rfq_id" value="{{ $details->rfq_id }}">
+                        </div>
+                        <div class="modal-footer custom" style="flex-wrap: nowrap;">
+                            <div class="left-side">
+                                <button type="button" class="btn btn-link danger" data-dismiss="modal">Cancel</button>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="right-side">
+                                <button type="submit" class="btn btn-link success">Request Approval</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
+ 
                         </div>
                     </div>
                 </div>
@@ -2421,6 +2482,7 @@ label {
 <script>
                                             function calculateCostOfFunds() {
                                                 if ($("#autoCalculate").is(":checked")) {
+                                        
                                                 // Get values from the main form fields
                                                 const supplierQuote = parseFloat($("#supplier_quote").val()) || 0;
                                                 const freightCharges = parseFloat($("#freight_charges").val()) || 0;
@@ -2694,13 +2756,16 @@ label {
                                                         //console.log('worked Logistic' + l);
                                                         //console.log('Total misc Logistic' + totalMiscLogistics);
                                                     };
+                var Ncd_others_Checked = document.getElementById('ncd_others').checked;
 
                                                     const subTotalCost = supplierQuote + freightCharges + totalMiscSupplier + otherCharges + localDelivery + totalMiscLogistics;
-                                                    const fundsTransferCharge = 0.005 * (supplierQuote + freightCharges + otherCharges + localDelivery);
+                                                    const whtcnd = Ncd_others_Checked ? TotalQuote : TotalQuote - subTotalCost;
+                                                    const fundsTransferCharge = 0.005 * (subTotalCost);
                                                     const vatcharge = 0.075 * fundsTransferCharge;
                                                     const FundTransfer = fundsTransferCharge + vatcharge + offshoreCharge + SwiftCharge;
-                                                    const Wht = 0.05 * (TotalQuote - subTotalCost);
-                                                    const Ncd = 0.01 * (TotalQuote - subTotalCost);
+                                                    const Wht = 0.05 * (whtcnd);
+    var hasNcdChecked = document.getElementById('has_ncd').checked;
+                                                    const Ncd = hasNcdChecked ? 0.01 * (whtcnd) : 0;
                                                     const TotalDDP = subTotalCost + FundTransfer + Costoffunds;
                                                     const NetMargin = TotalQuote - (TotalDDP + Wht + Ncd);
                                                     const PercentNetMargin = (NetMargin/TotalQuote) * 100;
