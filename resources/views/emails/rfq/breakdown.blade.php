@@ -85,13 +85,13 @@
             <tbody>
                 <tr>
                     <td class="o_bg-light o_px-xs o_pt-lg o_xs-pt-xs" align="center" data-bgcolor="Bg Light" style="background-color: #dbe5ea;padding-left: 8px;padding-right: 8px;padding-top: 32px;">
-                        <table class="o_block" width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation" style="max-width: 632px;margin: 0 auto;">
+                        <table class="o_block" width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation" style="max-width: 100%;margin: 0 auto;">
                             <tbody>
                                 <tr>
                                     <td class="o_re o_bg-primary o_px o_pb-md o_br-t" align="center" data-bgcolor="Bg Primary" style="font-size: 0;vertical-align: top;background-color: white;
                                     border-radius: 4px 4px 0px 0px;padding-left: 16px;padding-right: 16px;padding-bottom: 24px;">
 
-                                        <div class="o_col o_col-4" style="display: inline-block;vertical-align: top;width: 100%;max-width: 200px;">
+                                        <div class="o_col o_col-4" style="display: inline-block;vertical-align: top;width: 100%;">
                                             <div style="font-size: 24px; line-height: 24px; height: 24px;">&nbsp; </div>
                                             <div class="o_px-xs o_sans o_text o_left o_xs-center" data-size="Text Default" data-min="12" data-max="20" style="font-family: Helvetica, Arial, sans-serif;margin-top: 0px;margin-bottom: 0px;font-size: 16px;
                                                 line-height: 24px;text-align: left;padding-left: 8px;padding-right: 8px;">
@@ -100,8 +100,8 @@
                                                     @foreach (getLogo($rfq->company_id) as $item)
                                                         @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                                         <img src="{{$log}}" width="46" height="26" alt="SCM"
-                                                        style="max-width: 136px;-ms-interpolation-mode: bicubic;vertical-align: middle;border: 0;line-height: 100%;height: auto;
-                                                        outline: none;text-decoration: none; margin-left:50px;" data-crop="false" alt="Logo" align="center" 
+                                                        style="max-width: 136px;vertical-align: middle;border: 0;line-height: 100%;height: auto;
+                                                        outline: none;text-decoration: none;" data-crop="false" alt="Logo" align="left" 
                                                         >
                                                     @endforeach
                                                     </a>
@@ -153,9 +153,9 @@
                                         <p style="color: #203864; font-size: 9.0pt;
                                             font-family: Calibri, sans-serif; margin-top:-20px;">  Good Afternoon Sir/Madam, <br>
                                             RFQ with The RFQ Number {{ $rfq->refrence_no }}  has been {{ $status }} due to the below reason <br>
-                                            {{ $reason }}   . <br>
+                                            <span style="color:red;">{{ $reason }}</span>   . <br>
                                             Please click this link to view more details about the RFQ.
-                                            <a href="https://test.ebsl.enabledjobs.com/dashboard/request-for-quotation/edit/{{ $rfq->refrence_no }}" style="color: blue"> 
+                                            <a href="https://scmtagenergygroup.net/dashboard/request-for-quotation/edit/{{ $rfq->refrence_no }}" style="color: blue"> 
                                                 View RFQ Details</a>
                                         </p>
                                         <p style="font-size: 7.5pt;font-family: Arial,sans-serif; color: #1F497D;">Best Regards,<br> {{ Auth::user()->first_name . ' '. strtoupper(Auth::user()->last_name) }}, <br> @if(Auth::user()->role == 'HOD' ) 

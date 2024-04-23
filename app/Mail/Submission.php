@@ -29,12 +29,16 @@ class Submission extends Mailable
     public function build()
     {
         $rfq = $this->data['rfq'];
+        $assigned = $this->data['assigned'];
+        $client_name = $this->data['client_name'];
         $company = $this->data['company'];
         $tq = $this->data['tq'];
+        $extra_note = $this->data['extra_note'];
         $shiname = $this->data['shiname'];
         $tempFilePath = $this->data['tempFilePath'];
         $tempFileDirs = $this->data['tempFileDirs'];
         $fileNames = $this->data['fileNames'];
+        $rfqcode = $this->data['rfqcode'];
         $company_id = $rfq->company_id;
         if($company_id == 1){
             $sender =  'contact@enabledsolutions.net';
@@ -56,8 +60,8 @@ class Submission extends Mailable
             $sender = $name->email;
             $reply = $name->email;
         }
-        $mail = $this->replyTo($reply, $company->company_name)->subject("Quotation Breakdown Approval For RFX " .$rfq->rfq_number.': '. $rfq->refrence_no . ', '. ucwords($rfq->description))->markdown('emails.rfq.approval')
-        ->with(compact('rfq', 'sender', 'reply', 'tq', 'shiname'));
+        $mail = $this->replyTo($reply, $company->company_name)->subject("Request for Approval to Submit Quotation - " .$rfqcode." for ".$client_name." ".$rfq->product." - ".$assigned)->markdown('emails.rfq.approval')
+        ->with(compact('rfq', 'sender', 'reply', 'tq', 'shiname', 'extra_note'));
         // $mail = $this->subject("QUOTATION BREAKDOWN APPROVAL FOR RFX " .$rfq->rfq_number.': '. $rfq->refrence_no . ', '. strtoupper($rfq->product))->markdown('emails.rfq.approval')->with(compact('rfq', 'sender'));
         if($rfq->send_image == 'YES'){
             $dir = 'document/rfq/' .$rfq->rfq_id.'/';

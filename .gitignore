@@ -23,8 +23,6 @@ Homestead.json
 .phpunit.result.cache
 
 *.zip
+*.sql
 
-<<<<<<< Updated upstream
-=======
 document/
->>>>>>> Stashed changes

@@ -16,8 +16,8 @@ class ClientRfq extends Model
         'contract_po_value_usd', 'total_quote','incoterm', 'percent_margin','percent_net', 'supplier_quote_usd', 'freight_charges', 'local_delivery', 'fund_transfer', 'cost_of_funds', 'wht', 'ncd',
         'other_cost', 'net_value', 'net_percentage', 'total_weight', 'contact_id', 'shipper_id', 'delivery_due_date', 'note', 'status', 'rfq_acknowledge', 'shipper_mail',
         'shipper_submission_date', 'transport_mode', 'estimated_package_weight', 'estimated_package_dimension', 'hs_codes', 'certificates_offered', 'estimated_delivery_time',
-        'delivery_location','payment_term', 'validity', 'technical_note', 'vendor_id', 'oversized', 'percent_supplier','intrest_rate', 'duration', 'percent_supplier_1','intrest_rate_1', 'duration_1', 'percent_supplier_2','intrest_rate_2', 'duration_2', 'percent_logistics','intrest_logistics', 'duration_logistics', 'percent_logistics_1','intrest_logistics_1', 'duration_logistics_1', 'percent_logistics_2','intrest_logistics_2', 'duration_logistics_2',
-        'misc_cost_supplier','misc_cost_logistics','online_submission', 'currency', 'fund_transfer_charge', 'vat_transfer_charge', 'offshore_charges', 'swift_charges', 'send_image', 
+        'delivery_location','payment_term', 'validity', 'technical_note', 'vendor_id', 'oversized', 'supplier_cof','logistics_cof','others_cof', 'percent_supplier','intrest_rate', 'duration', 'percent_supplier_1','intrest_rate_1', 'duration_1', 'percent_supplier_2','intrest_rate_2', 'duration_2', 'percent_logistics','intrest_logistics', 'duration_logistics', 'percent_logistics_1','intrest_logistics_1', 'duration_logistics_1', 'percent_logistics_2','intrest_logistics_2', 'duration_logistics_2',
+        'misc_cost_supplier','misc_cost_logistics','misc_cost_others','online_submission', 'currency', 'fund_transfer_charge', 'vat_transfer_charge', 'offshore_charges', 'swift_charges', 'send_image', 
         'contract_po_value_ngn', 'shipper_currency', 'freight_cost_option', 'end_user', 'clearing_agent', 'short_code', 'mark_up', 'auto_calculate','ncd_others'
     ];
 

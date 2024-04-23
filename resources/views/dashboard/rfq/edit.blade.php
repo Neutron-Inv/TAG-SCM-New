@@ -461,7 +461,7 @@ label {
                                             <div class="col-xl-8 col-lg-8 col-md-6 col-sm-6 col-12">
 
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Shipping Company</label><div class="input-group">
+                                                    <label for="shipping">Shipping Company</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-database" style="color:#28a745"></i></span>
                                                         </div>
@@ -714,7 +714,7 @@ label {
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Shipper Submission Date</label><div class="input-group">
+                                                    <label for="shipper submission">Shipper Submission Date</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon5"><i class="icon-calendar" style="color:#28a745"></i></span>
                                                         </div>
@@ -732,7 +732,7 @@ label {
 
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Oversized</label><div class="input-group">
+                                                    <label for="oveersized">Oversized</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-truck" style="color:#28a745"></i></span>
                                                         </div>
@@ -755,6 +755,62 @@ label {
                                             <fieldset class="row" style="background: #F5F3E7;">
                                                 <legend> <i class="icon-history mt-6" style="color:#000"></i> Cost / Interest Information </legend>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            @php
+                                            $supplierCofs = json_decode($details->supplier_cof, true) ?? [];
+                                            @endphp
+                                            @php
+                                                $counters = 1;
+                                            @endphp
+                                            @if (!empty($supplierCofs))
+                                            @foreach ($supplierCofs as $index => $supplierCof)
+                                            <div class="row gutters" id="formSet">
+                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
+                                                    <label for="intrest_percent_{{ $counters }}">Percent (Supplier)</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
+                                                        </div>
+                                                        <input class="form-control percentage cloned_supplier_percent" name="intrest_percent[]" value="{{ $supplierCof['percent'] ?? '' }}" id="intrest_percent_{{ $counters }}" max="100" required placeholder="Enter Percent of Supplier Cost" type="text" aria-describedby="basic-addon3">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
+                                                    <label for="intrest_rate_{{ $counters }}">Interest Rate (Supplier)</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
+                                                        </div>
+                                                        <input class="form-control" name="intrest_rate[]" id="intrest_rate_{{ $counters }}" value="{{ $supplierCof['interest'] ?? '' }}" maxlength="11" required placeholder="Enter Interest Rate Supplier" type="text" aria-describedby="basic-addon3">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 form-group">
+                                                    <label for="duration_{{ $counters }}">Duration (Supplier)</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
+                                                        </div>
+                                                        <input class="form-control" name="duration[]" id="duration_{{ $counters }}" value="{{ $supplierCof['duration'] ?? '' }}" required placeholder="Enter Duration Supplier" type="number" aria-describedby="basic-addon3">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group align-self-center">
+                                                    <label for="duration">.</label>
+                                                    <div class="input-group">
+                                                        @if ($index === 0)
+                                                            <button type="button" class="btn btn-primary" id="addForm">+</button>
+                                                        @else
+                                                            <button type="button" class="btn btn-danger remove-form">-</button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @php
+                                                $counters++;
+                                            @endphp
+                                            @endforeach
+                                            @else
+
                                             <div class="row gutters" id="formSet">
                                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
                                                     <label for="intrest_percent">Percent (Supplier)</label>
@@ -762,11 +818,8 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control percentage" name="intrest_percent" value="{{ $details->percent_supplier ?? '0'}}" id="intrest_percent" max="100" required placeholder="Enter Percent of Supplier Cost" type="number" aria-describedby="basic-addon3">
+                                                        <input class="form-control percentage cloned_supplier_percent" name="intrest_percent[]" value="" id="intrest_percent_{{ $counters }}" max="100" required placeholder="Enter Percent of Supplier Cost" type="text" aria-describedby="basic-addon3">
                                                     </div>
-                                                    @if ($errors->has('intrest_percent'))
-                                                        <div class="" style="color:red">{{ $errors->first('intrest_percent') }}</div>
-                                                    @endif
                                                 </div>
 
                                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
@@ -775,11 +828,8 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="intrest_rate" id="intrest_rate" value="{{ $details->intrest_rate ?? '0'}}" maxlength="11" required placeholder="Enter Interest Rate Supplier" type="text" aria-describedby="basic-addon3">
+                                                        <input class="form-control" name="intrest_rate[]" id="intrest_rate_{{ $counters }}" value="" maxlength="11" required placeholder="Enter Interest Rate Supplier" type="text" aria-describedby="basic-addon3">
                                                     </div>
-                                                    @if ($errors->has('intrest_rate'))
-                                                        <div class="" style="color:red">{{ $errors->first('intrest_rate') }}</div>
-                                                    @endif
                                                 </div>
 
                                                 <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 form-group">
@@ -788,123 +838,20 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="duration" id="duration" value="{{ $details->duration ?? '0'}}" required placeholder="Enter Duration Supplier" type="number" aria-describedby="basic-addon3">
+                                                        <input class="form-control" name="duration[]" id="duration_{{ $counters }}" value="" required placeholder="Enter Duration Supplier" type="number" aria-describedby="basic-addon3">
                                                     </div>
-                                                    @if ($errors->has('duration'))
-                                                        <div class="" style="color:red">{{ $errors->first('duration') }}</div>
-                                                    @endif
                                                 </div>
 
                                                 <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group align-self-center">
                                                     <label for="duration">.</label>
                                                     <div class="input-group">
                                                             <button type="button" class="btn btn-primary" id="addForm">+</button>
-                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            @endif
+                                        </div>
 
-                                        @if ($details->percent_supplier_1 > 0)
-                                            <div class="row gutters" id="formSet">
-                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
-                                                    <label for="intrest_percent_1">Percent (Supplier)</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
-                                                        </div>
-                                                        <input class="form-control percentage cloned_supplier_percent" name="intrest_percent_1" value="{{ $details->percent_supplier_1 ?? '0'}}" id="intrest_percent_1" max="100" required placeholder="Enter Percent of Supplier Cost" type="number" aria-describedby="basic-addon3">
-                                                    </div>
-                                                    @if ($errors->has('intrest_percent_1'))
-                                                        <div class="" style="color:red">{{ $errors->first('intrest_percent_1') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
-                                                    <label for="intrest_rate_1">Interest Rate (Supplier)</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
-                                                        </div>
-                                                        <input class="form-control" name="intrest_rate_1" id="intrest_rate_1" value="{{ $details->intrest_rate_1 ?? '0'}}" maxlength="11" required placeholder="Enter Interest Rate Supplier" type="text" aria-describedby="basic-addon3">
-                                                    </div>
-                                                    @if ($errors->has('intrest_rate'))
-                                                        <div class="" style="color:red">{{ $errors->first('intrest_rate') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 form-group">
-                                                    <label for="duration_1">Duration (Supplier)</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
-                                                        </div>
-                                                        <input class="form-control" name="duration_1" id="duration_1" value="{{ $details->duration_1 ?? '0'}}" required placeholder="Enter Duration Supplier" type="number" aria-describedby="basic-addon3">
-                                                    </div>
-                                                    @if ($errors->has('duration'))
-                                                        <div class="" style="color:red">{{ $errors->first('duration') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group align-self-center">
-                                                    <label for="duration">.</label>
-                                                    <div class="input-group">
-                                                            <button type="button" class="btn btn-danger remove-form">-</button>
-                                                        </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                        
-                                        @if ($details->percent_supplier_2 > 0)
-                                            <div class="row gutters" id="formSet">
-                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
-                                                    <label for="intrest_percent_2">Percent (Supplier)</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
-                                                        </div>
-                                                        <input class="form-control percentage cloned_supplier_percent" name="intrest_percent_2" value="{{ $details->percent_supplier_2 ?? '0'}}" id="intrest_percent_2" max="100" required placeholder="Enter Percent of Supplier Cost" type="number" aria-describedby="basic-addon3">
-                                                    </div>
-                                                    @if ($errors->has('intrest_percent_2'))
-                                                        <div class="" style="color:red">{{ $errors->first('intrest_percent_2') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
-                                                    <label for="intrest_rate_2">Interest Rate (Supplier)</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
-                                                        </div>
-                                                        <input class="form-control" name="intrest_rate_2" id="intrest_rate_2" value="{{ $details->intrest_rate_2 ?? '0'}}" maxlength="11" required placeholder="Enter Interest Rate Supplier" type="text" aria-describedby="basic-addon3">
-                                                    </div>
-                                                    @if ($errors->has('intrest_rate_2'))
-                                                        <div class="" style="color:red">{{ $errors->first('intrest_rate_2') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 form-group">
-                                                    <label for="duration_2">Duration (Supplier)</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
-                                                        </div>
-                                                        <input class="form-control" name="duration_2" id="duration_2" value="{{ $details->duration_2 ?? '0'}}" required placeholder="Enter Duration Supplier" type="number" aria-describedby="basic-addon3">
-                                                    </div>
-                                                    @if ($errors->has('duration_2'))
-                                                        <div class="" style="color:red">{{ $errors->first('duration_2') }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group align-self-center">
-                                                    <label for="duration_2">.</label>
-                                                    <div class="input-group">
-                                                            <button type="button" class="btn btn-danger remove-form">-</button>
-                                                        </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                            
-                                            </div>
-                                            
                                             <script>
                                             $(document).ready(function() {
                                                  // Initialize the clone count
@@ -925,13 +872,13 @@ label {
                                                     
                                                     // Increment the clone count and append it to class names
                                                     clonedForm.find("[id^='intrest_percent']").attr('id', 'intrest_percent_' + supplierCloneCount);
-                                                    clonedForm.find("[id^='intrest_percent']").attr('name', 'intrest_percent_' + supplierCloneCount);
+                                                    //clonedForm.find("[id^='intrest_percent']").attr('name', 'intrest_percent_' + supplierCloneCount);
                                                     clonedForm.find("[id^='intrest_rate']").attr('id', 'intrest_rate_' + supplierCloneCount);
-                                                    clonedForm.find("[id^='intrest_rate']").attr('name', 'intrest_rate_' + supplierCloneCount);
+                                                    //clonedForm.find("[id^='intrest_rate']").attr('name', 'intrest_rate_' + supplierCloneCount);
                                                     clonedForm.find("[id^='duration']").attr('id','duration_' + supplierCloneCount);
-                                                    clonedForm.find("[id^='duration']").attr('name','duration_' + supplierCloneCount);
+                                                    //clonedForm.find("[id^='duration']").attr('name','duration_' + supplierCloneCount);
 
-                                                    clonedForm.find("[id^='intrest_percent']").addClass('cloned_supplier_percent');
+                                                    //clonedForm.find("[id^='intrest_percent']").addClass('cloned_supplier_percent');
                                                     
                                                     clonedForm.find('.btn-primary').replaceWith('<button class="btn btn-danger remove-form" type="button">-</button>');
                                                     $("#formSet").after(clonedForm);
@@ -959,6 +906,14 @@ label {
                                             </script>
 
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            @php
+                                            $logisticsCofs = json_decode($details->logistics_cof, true) ?? [];
+                                            @endphp
+                                            @php
+                                                $counters = 1;
+                                            @endphp
+                                            @if (!empty($logisticsCofs))
+                                            @foreach ($logisticsCofs as $index => $logisticsCof)
                                             <div class="row gutters" id="formSet2">
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
                                                 <div class="form-group">
@@ -966,8 +921,8 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control percentage" name="percent_logistics" id="percent_logistics"
-                                                        maxlength="11" value="{{ $details->percent_logistics ?? '0'}}" required max="100" type="number" placeholder="Enter Percent of Logistics Cost"
+                                                        <input class="form-control percentage cloned_logistics_percent" name="percent_logistics[]" id="percent_logistics_{{ $counters }}"
+                                                        maxlength="11" value="{{ $logisticsCof['percent'] ?? '' }}" required max="100" type="text" placeholder="Enter Percent of Logistics Cost"
                                                         aria-describedby="basic-addon3">
                                                     </div>
                                                     @if ($errors->has('intrest_logistics'))
@@ -983,8 +938,8 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="intrest_logistics" id="intrest_logistics"
-                                                        maxlength="11" value="{{ $details->intrest_logistics ?? '0'}}" required placeholder="Enter Intrest Rate Logistics" type="text"
+                                                        <input class="form-control" name="intrest_logistics[]" id="intrest_logistics_{{ $counters }}"
+                                                        maxlength="11" value="{{ $logisticsCof['interest'] ?? '' }}" required placeholder="Enter Intrest Rate Logistics" type="text"
                                                         aria-describedby="basic-addon3">
                                                     </div>
                                                     @if ($errors->has('intrest_logistics'))
@@ -1000,7 +955,7 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="duration_logistics" id="duration_logistics" value="{{ $details->duration_logistics ?? '0'}}" placeholder="Enter Duration Logistics"
+                                                        <input class="form-control" name="duration_logistics[]" id="duration_logistics_{{ $counters }}" value="{{ $logisticsCof['duration'] ?? '' }}" placeholder="Enter Duration Logistics"
                                                         type="number" required aria-describedby="basic-addon3">
                                                     </div>
                                                     @if ($errors->has('duration_logistics'))
@@ -1009,28 +964,36 @@ label {
 
                                                 </div>
                                             </div>
-                                            <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group">
-                                                    <label for="duration">.</label>
-                                                    <div class="input-group">
-                                                            <button type="button" class="btn btn-primary" id="addForm2">+</button>
-                                                        </div>
+                                            <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group align-self-center">
+                                                <label for="duration">.</label>
+                                                <div class="input-group">
+                                                    @if ($index === 0)
+                                                        <button type="button" class="btn btn-primary" id="addForm2">+</button>
+                                                    @else
+                                                        <button type="button" class="btn btn-danger remove-form2">-</button>
+                                                    @endif
                                                 </div>
                                             </div>
-                                @if ($details->percent_logistics_1 > 0)
+                                            </div>
+                                        @php
+                                        $counters++;
+                                        @endphp
+                                        @endforeach
+                                        @else
 
-                                <div class="row gutters" id="formSet2">
+                                        <div class="row gutters" id="formSet2">
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
                                                 <div class="form-group">
-                                                    <label for="percent_logistics_1">Percent (Logistics)</label><div class="input-group">
+                                                    <label for="intrest_rate">Percent (Logistics)</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control cloned_logistics_percent" name="percent_logistics_1" id="percent_logistics_1"
-                                                        maxlength="11" value="{{ $details->percent_logistics_1 ?? '0'}}" required max="100" type="number"
+                                                        <input class="form-control percentage cloned_logistics_percent" name="percent_logistics[]" id="percent_logistics_{{ $counters }}"
+                                                        maxlength="11" value="" required max="100" type="text" placeholder="Enter Percent of Logistics Cost"
                                                         aria-describedby="basic-addon3">
                                                     </div>
-                                                    @if ($errors->has('percent_logistics_1'))
-                                                        <div class="" style="color:red">{{ $errors->first('percent_logistics_1') }}</div>
+                                                    @if ($errors->has('intrest_logistics'))
+                                                        <div class="" style="color:red">{{ $errors->first('intrest_logistics') }}</div>
                                                     @endif
 
                                                 </div>
@@ -1038,16 +1001,16 @@ label {
 
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
                                                 <div class="form-group">
-                                                    <label for="intrest_logistics_1">Interest Rate (Logistics)</label><div class="input-group">
+                                                    <label for="intrest_rate">Interest Rate (Logistics)</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="intrest_logistics_1" id="intrest_logistics_1"
-                                                        maxlength="11" value="{{ $details->intrest_logistics_1 ?? '0'}}" required placeholder="Enter Intrest Rate Logistics" type="text"
+                                                        <input class="form-control" name="intrest_logistics[]" id="intrest_logistics_{{ $counters }}"
+                                                        maxlength="11" value="" required placeholder="Enter Intrest Rate Logistics" type="text"
                                                         aria-describedby="basic-addon3">
                                                     </div>
-                                                    @if ($errors->has('intrest_logistics_1'))
-                                                        <div class="" style="color:red">{{ $errors->first('intrest_logistics_1') }}</div>
+                                                    @if ($errors->has('intrest_logistics'))
+                                                        <div class="" style="color:red">{{ $errors->first('intrest_logistics') }}</div>
                                                     @endif
 
                                                 </div>
@@ -1055,87 +1018,26 @@ label {
 
                                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 form-group">
                                                 <div class="form-group">
-                                                    <label for="duration_logistics_1">Duration (Logistics) </label><div class="input-group">
+                                                    <label for="freight_charges">Duration (Logistics) </label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="duration_logistics_1" id="duration_logistics_1" value="{{ $details->duration_logistics_1 ?? '0'}}" placeholder="Enter Duration Logistics"
+                                                        <input class="form-control" name="duration_logistics[]" id="duration_logistics_{{ $counters }}" value="" placeholder="Enter Duration Logistics"
                                                         type="number" required aria-describedby="basic-addon3">
                                                     </div>
-                                                    @if ($errors->has('duration_logistics_1'))
-                                                        <div class="" style="color:red">{{ $errors->first('duration_logistics_1') }}</div>
+                                                    @if ($errors->has('duration_logistics'))
+                                                        <div class="" style="color:red">{{ $errors->first('duration_logistics') }}</div>
                                                     @endif
 
                                                 </div>
                                             </div>
-                                            <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group">
-                                                    <label for="percent_add">.</label>
-                                                    <div class="input-group">
-                                                            <button type="button" class="btn btn-danger remove-form" style="display: block;">-</button>
-                                                        </div>
+                                            <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group align-self-center">
+                                                <label for="duration">.</label>
+                                                <div class="input-group">
+                                                        <button type="button" class="btn btn-primary" id="addForm2">+</button>
                                                 </div>
                                             </div>
-                                        @endif
-
-                                    @if ($details->percent_logistics_2 > 0)
-
-                                    <div class="row gutters" id="formSet2">
-                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
-                                                    <div class="form-group">
-                                                        <label for="percent_logistics_2">Percent (Logistics)</label><div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
-                                                            </div>
-                                                            <input class="form-control cloned_logistics_percent" name="percent_logistics_2" id="percent_logistics_2"
-                                                            maxlength="11" value="{{ $details->percent_logistics_2 ?? '0'}}" required max="100" type="number"
-                                                            aria-describedby="basic-addon3">
-                                                        </div>
-                                                        @if ($errors->has('percent_logistics_2'))
-                                                            <div class="" style="color:red">{{ $errors->first('percent_logistics_2') }}</div>
-                                                        @endif
-
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
-                                                    <div class="form-group">
-                                                        <label for="intrest_logistics_2">Interest Rate (Logistics)</label><div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
-                                                            </div>
-                                                            <input class="form-control" name="intrest_logistics_2" id="intrest_logistics_2"
-                                                            maxlength="11" value="{{ $details->intrest_logistics_2 ?? '0'}}" required placeholder="Enter Intrest Rate Logistics" type="text"
-                                                            aria-describedby="basic-addon3">
-                                                        </div>
-                                                        @if ($errors->has('intrest_logistics_2'))
-                                                            <div class="" style="color:red">{{ $errors->first('intrest_logistics_2') }}</div>
-                                                        @endif
-
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 form-group">
-                                                    <div class="form-group">
-                                                        <label for="duration_logistics_2">Duration (Logistics) </label><div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
-                                                            </div>
-                                                            <input class="form-control" name="duration_logistics_2" id="duration_logistics_2" value="{{ $details->duration_logistics_2 ?? '0'}}" placeholder="Enter Duration Logistics"
-                                                            type="number" required aria-describedby="basic-addon3">
-                                                        </div>
-                                                        @if ($errors->has('duration_logistics_2'))
-                                                            <div class="" style="color:red">{{ $errors->first('duration_logistics_2') }}</div>
-                                                        @endif
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group">
-                                                        <label for="percent_add">.</label>
-                                                        <div class="input-group">
-                                                                <button type="button" class="btn btn-danger remove-form" style="display: block;">-</button>
-                                                            </div>
-                                                    </div>
-                                                </div>
+                                            </div>
                                             @endif
                                         </div>
 
@@ -1158,23 +1060,194 @@ label {
                                                 // Increment the clone count and append it to class names
                                                 logisticsCloneCount++;
                                                 clonedForm.find("[id^='percent_logistics']").attr('id','percent_logistics_' + length2);
-                                                clonedForm.find("[id^='percent_logistics']").attr('name','percent_logistics_' + length2);
+                                                //clonedForm.find("[id^='percent_logistics']").attr('name','percent_logistics_' + length2);
                                                 clonedForm.find("[id^='intrest_logistics']").attr('id','intrest_logistics_' + length2);
-                                                clonedForm.find("[id^='intrest_logistics']").attr('name','intrest_logistics_' + length2);
+                                                //clonedForm.find("[id^='intrest_logistics']").attr('name','intrest_logistics_' + length2);
                                                 clonedForm.find("[id^='duration_logistics']").attr('id','duration_logistics_' + length2);
-                                                clonedForm.find("[id^='duration_logistics']").attr('name','duration_logistics_' + length2);
+                                               // clonedForm.find("[id^='duration_logistics']").attr('name','duration_logistics_' + length2);
                                                 
-                                                clonedForm.find("[id^='percent_logistics']").addClass('cloned_logistics_percent');
+                                                //clonedForm.find("[id^='percent_logistics']").addClass('cloned_logistics_percent');
 
-                                                clonedForm.find('.btn-primary').replaceWith('<button class="btn btn-danger remove-form" type="button">-</button>');
+                                                clonedForm.find('.btn-primary').replaceWith('<button class="btn btn-danger remove-form2" type="button">-</button>');
                                                 $("#formSet2").after(clonedForm);
                                             });
 
-                                            $(document).on('click', '.remove-form', function() {
+                                            $(document).on('click', '.remove-form2', function() {
                                                 $(this).closest('.row').remove();
                                             });
                                         });
                                         </script>
+                                        
+                                        
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+    @php
+    $othersCofs = json_decode($details->others_cof, true) ?? [];
+    @endphp
+    @php
+        $counters = 1;
+    @endphp
+    @if (!empty($othersCofs))
+    @foreach ($othersCofs as $index => $othersCof)
+    <div class="row gutters" id="formSet8">
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
+        <div class="form-group">
+            <label for="intrest_rate">Percent (Others)</label><div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
+                </div>
+                <input class="form-control percentage cloned_others_percent" name="percent_others[]" id="percent_others_{{ $counters }}"
+                maxlength="11" value="{{ $othersCof['percent'] ?? '' }}" required max="100" type="text" placeholder="Enter Percent of Others Cost"
+                aria-describedby="basic-addon3">
+            </div>
+            @if ($errors->has('percent_others'))
+                <div class="" style="color:red">{{ $errors->first('percent_others') }}</div>
+            @endif
+
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
+        <div class="form-group">
+            <label for="intrest_rate">Interest Rate (Others)</label><div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
+                </div>
+                <input class="form-control" name="intrest_others[]" id="intrest_others_{{ $counters }}"
+                maxlength="11" value="{{ $othersCof['interest'] ?? '' }}" required placeholder="Enter Intrest Rate Others" type="text"
+                aria-describedby="basic-addon3">
+            </div>
+            @if ($errors->has('intrest_others'))
+                <div class="" style="color:red">{{ $errors->first('intrest_others') }}</div>
+            @endif
+
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 form-group">
+        <div class="form-group">
+            <label for="freight_charges">Duration (Others) </label><div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
+                </div>
+                <input class="form-control" name="duration_others[]" id="duration_others_{{ $counters }}" value="{{ $othersCof['duration'] ?? '' }}" placeholder="Enter Duration Others"
+                type="number" required aria-describedby="basic-addon3">
+            </div>
+            @if ($errors->has('duration_others'))
+                <div class="" style="color:red">{{ $errors->first('duration_others') }}</div>
+            @endif
+
+        </div>
+    </div>
+    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group align-self-center">
+        <label for="duration">.</label>
+        <div class="input-group">
+            @if ($index === 0)
+                <button type="button" class="btn btn-primary" id="addForm8">+</button>
+            @else
+                <button type="button" class="btn btn-danger remove-form8">-</button>
+            @endif
+        </div>
+    </div>
+    </div>
+@php
+$counters++;
+@endphp
+@endforeach
+@else
+
+<div class="row gutters" id="formSet8">
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
+        <div class="form-group">
+            <label for="intrest_rate">Percent (Others)</label><div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
+                </div>
+                <input class="form-control percentage cloned_others_percent" name="percent_others[]" id="percent_others_{{ $counters }}"
+                maxlength="11" value="" required max="100" type="text" placeholder="Enter Percent of Others Cost"
+                aria-describedby="basic-addon3">
+            </div>
+            @if ($errors->has('percent_others'))
+                <div class="" style="color:red">{{ $errors->first('percent_others') }}</div>
+            @endif
+
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
+        <div class="form-group">
+            <label for="intrest_rate">Interest Rate (Others)</label><div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
+                </div>
+                <input class="form-control" name="intrest_others[]" id="intrest_others_{{ $counters }}"
+                maxlength="11" value="" required placeholder="Enter Intrest Rate Others" type="text"
+                aria-describedby="basic-addon3">
+            </div>
+            @if ($errors->has('intrest_others'))
+                <div class="" style="color:red">{{ $errors->first('intrest_others') }}</div>
+            @endif
+
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 form-group">
+        <div class="form-group">
+            <label for="freight_charges">Duration (Others) </label><div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
+                </div>
+                <input class="form-control" name="duration_others[]" id="duration_others_{{ $counters }}" value="" placeholder="Enter Duration Others"
+                type="number" required aria-describedby="basic-addon3">
+            </div>
+            @if ($errors->has('duration_others'))
+                <div class="" style="color:red">{{ $errors->first('duration_others') }}</div>
+            @endif
+
+        </div>
+    </div>
+    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group align-self-center">
+        <label for="duration">.</label>
+        <div class="input-group">
+                <button type="button" class="btn btn-primary" id="addForm8">+</button>
+        </div>
+    </div>
+    </div>
+    @endif
+</div>
+
+<script>
+$(document).ready(function() {
+
+    $("#addForm8").click(function() {
+    // Initialize the clone count
+    var elementsOL = document.querySelectorAll('[id^="percent_others_"]');
+    var countOL = elementsOL.length;
+        var othersCloneCount = 0;
+        var clonedOthers = document.getElementsByClassName("form-control cloned_others_percent");
+        var length2 = countOL + 1;
+        var othersCloneCount = length2;
+
+        var clonedForm = $("#formSet8").clone();
+        clonedForm.find('input').val('');
+        clonedForm.find('input').removeAttr('required');
+        
+        // Increment the clone count and append it to class names
+        othersCloneCount++;
+        clonedForm.find("[id^='percent_others']").attr('id','percent_others_' + length2);
+        clonedForm.find("[id^='intrest_others']").attr('id','intrest_others_' + length2);
+        clonedForm.find("[id^='duration_others']").attr('id','duration_others_' + length2);
+
+        clonedForm.find('.btn-primary').replaceWith('<button class="btn btn-danger remove-form8" type="button">-</button>');
+        $("#formSet8").after(clonedForm);
+    });
+
+    $(document).on('click', '.remove-form8', function() {
+        $(this).closest('.row').remove();
+    });
+});
+</script>
+                                        
+                                        
                                         </fieldset>
 
                                         <fieldset class="row" style="background: #E5DBD9;">
@@ -1329,7 +1402,11 @@ label {
                                                     <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group align-self-center">
                                                     <label for="duration">.</label>
                                                     <div class="input-group">
-                                                            <button type="button" class="btn btn-primary" id="addForm4">+</button>
+                                                        @if ($index === 0)
+                                                            <button type="button" class="btn btn-primary" id="addForm4">+</button> 
+                                                        @else
+                                                            <button type="button" class="btn btn-danger remove-form4">-</button>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -1404,6 +1481,119 @@ label {
                                             });
                                         });
                                         </script>
+                                        
+                                        
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"> 
+                                                @php
+                                                // Decode the JSON data into an array
+                                                $othersData = json_decode($details->misc_cost_others, true) ?? [];
+                                                @endphp
+                                                @php
+                                                $counter = 1;
+                                                @endphp
+                                                @if (!empty($othersData))
+                                                @foreach ($othersData as $index => $others)
+                                                <div class="row gutters" id="formSet7">
+                                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
+                                                        <label for="misc_cost_others_{{ $counter }}">Misc Cost (Others)</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
+                                                            </div>
+                                                            <input class="form-control" name="misc_cost_others[]" value="{{ $others['desc'] ?? '' }}" id="misc_cost_others_{{ $counter }}" placeholder="Enter Misc Cost (Others)" type="text" aria-describedby="basic-addon3">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
+                                                        <label for="misc_amount_others_{{ $counter }}">Misc Amount (Others)</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
+                                                            </div>
+                                                            <input class="form-control misc_amount_others" name="misc_amount_others[]" value="{{ $others['amount'] ?? '' }}" id="misc_amount_others_{{ $counter }}" placeholder="Enter Misc Amount (Others)" type="text" aria-describedby="basic-addon3">
+                                                        </div>
+                                                    </div>
+                                                
+
+                                                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group align-self-center">
+                                                    <label for="duration">.</label>
+                                                    <div class="input-group">
+                                                        @if ($index === 0)
+                                                            <button type="button" class="btn btn-primary" id="addForm7">+</button>
+                                                        @else
+                                                            <button type="button" class="btn btn-danger remove-form7">-</button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @php
+                                                $counter++;
+                                            @endphp
+                                            @endforeach
+                                            @else
+                                            <div class="row gutters" id="formSet7">
+                                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
+                                                        <label for="misc_cost_others_1">Misc Cost (Others)</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
+                                                            </div>
+                                                            <input class="form-control misc_cost_others" name="misc_cost_others[]" value="" id="misc_cost_others_1" placeholder="Enter Misc Cost (Others)" type="text" aria-describedby="basic-addon3">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 form-group">
+                                                        <label for="misc_amount_others_1">Misc Amount (Others)</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
+                                                            </div>
+                                                            <input class="form-control misc_amount_others" name="misc_amount_others[]" value="" id="misc_amount_others_1" placeholder="Enter Misc Amount (Others)" type="text" aria-describedby="basic-addon3">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12 form-group align-self-center">
+                                                    <label for="others">.</label>
+                                                    <div class="input-group">
+                                                        <button type="button" class="btn btn-primary" id="addForm7">+</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endif
+                                        </div>
+                                        <script>
+                                        $(document).ready(function() {
+                                            // Initialize the clone count
+                                            var othersCloneCount = {{ $counter }};
+
+                                            console.log("Initial othersCloneCount: " + othersCloneCount);
+
+                                            $("#addForm7").click(function() {
+                                                var miscOthers = document.getElementsByClassName("form-control misc_amount_others");
+
+                                                console.log("Adding new form. Updated othersCloneCount Length: " + miscOthers.length);
+
+                                                othersCloneCount = miscOthers.length;
+                                                othersCloneCount++;
+
+                                                console.log("Adding new form. Updated othersCloneCount: " + othersCloneCount);
+
+                                                var clonedFormO = $("#formSet7").clone();
+                                                clonedFormO.find('input').val('');
+                                                clonedFormO.find('input').removeAttr('required');
+
+                                                clonedFormO.find("[id^='misc_cost_others']").attr('id', 'misc_cost_others_' + othersCloneCount);
+                                                
+                                                clonedFormO.find("[id^='misc_amount_others']").attr('id', 'misc_amount_others_' + othersCloneCount);
+
+                                                clonedFormO.find('.btn-primary').replaceWith('<button class="btn btn-danger remove-form7" type="button">-</button>');
+                                                $("#formSet7").after(clonedFormO);
+                                            });
+
+                                            $(document).on('click', '.remove-form7', function() {
+                                                $(this).closest('.row').remove();
+                                            });
+                                        });
+                                        </script>
                                         </fieldset>
 
                                         <fieldset class="row" style="background: #E7CBA9;">
@@ -1445,7 +1635,7 @@ label {
 
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Select Freight Cost</label><div class="input-group">
+                                                    <label for="freight cost">Select Freight Cost</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-truck" style="color:#28a745"></i></span>
                                                         </div>
@@ -1468,7 +1658,7 @@ label {
 
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Transport Mode</label><div class="input-group">
+                                                    <label for="transport_mode">Transport Mode</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-truck" style="color:#28a745"></i></span>
                                                         </div>
@@ -1785,7 +1975,7 @@ label {
 
                                                         <input class="form-control" name="net_percentage" id="net_percentage"
                                                         maxlength="" value="{{ round($details->net_percentage,2) ?? '0'}}" required placeholder="Enter Net %"
-                                                            type="text" readonly
+                                                            type="text"
                                                         aria-describedby="basic-addon3">
                                                     </div>
 
@@ -1800,14 +1990,14 @@ label {
 
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Percent Net Margin</label><div class="input-group">
+                                                    <label for="net_percentage_margin">Percent Net Margin</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3">
                                                                 <i class="icon-price-tag" style="color:#28a745"></i></span>
                                                         </div>
                                                         <input class="form-control" name="net_percentage_margin" id="net_percentage_margin"
                                                         maxlength="100" value="{{ round($details->percent_net, 2) ?? 0}}" required placeholder="Percent Net Margin"
-                                                            type="text" readonly
+                                                            type="text"
                                                         aria-describedby="basic-addon3">
                                                     </div>
 
@@ -1887,7 +2077,7 @@ label {
 
                                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Validity</label><div class="input-group">
+                                                    <label for="validity">Validity</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-truck" style="color:#28a745"></i></span>
                                                         </div>
@@ -1917,7 +2107,7 @@ label {
 
                                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Certificate offered?</label><div class="input-group">
+                                                    <label for="certificate_offered">Certificate offered?</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-book" style="color:#28a745"></i></span>
                                                         </div>
@@ -1933,7 +2123,7 @@ label {
 
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Delivery Location</label><div class="input-group">
+                                                    <label for="delivery location">Delivery Location</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-truck" style="color:#28a745"></i></span>
                                                         </div>
@@ -1948,7 +2138,7 @@ label {
                                             </div>
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Payment Term</label><div class="input-group">
+                                                    <label for="payment_term">Payment Term</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-truck" style="color:#28a745"></i></span>
                                                         </div>
@@ -1976,6 +2166,14 @@ label {
                                                             <option value="">Select Incoterm</option>
                                                             <option value="Ex Works" <?php if($details->incoterm == 'Ex Works'){echo 'selected';} ?>> Ex Works </option>
                                                             <option value="DDP" <?php if($details->incoterm == 'DDP'){echo 'selected';} ?>> DDP </option>
+                                                            
+                                                            <option value="FCA" <?php if($details->incoterm == 'FCA'){echo 'selected';} ?>> FCA </option>
+                                                            
+                                                            <option value="CIF" <?php if($details->incoterm == 'CIF'){echo 'selected';} ?>> CIF </option>
+                                                            
+                                                            <option value="DAP" <?php if($details->incoterm == 'DAP'){echo 'selected';} ?>> DAP </option>
+                                                            
+                                                            <option value="FOB" <?php if($details->incoterm == 'FOB'){echo 'selected';} ?>> FOB </option>
 
                                                         </select>
 
@@ -2008,7 +2206,7 @@ label {
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                                 <div class="form-group">
 
-                                                    <div class="card m-0"><label for="net_percentage">RFQ Note:</label>
+                                                    <div class="card m-0"><label for="rfq_note">RFQ Note:</label>
                                                         <textarea class="summernote" name="note" required placeholder="Please enter RFQ Note Here">
                                                             {!! $details->note !!}
                                                         </textarea>
@@ -2021,7 +2219,7 @@ label {
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Technical Note:</label>
+                                                    <label for="technical_note">Technical Note:</label>
                                                     <textarea class="summernote2" name="technical_note" placeholder="Please enter technical note (if any)." style="">{!! $details->technical_note !!}</textarea>
                                                     @if ($errors->has('technical_note'))
                                                         <div class="" style="color:red">{{ $errors->first('technical_note') }}</div>
@@ -2040,10 +2238,10 @@ label {
                                                                     $dir = 'document/rfq/'.$details->rfq_id.'/';
                                                                     $files = scandir($dir);
                                                                     $total = count($files) - 2; ?>
-                                                                    <label for="net_percentage">Total Files ({{ $total ?? 0 }}) </label>
+                                                                    <label for="total_file">Total Files ({{ $total ?? 0 }}) </label>
 
                                                                 @else
-                                                                <label for="net_percentage"> File (0) </label>
+                                                                <label for="total_file"> File (0) </label>
                                                                 @endif
                                                             </b></p>
                                                             <div class="input-group mb-3">
@@ -2183,7 +2381,7 @@ label {
                                             </div>
                                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                                                 <div class="form-group">
-                                                    <label for="net_percentage">Notify Shipper</label><div class="input-group">
+                                                    <label for="notify_shipper">Notify Shipper</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-database" style="color:#28a745"></i></span>
                                                         </div>
@@ -2450,9 +2648,25 @@ label {
                             <div class="form-group">
                                 <label for="file-upload" class="col-form-label">Upload Files to send with Breakdown:</label>
                                 <input type="file" class="form-control-file" id="file-upload" name="quotation_file[]" multiple>
-                                @if ($errors->has('files'))
-                                    <div class="" style="color:red">{{ $errors->first('files') }}</div>
+                                @if ($errors->has('quotation_file'))
+                                    <div class="" style="color:red">{{ $errors->first('quotation_file') }}</div>
                                 @endif
+                            </div>
+                            
+                            <!-- Extra Note -->
+                            
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="form-group">
+    
+                                    <div class="card m-0"><label for="extra_note">Extra Note:</label>
+                                        <textarea class="summernote" name="extra_note" required placeholder="Please enter Extra Note Here">
+                                            {!! $details->extra_note !!}
+                                        </textarea>
+                                        @if ($errors->has('extra_note'))
+                                            <div class="" style="color:red">{{ $errors->first('extra_note') }}</div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
         
                             <input type="hidden" name="rfq_id" value="{{ $details->rfq_id }}">
@@ -2487,18 +2701,13 @@ label {
                                                 const supplierQuote = parseFloat($("#supplier_quote").val()) || 0;
                                                 const freightCharges = parseFloat($("#freight_charges").val()) || 0;
                                                 const localDelivery = parseFloat($("#local_delivery").val()) || 0;
-                                                const percentInterest = parseFloat($("#percent_interest").val()) || 0;
-                                                const interestRate = parseFloat($("#intrest_rate").val()) || 0;
-                                                const duration = parseFloat($("#duration").val()) || 0;
-                                                
-                                                const logisticsPercent = parseFloat($("#percent_logistics").val()) || 0;
-                                                const logisticsInterestRate = parseFloat($("#intrest_rate_logistics").val()) || 0;
-                                                const logisticsDuration = parseFloat($("#duration_logistics").val()) || 0;
-
+                                               
                                                 var clonedsupplier = document.getElementsByClassName("form-control cloned_supplier_percent");
                                                 var clonedlogistics = document.getElementsByClassName("form-control cloned_logistics_percent");
+                                                var clonedothers = document.getElementsByClassName("form-control cloned_others_percent");
                                                 var miscSupplier = document.getElementsByClassName("form-control misc_amount_supplier");
                                                 var miscLogistics = document.getElementsByClassName("form-control misc_amount_logistics");
+                                                var miscOthers = document.getElementsByClassName("form-control misc_amount_others");
 
                                                 let totalMiscSupplier = 0;
                                                 for( var s = 0; s < miscSupplier.length; s++ )
@@ -2519,28 +2728,34 @@ label {
                                                     //console.log('worked Logistic' + l);
                                                     //console.log('Total misc Logistic' + totalMiscLogistics);
                                                 };
+                                                
+                                                let totalMiscOthers = 0;
+                                                for( var o = 0; o < miscOthers.length; o++ )
+                                                {
+                                                    var oo = o+1;
+                                                    const miscAmountOthers = parseFloat($("#misc_amount_others_" + oo).val()) || 0; // Correct the selector
+                                                    totalMiscOthers += miscAmountOthers; 
+                                                };
 
-                                                //console.log('Total misc Logistic' + totalMiscLogistics);
 
-
-                                                let totalCostOfFunds = 0; // Initialize the total cost of funds
-                                                //console.log(clonedsupplier.length);
-                                                // Calculate cost of funds for the main form fields
-                                                totalCostOfFunds += ((supplierQuote + freightCharges + totalMiscSupplier) * parseFloat($("#intrest_percent").val()) / 100 * parseFloat($("#intrest_rate").val()) * parseFloat($("#duration").val())) +
-                                                ((localDelivery + totalMiscLogistics) * parseFloat($("#percent_logistics").val()) / 100 * parseFloat($("#intrest_logistics").val()) * parseFloat($("#duration_logistics").val()));
-
+                                                let totalCostOfFunds = 0;
+                                                
+                                                
+                                                
                                                 // Iterate through the cloned supplier rows and calculate cost of funds for each
+                                                
+                                                
                                                 for( var i = 0; i < clonedsupplier.length; i++ )
                                                 {
                                                     var ii = i+1;
                                                     const interestRatesq = parseFloat($("#intrest_rate_" + ii).val()) || 0; // Correct the selector
                                                     const durationsq = parseFloat($("#duration_" + ii).val()) || 0; // Correct the selector
                                                     const percentInterestsq = parseFloat($("#intrest_percent_" + ii).val()) || 0; // Correct the selector
-                                                    totalCostOfFunds += ((supplierQuote + freightCharges + totalMiscSupplier) * percentInterestsq / 100 * interestRatesq * durationsq); // Add the missing multiplication
-                                                    //console.log('worked' + i);
+                                                    totalCostOfFunds += ((supplierQuote + freightCharges + totalMiscSupplier) * percentInterestsq / 100 * interestRatesq * durationsq); 
                                                 };
                                                 
-                                                // Iterate through the cloned logistics rows and calculate cost of funds for each
+                                                
+                                                
                                                 for( var j = 0; j < clonedlogistics.length; j++ )
                                                 {
                                                     
@@ -2551,6 +2766,18 @@ label {
 
                                                     totalCostOfFunds += ((localDelivery + totalMiscLogistics) * percentLogistics / 100 * interestRatelg * durationlg);
                                                 };
+                                                
+                                                
+                                                for( var q = 0; q < clonedothers.length; q++ )
+                                                {
+                                                    
+                                                    var qq = q+1;
+                                                    const interestRateot = parseFloat($("#intrest_others_" + qq).val()) || 0;
+                                                    const durationot = parseFloat($("#duration_others_" + qq).val()) || 0;
+                                                    const percentot = parseFloat($("#percent_others_" + qq).val()) || 0;
+                                                    
+                                                    totalCostOfFunds += (totalMiscOthers) * (percentot / 100) * interestRateot * durationot;
+                                                };
 
                                                 // Update the cost of funds field
                                                 $("#cost_of_funds").val(totalCostOfFunds.toFixed(2)) || 0;
@@ -2558,12 +2785,12 @@ label {
                                             }
 
                                             // Add event listeners to cloned rows
-                                            $(document).on("input", "[id^='misc_amount_supplier_'], [id^='misc_amount_logistics_'], [id^='intrest_percent'], [id^='percent_logistics'], [id^='intrest_rate'], [id^='intrest_logistics'], [id^='duration'], [id^='duration_logistics']", function() {
+                                            $(document).on("input", "[id^='misc_amount_supplier_'], [id^='misc_amount_logistics_'], [id^='misc_amount_others_'], [id^='intrest_percent'], [id^='percent_logistics'], [id^='intrest_rate'], [id^='intrest_logistics'], [id^='intrest_others'], [id^='percent_others'], [id^='duration'], [id^='duration_others'], [id^='duration_logistics']", function() {
                                                 calculateCostOfFunds();
                                             });
 
                                             // Add event listeners to cloned rows
-                                            $(document).on("input", "[id^='intrest_percent_'], [id^='percent_logistics_'], [id^='intrest_rate_'], [id^='intrest_logistics_'], [id^='duration_'], [id^='duration_logistics_'], #freight_charges", function() {
+                                            $(document).on("input", "[id^='intrest_percent_'], [id^='percent_logistics_'], [id^='intrest_others_'], [id^='percent_others_'], [id^='intrest_rate_'], [id^='intrest_logistics_'], [id^='duration_'], [id^='duration_logistics_'], [id^='duration_others_'], #freight_charges", function() {
                                                 calculateCostOfFunds();
                                             });
 
@@ -2586,85 +2813,8 @@ label {
                                                 clearingFields.querySelector('input').addEventListener('input', calculateCostOfFunds);
                                                 truckingFields.querySelector('input').addEventListener('input', calculateCostOfFunds);
 
-
-                                            function calculateCostOfFunds() {
-                                                if ($("#autoCalculate").is(":checked")) {
-                                                // Get values from the main form fields
-                                                const supplierQuote = parseFloat($("#supplier_quote").val()) || 0;
-                                                const freightCharges = parseFloat($("#freight_charges").val()) || 0;
-                                                const localDelivery = parseFloat($("#local_delivery").val()) || 0;
-                                                const percentInterest = parseFloat($("#percent_interest").val()) || 0;
-                                                const interestRate = parseFloat($("#intrest_rate").val()) || 0;
-                                                const duration = parseFloat($("#duration").val()) || 0;
-                                                
-                                                const logisticsPercent = parseFloat($("#percent_logistics").val()) || 0;
-                                                const logisticsInterestRate = parseFloat($("#intrest_rate_logistics").val()) || 0;
-                                                const logisticsDuration = parseFloat($("#duration_logistics").val()) || 0;
-
-                                                var clonedsupplier = document.getElementsByClassName("form-control cloned_supplier_percent");
-                                                var clonedlogistics = document.getElementsByClassName("form-control cloned_logistics_percent");
-                                                var miscSupplier = document.getElementsByClassName("form-control misc_amount_supplier");
-                                                var miscLogistics = document.getElementsByClassName("form-control misc_amount_logistics");
-
-                                                let totalMiscSupplier = 0;
-                                                for( var s = 0; s < miscSupplier.length; s++ )
-                                                {
-                                                    var ss = s+1;
-                                                    const miscAmountSupplier = parseFloat($("#misc_amount_supplier_" + ss).val()) || 0; // Correct the selector
-                                                    totalMiscSupplier += miscAmountSupplier; // Add the missing multiplication
-                                                    //console.log('worked Supplier' + s);
-                                                    //console.log('total Misc Supplier' + totalMiscSupplier);
-                                                };
-                                                
-                                                let totalMiscLogistics = 0;
-                                                for( var l = 0; l < miscLogistics.length; l++ )
-                                                {
-                                                    var ll = l+1;
-                                                    const miscAmountLogistics = parseFloat($("#misc_amount_logistics_" + ll).val()) || 0; // Correct the selector
-                                                    totalMiscLogistics += miscAmountLogistics; // Add the missing multiplication
-                                                    //console.log('worked Logistic' + l);
-                                                    //console.log('Total misc Logistic' + totalMiscLogistics);
-                                                };
-
-                                                //console.log('Total misc Logistic' + totalMiscLogistics);
-
-
-                                                let totalCostOfFunds = 0; // Initialize the total cost of funds
-                                                //console.log(clonedsupplier.length);
-                                                // Calculate cost of funds for the main form fields
-                                                totalCostOfFunds += ((supplierQuote + freightCharges + totalMiscSupplier) * parseFloat($("#intrest_percent").val()) / 100 * parseFloat($("#intrest_rate").val()) * parseFloat($("#duration").val())) +
-                                                ((localDelivery + totalMiscLogistics) * parseFloat($("#percent_logistics").val()) / 100 * parseFloat($("#intrest_logistics").val()) * parseFloat($("#duration_logistics").val()));
-
-                                                // Iterate through the cloned supplier rows and calculate cost of funds for each
-                                                for( var i = 0; i < clonedsupplier.length; i++ )
-                                                {
-                                                    var ii = i+1;
-                                                    const interestRatesq = parseFloat($("#intrest_rate_" + ii).val()) || 0; // Correct the selector
-                                                    const durationsq = parseFloat($("#duration_" + ii).val()) || 0; // Correct the selector
-                                                    const percentInterestsq = parseFloat($("#intrest_percent_" + ii).val()) || 0; // Correct the selector
-                                                    totalCostOfFunds += ((supplierQuote + freightCharges + totalMiscSupplier) * percentInterestsq / 100 * interestRatesq * durationsq); // Add the missing multiplication
-                                                    //console.log('worked' + i);
-                                                };
-                                                
-                                                // Iterate through the cloned logistics rows and calculate cost of funds for each
-                                                for( var j = 0; j < clonedlogistics.length; j++ )
-                                                {
-                                                    
-                                                    var jj = j+1;
-                                                    const interestRatelg = parseFloat($("#intrest_logistics_" + jj).val()) || 0;
-                                                    const durationlg = parseFloat($("#duration_logistics_" + jj).val()) || 0;
-                                                    const percentLogistics = parseFloat($("#percent_logistics_" + jj).val()) || 0;
-
-                                                    totalCostOfFunds += ((localDelivery + totalMiscLogistics) * percentLogistics / 100 * interestRatelg * durationlg);
-                                                };
-
-                                                // Update the cost of funds field
-                                                $("#cost_of_funds").val(totalCostOfFunds.toFixed(2)) || 0;
-                                            }
-                                            }
-
                                             // Add event listeners to cloned rows
-                                            $(document).on("input", "[id^='misc_amount_supplier_'], [id^='misc_amount_logistics_'], [id^='intrest_percent'], [id^='percent_logistics'], [id^='intrest_rate'], [id^='intrest_logistics'], [id^='duration'], [id^='duration_logistics']", function() {
+                                            $(document).on("input", "[id^='misc_amount_supplier_'], [id^='misc_amount_logistics_'], [id^='misc_amount_others_'], [id^='intrest_percent'], [id^='percent_logistics'], [id^='intrest_rate'], [id^='intrest_logistics'], [id^='duration'], [id^='duration_logistics']", function() {
                                                 calculateCostOfFunds();
                                             });
 
@@ -2693,6 +2843,69 @@ label {
                                                 truckingFields.querySelector('input').addEventListener('input', calculateCostOfFunds);
 
                                             let timeout;
+                                            
+                                            
+                                            
+                                            function calculateTotalQuoteN() {
+                                            if ($("#autoCalculate").is(":checked")) {
+                                                clearTimeout(timeout); // Clear any previous timeouts
+                                                
+                                                const supplierQuote = parseFloat($("#supplier_quote").val()) || 0;
+                                                const desired_percent_Margin = parseFloat($("#net_percentage_margin").val()) || 0;
+                                                let markup = 0;
+                                                
+                                                // Calculate Total_Quote using markup until the desired net percentage margin is achieved
+                                                while (true) {
+                                                    markup += 0.0001;
+                                                    const Total_Quote = (markup * supplierQuote) + supplierQuote;
+                                                    
+                                                    // console.log('mark up: ' + markup);
+                                                    // console.log('Total Quote predicted: ' + Total_Quote);
+                                                    
+                                                    // Calculate the percent net margin using another function
+                                                    let x = calculateFundsTransferChargeN(Total_Quote);
+                                                    //console.log('percent Net: ' + x);
+                                                    
+                                                if (Math.abs(x - desired_percent_Margin) < 0.001) {
+                                        $("#total_quote").val(Total_Quote.toFixed(2));
+                                        $("#mark_up").val(markup); calculateFundsTransferCharge();
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        
+                                        
+                                        function calculateTotalQuoteM() {
+                                            if ($("#autoCalculate").is(":checked")) {
+                                                clearTimeout(timeout); // Clear any previous timeouts
+                                                
+                                                const supplierQuote = parseFloat($("#supplier_quote").val()) || 0;
+                                                const desired_net_Margin = parseFloat($("#net_percentage").val()) || 0;
+                                                let markup = 0;
+                                                
+                                                // Calculate Total_Quote using markup until the desired net percentage margin is achieved
+                                    while (true) {
+                                        markup += 0.0001;
+                                        const Total_Quote = (markup * supplierQuote) + supplierQuote;
+                                        
+                                        //console.log('mark up: ' + markup);
+                                        //console.log('Total Quote predicted: ' + Total_Quote);
+                                                    
+                                        // Calculate the percent net margin using another function
+                                        let x = calculateFundsTransferChargeM(Total_Quote);
+                                        //console.log('Net Margin: ' + x);
+                                                    
+                                    if (Math.abs(x - desired_net_Margin) <= 1) {
+                                        $("#total_quote").val(Total_Quote.toFixed(2));
+                                        $("#mark_up").val(markup);
+                                                        calculateFundsTransferCharge();
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                            
 
                                             function calculateTotalQuote() {
                                                 if ($("#autoCalculate").is(":checked")) {
@@ -2713,83 +2926,226 @@ label {
                                             }
 
                                             // Add event listener to trigger the calculation for #percent_margin
-                                            $(document).on("input", "#percent_margin", function() {
+                $(document).on("input", "#percent_margin", function() {
                                                 calculateTotalQuote();
                                             });
+                                            
+                $(document).on("input", "#net_percentage_margin", function() {
+                    // Delay the start of calculateTotalQuoteN by 2 seconds
+                    setTimeout(function() {
+                        calculateTotalQuoteN();
+                    }, 500); // 2000 milliseconds = 2 seconds
+                });
+                
+                $(document).on("input", "#net_percentage", function() {
+                    // Delay the start of calculateTotalQuoteN by 2 seconds
+                    setTimeout(function() {
+                        calculateTotalQuoteM();
+                    }, 3500); // 2000 milliseconds = 2 seconds
+                });
 
-                                            function calculateFundsTransferCharge() {
-                                                if ($("#autoCalculate").is(":checked")) {
-                                                
-                                                clearTimeout(timeout); // Clear any previous timeouts
+        function calculateFundsTransferCharge() {
+            if ($("#autoCalculate").is(":checked")) {
+            
+            clearTimeout(timeout); // Clear any previous timeouts
 
-                                                timeout = setTimeout(function() {
-                                                    const supplierQuote = parseFloat($("#supplier_quote").val()) || 0;
-                                                    const freightCharges = parseFloat($("#freight_charges").val()) || 0;
-                                                    const otherCharges = parseFloat($("#other_cost").val()) || 0;
-                                                    const localDelivery = parseFloat($("#local_delivery").val()) || 0;
-                                                    const offshoreCharge = parseFloat($("#offshore_charges").val()) || 0;
-                                                    const SwiftCharge = parseFloat($("#swift_charges").val()) || 0;
-                                                    const TotalQuote = parseFloat($("#total_quote").val()) || 0;
-                                                    const percent_Margin = parseFloat($("#percent_margin").val()) || 0;
-                                                    const Costoffunds = parseFloat($("#cost_of_funds").val()) || 0;
-                                                    const MarkUp = parseFloat($("#mark_up").val()) || 0;
+            timeout = setTimeout(function() {
+                const supplierQuote = parseFloat($("#supplier_quote").val()) || 0;
+                const freightCharges = parseFloat($("#freight_charges").val()) || 0;
+                const otherCharges = parseFloat($("#other_cost").val()) || 0;
+                const localDelivery = parseFloat($("#local_delivery").val()) || 0;
+                const offshoreCharge = parseFloat($("#offshore_charges").val()) || 0;
+                const SwiftCharge = parseFloat($("#swift_charges").val()) || 0;
+                const TotalQuote = parseFloat($("#total_quote").val()) || 0;
+                const percent_Margin = parseFloat($("#percent_margin").val()) || 0;
+                const Costoffunds = parseFloat($("#cost_of_funds").val()) || 0;
+                const MarkUp = parseFloat($("#mark_up").val()) || 0;
 
-                                                    var miscSupplier = document.getElementsByClassName("form-control misc_amount_supplier");
-                                                    var miscLogistics = document.getElementsByClassName("form-control misc_amount_logistics");
+                var miscSupplier = document.getElementsByClassName("form-control misc_amount_supplier");
+                var miscLogistics = document.getElementsByClassName("form-control misc_amount_logistics");
+                var miscOthers = document.getElementsByClassName("form-control misc_amount_others");
 
-                                                    let totalMiscSupplier = 0;
-                                                    for( var s = 0; s < miscSupplier.length; s++ )
-                                                    {
-                                                        var ss = s+1;
-                                                        const miscAmountSupplier = parseFloat($("#misc_amount_supplier_" + ss).val()) || 0; // Correct the selector
-                                                        totalMiscSupplier += miscAmountSupplier; // Add the missing multiplication
-                                                        //console.log('worked Supplier' + s);
-                                                        //console.log('total Misc Supplier' + totalMiscSupplier);
-                                                    };
+                let totalMiscSupplier = 0;
+                for( var s = 0; s < miscSupplier.length; s++ )
+                {
+                    var ss = s+1;
+                    const miscAmountSupplier = parseFloat($("#misc_amount_supplier_" + ss).val()) || 0; // Correct the selector
+                    totalMiscSupplier += miscAmountSupplier; // Add the missing multiplication
+                    //console.log('worked Supplier' + s);
+                    //console.log('total Misc Supplier' + totalMiscSupplier);
+                };
+                
+                let totalMiscLogistics = 0;
+                for( var l = 0; l < miscLogistics.length; l++ )
+                {
+                    var ll = l+1;
+                    const miscAmountLogistics = parseFloat($("#misc_amount_logistics_" + ll).val()) || 0; // Correct the selector
+                    totalMiscLogistics += miscAmountLogistics; 
+                };
+                
+                
+                let totalMiscOthers = 0;
+                for( var o = 0; o < miscOthers.length; o++ )
+                {
+                    var oo = o+1;
+                    const miscAmountOthers = parseFloat($("#misc_amount_others_" + ll).val()) || 0; // Correct the selector
+                    totalMiscOthers += miscAmountOthers;
+                };
                                                     
-                                                    let totalMiscLogistics = 0;
-                                                    for( var l = 0; l < miscLogistics.length; l++ )
-                                                    {
-                                                        var ll = l+1;
-                                                        const miscAmountLogistics = parseFloat($("#misc_amount_logistics_" + ll).val()) || 0; // Correct the selector
-                                                        totalMiscLogistics += miscAmountLogistics; // Add the missing multiplication
-                                                        //console.log('worked Logistic' + l);
-                                                        //console.log('Total misc Logistic' + totalMiscLogistics);
-                                                    };
+                                                    
                 var Ncd_others_Checked = document.getElementById('ncd_others').checked;
 
-                                                    const subTotalCost = supplierQuote + freightCharges + totalMiscSupplier + otherCharges + localDelivery + totalMiscLogistics;
-                                                    const whtcnd = Ncd_others_Checked ? TotalQuote : TotalQuote - subTotalCost;
-                                                    const fundsTransferCharge = 0.005 * (subTotalCost);
-                                                    const vatcharge = 0.075 * fundsTransferCharge;
-                                                    const FundTransfer = fundsTransferCharge + vatcharge + offshoreCharge + SwiftCharge;
-                                                    const Wht = 0.05 * (whtcnd);
-    var hasNcdChecked = document.getElementById('has_ncd').checked;
-                                                    const Ncd = hasNcdChecked ? 0.01 * (whtcnd) : 0;
-                                                    const TotalDDP = subTotalCost + FundTransfer + Costoffunds;
-                                                    const NetMargin = TotalQuote - (TotalDDP + Wht + Ncd);
-                                                    const PercentNetMargin = (NetMargin/TotalQuote) * 100;
-                                                    const GrossMargin = TotalQuote - supplierQuote;
-                                                    const PercentGrossMargin = (GrossMargin / supplierQuote) * 100;
-                                                    const Total_Quote = ((MarkUp) * supplierQuote) + supplierQuote;
+                const subTotalCost = supplierQuote + freightCharges + totalMiscSupplier + otherCharges + localDelivery + totalMiscLogistics + totalMiscOthers;
+                const whtcnd = Ncd_others_Checked ? TotalQuote : TotalQuote - subTotalCost;
+                const fundsTransferCharge = 0.005 * (subTotalCost);
+                const vatcharge = 0.075 * fundsTransferCharge;
+                const FundTransfer = fundsTransferCharge + vatcharge + offshoreCharge + SwiftCharge;
+                const Wht = 0.05 * (whtcnd);
+                var hasNcdChecked = document.getElementById('has_ncd').checked;
+                const Ncd = hasNcdChecked ? 0.01 * (whtcnd) : 0;
+                const TotalDDP = subTotalCost + FundTransfer + Costoffunds;
+                const NetMargin = TotalQuote - (TotalDDP + Wht + Ncd);
+                const PercentNetMargin = (NetMargin/TotalQuote) * 100;
+                const GrossMargin = TotalQuote - supplierQuote;
+                const PercentGrossMargin = (GrossMargin / supplierQuote) * 100;
+                const Total_Quote = ((MarkUp) * supplierQuote) + supplierQuote;
 
-                                                    $("#fund_transfer_charge").val(fundsTransferCharge.toFixed(2));
-                                                    $("#vat_transfer_charge").val(vatcharge.toFixed(2));
-                                                    $("#fund_transfer").val(FundTransfer.toFixed(2));
-                                                    $("#wht").val(Wht.toFixed(2));
-                                                    $("#ncd").val(Ncd.toFixed(2));
-                                                    $("#net_percentage_margin").val(PercentNetMargin.toFixed(2));
-                                                    $("#net_percentage").val(NetMargin.toFixed(2));
-                                                    $("#net_value").val(GrossMargin.toFixed(2));
-                                                    $("#percent_margin").val(PercentGrossMargin.toFixed(2));
-                                                    $("#total_quote").val(Total_Quote.toFixed(2));
-                                                    $("#percent_margin").val(PercentGrossMargin.toFixed(2));
-                                                }, 500); // Delay for 1 second (1000 milliseconds)
-                                            }
-                                            }
+                $("#fund_transfer_charge").val(fundsTransferCharge.toFixed(2));
+                $("#vat_transfer_charge").val(vatcharge.toFixed(2));
+                $("#fund_transfer").val(FundTransfer.toFixed(2));
+                $("#wht").val(Wht.toFixed(2));
+                $("#ncd").val(Ncd.toFixed(2));
+                $("#net_percentage_margin").val(PercentNetMargin.toFixed(2));
+                $("#net_percentage").val(NetMargin.toFixed(2));
+                $("#net_value").val(GrossMargin.toFixed(2));
+                $("#percent_margin").val(PercentGrossMargin.toFixed(2));
+                $("#total_quote").val(Total_Quote.toFixed(2));
+                $("#percent_margin").val(PercentGrossMargin.toFixed(2));
+            }, 500); // Delay for 1 second (1000 milliseconds)
+        }
+        }
+
+
+
+
+                function calculateFundsTransferChargeN(Total_quotee) {
+            const supplierQuote = parseFloat($("#supplier_quote").val()) || 0;
+            const freightCharges = parseFloat($("#freight_charges").val()) || 0;
+            const otherCharges = parseFloat($("#other_cost").val()) || 0;
+            const localDelivery = parseFloat($("#local_delivery").val()) || 0;
+            const offshoreCharge = parseFloat($("#offshore_charges").val()) || 0;
+            const SwiftCharge = parseFloat($("#swift_charges").val()) || 0;
+            const percent_Margin = parseFloat($("#percent_margin").val()) || 0;
+            const Costoffunds = parseFloat($("#cost_of_funds").val()) || 0;
+            const MarkUp = parseFloat($("#mark_up").val()) || 0;
+        
+            var miscSupplier = document.getElementsByClassName("form-control misc_amount_supplier");
+            var miscLogistics = document.getElementsByClassName("form-control misc_amount_logistics");
+            var miscOthers = document.getElementsByClassName("form-control misc_amount_others");
+        
+            let totalMiscSupplier = 0;
+            for( var s = 0; s < miscSupplier.length; s++ ) {
+                var ss = s+1;
+                const miscAmountSupplier = parseFloat($("#misc_amount_supplier_" + ss).val()) || 0; // Correct the selector
+                totalMiscSupplier += miscAmountSupplier; // Add the missing multiplication
+            };
+            
+            let totalMiscLogistics = 0;
+            for( var l = 0; l < miscLogistics.length; l++ ) {
+                var ll = l+1;
+                const miscAmountLogistics = parseFloat($("#misc_amount_logistics_" + ll).val()) || 0; // Correct the selector
+                totalMiscLogistics += miscAmountLogistics; // Add the missing multiplication
+            };
+            
+            let totalMiscOthers = 0;
+                for( var o = 0; o < miscOthers.length; o++ )
+                {
+                    var oo = o+1;
+                    const miscAmountOthers = parseFloat($("#misc_amount_others_" + ll).val()) || 0; // Correct the selector
+                    totalMiscOthers += miscAmountOthers;
+                };
+            
+            var Ncd_others_Checked = document.getElementById('ncd_others').checked;
+        
+            const subTotalCost = supplierQuote + freightCharges + totalMiscSupplier + otherCharges + localDelivery + totalMiscLogistics + totalMiscOthers;
+            const whtcnd = Ncd_others_Checked ? Total_quotee : Total_quotee - subTotalCost;
+            const fundsTransferCharge = 0.005 * (subTotalCost);
+            const vatcharge = 0.075 * fundsTransferCharge;
+            const FundTransfer = fundsTransferCharge + vatcharge + offshoreCharge + SwiftCharge;
+            const Wht = 0.05 * (whtcnd);
+            var hasNcdChecked = document.getElementById('has_ncd').checked;
+            const Ncd = hasNcdChecked ? 0.01 * (whtcnd) : 0;
+            const TotalDDP = subTotalCost + FundTransfer + Costoffunds;
+            const NetMargin = Total_quotee - (TotalDDP + Wht + Ncd);
+            const PercentNetMargin = (NetMargin/Total_quotee) * 100;
+            const GrossMargin = Total_quotee - supplierQuote;
+            const PercentGrossMargin = (GrossMargin / supplierQuote) * 100;
+        
+            //console.log('percent Net Margin: '+PercentNetMargin);
+            return PercentNetMargin.toFixed(2);
+        }
+        
+        function calculateFundsTransferChargeM(Total_quotee) {
+            const supplierQuote = parseFloat($("#supplier_quote").val()) || 0;
+            const freightCharges = parseFloat($("#freight_charges").val()) || 0;
+            const otherCharges = parseFloat($("#other_cost").val()) || 0;
+            const localDelivery = parseFloat($("#local_delivery").val()) || 0;
+            const offshoreCharge = parseFloat($("#offshore_charges").val()) || 0;
+            const SwiftCharge = parseFloat($("#swift_charges").val()) || 0;
+            const percent_Margin = parseFloat($("#percent_margin").val()) || 0;
+            const Costoffunds = parseFloat($("#cost_of_funds").val()) || 0;
+            const MarkUp = parseFloat($("#mark_up").val()) || 0;
+        
+            var miscSupplier = document.getElementsByClassName("form-control misc_amount_supplier");
+            var miscLogistics = document.getElementsByClassName("form-control misc_amount_logistics");
+            var miscOthers = document.getElementsByClassName("form-control misc_amount_others");
+        
+            let totalMiscSupplier = 0;
+            for( var s = 0; s < miscSupplier.length; s++ ) {
+                var ss = s+1;
+                const miscAmountSupplier = parseFloat($("#misc_amount_supplier_" + ss).val()) || 0; // Correct the selector
+                totalMiscSupplier += miscAmountSupplier; // Add the missing multiplication
+            };
+            
+            let totalMiscLogistics = 0;
+            for( var l = 0; l < miscLogistics.length; l++ ) {
+                var ll = l+1;
+                const miscAmountLogistics = parseFloat($("#misc_amount_logistics_" + ll).val()) || 0; // Correct the selector
+                totalMiscLogistics += miscAmountLogistics; // Add the missing multiplication
+            };
+            
+            let totalMiscOthers = 0;
+                for( var o = 0; o < miscOthers.length; o++ )
+                {
+                    var oo = o+1;
+                    const miscAmountOthers = parseFloat($("#misc_amount_others_" + ll).val()) || 0; // Correct the selector
+                    totalMiscOthers += miscAmountOthers;
+                };
+            
+            var Ncd_others_Checked = document.getElementById('ncd_others').checked;
+        
+            const subTotalCost = supplierQuote + freightCharges + totalMiscSupplier + otherCharges + localDelivery + totalMiscLogistics + totalMiscOthers;
+            const whtcnd = Ncd_others_Checked ? Total_quotee : Total_quotee - subTotalCost;
+            const fundsTransferCharge = 0.005 * (subTotalCost);
+            const vatcharge = 0.075 * fundsTransferCharge;
+            const FundTransfer = fundsTransferCharge + vatcharge + offshoreCharge + SwiftCharge;
+            const Wht = 0.05 * (whtcnd);
+            var hasNcdChecked = document.getElementById('has_ncd').checked;
+            const Ncd = hasNcdChecked ? 0.01 * (whtcnd) : 0;
+            const TotalDDP = subTotalCost + FundTransfer + Costoffunds;
+            const NetMargin = Total_quotee - (TotalDDP + Wht + Ncd);
+            const PercentNetMargin = (NetMargin/Total_quotee) * 100;
+            const GrossMargin = Total_quotee - supplierQuote;
+            const PercentGrossMargin = (GrossMargin / supplierQuote) * 100;
+        
+            //console.log('percent Net Margin: '+PercentNetMargin);
+            return NetMargin.toFixed(2);
+        }
+                                            
+                                            
 
                                             // Add event listeners to trigger the calculation
-                                            $(document).on("input", "#lumpsum, #mark_up, #total_quote, #soncap, #trucking, #clearing, #customs, #supplier_quote, #freight_charges, #other_cost, #percent_margix   n, #local_delivery, #offshore_charges, #swift_charges,[id^='intrest_percent'], [id^='percent_logistics'], [id^='intrest_rate'], [id^='intrest_logistics'], [id^='duration'], [id^='duration_logistics'], [id^='misc_amount_supplier_'], [id^='misc_amount_logistics_']", function() {
+                                            $(document).on("input", "#lumpsum, #mark_up, #total_quote, #soncap, #trucking, #clearing, #customs, #supplier_quote, #freight_charges, #other_cost, #percent_margix   n, #local_delivery, #offshore_charges, #swift_charges,[id^='intrest_percent'], [id^='percent_logistics'],[id^='percent_others'], [id^='intrest_rate'], [id^='intrest_logistics'], [id^='intrest_others'], [id^='duration'], [id^='duration_logistics'], [id^='duration_others'], [id^='misc_amount_supplier_'], [id^='misc_amount_logistics_'], [id^='misc_amount_others_']", function() {
                                                 calculateFundsTransferCharge();
                                             });
 

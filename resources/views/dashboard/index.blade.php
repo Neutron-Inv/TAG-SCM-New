@@ -223,7 +223,7 @@
                         <small class="d-block mb-1 text-muted">Conversion Overview</small>
                         <p class="card-text text-success">{{date('Y')}}</p>
                       </div>
-                      <h3 class="card-title mb-1">${{ formatNumber(TotalrfqQuote()) }}
+                      <div style="white-space: nowrap !important;">
                       @php
                       function formatNumber($value) {
                           if ($value < 1000) {
@@ -234,14 +234,22 @@
                               return number_format($value / 1000000, 1) . 'm';
                           }
                       }
-                      @endphp</h3>
+                      
+                      @endphp 
+                         
+                      @if(Auth::user()->hasRole('SuperAdmin'))
+                      <h3 class="card-title mb-1">${{ formatNumber(TotalrfqQuoteUSD()) }} | ₦{{ formatNumber(TotalrfqQuoteNGN()) }}</h3>
+                      @else
+                      <h3 class="card-title mb-1">${{ formatNumber(TotalrfqQuoteUSDEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }} | ₦{{ formatNumber(TotalrfqQuoteNGNEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }}</h3>
+                      @endif
+                      </div>
                     </div>
                     <div class="card-body">
                       <div class="row">
                         <div class="col-4">
                           <div class="d-flex gap-2 align-items-center mb-2">
                             <span class="badge bg-label-info p-1 rounded"
-                              ><i class="ti ti-shopping-cart ti-xs"></i
+                              ><i class="ti ti-clipboard ti-xs"></i
                             ></span>
                             <p class="mb-0">RFQs</p>
                           </div>
@@ -372,10 +380,17 @@
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div class="me-2">
                               <h6 class="mb-0">Top Performer</h6>
-                              <small class="text-muted">Admin Admin</small>
+                              @php
+                              if(Auth::user()->hasRole('SuperAdmin')){
+                              $company_idtp = '2';
+                              }else{
+                              $company_idtp = json_decode(empDet(Auth::user()->email))[0]->company_id;
+                              }
+                              @endphp
+                              <small class="text-muted">{{ TopPerformer($company_idtp) }}</small>
                             </div>
                             <div class="user-progress">
-                              <small>4</small><i class="ti ti-chevron-up text-success ms-3"></i>
+                              <small>{{ TopPerformerCount($company_idtp) }}</small><i class="ti ti-chevron-up text-success ms-3"></i>
                               <small class="text-muted">POs</small>
                             </div>
                           </div>
@@ -455,43 +470,13 @@
                       <div class="nav-align-top">
                         <ul class="nav nav-tabs nav-fill" style="width:100% !important; margin-left:1% !important; " role="tablist">
                           <li class="nav-item">
-                            <button
-                              type="button"
-                              class="nav-link active"
-                              role="tab"
-                              data-bs-toggle="tab"
-                              data-bs-target="#navs-justified-new"
-                              aria-controls="navs-justified-new"
-                              aria-selected="true"
-                            >
-                              New
-                            </button>
+                            <button type="button" class="nav-link active" data-toggle="tab" data-target="#navs-justified-new" aria-selected="true">New</button>
                           </li>
                           <li class="nav-item">
-                            <button
-                              type="button"
-                              class="nav-link"
-                              role="tab"
-                              data-bs-toggle="tab"
-                              data-bs-target="#navs-justified-link-preparing"
-                              aria-controls="navs-justified-link-preparing"
-                              aria-selected="false"
-                            >
-                              Awaiting Approval
-                            </button>
+                            <button type="button" class="nav-link" data-toggle="tab" data-target="#navs-justified-link-preparing" aria-selected="false">Awaiting Approval</button>
                           </li>
                           <li class="nav-item">
-                            <button
-                              type="button"
-                              class="nav-link"
-                              role="tab"
-                              data-bs-toggle="tab"
-                              data-bs-target="#navs-justified-link-shipping"
-                              aria-controls="navs-justified-link-shipping"
-                              aria-selected="false"
-                            >
-                              PO Issued
-                            </button>
+                            <button type="button" class="nav-link" data-toggle="tab" data-target="#navs-justified-link-shipping" aria-selected="false">PO Issued</button>
                           </li>
                         </ul>
                         <div class="tab-content pb-0">
@@ -509,7 +494,7 @@
                                 </span>
                                 <div class="timeline-event ps-0 pb-0">
                                   <div class="timeline-header">
-                                    <small class="text-success text-uppercase fw-semibold">{{$newrfq->refrence_no}} | {{$newrfq->rfq_date}}</small>
+                                    <small class="text-success text-uppercase fw-semibold"><a href="{{ route('rfq.edit', $newrfq->refrence_no) }}">{{$newrfq->refrence_no}} </a>| {{$newrfq->rfq_date}}</small>
                                   </div>
                                   <h6 class="mb-0">{{clits($newrfq->client_id)->client_name}}</h6>
                                   <p class="text-muted mb-0 text-nowrap">{{ fbuyers($newrfq->contact_id)->first_name ?? '' }} {{fbuyers($newrfq->contact_id)->last_name ?? '' }}</p>
@@ -543,8 +528,8 @@
                                 </span>
                                 <div class="timeline-event ps-0 pb-0">
                                   <div class="timeline-header">
-                                    <small class="text-success text-uppercase fw-semibold">{{$awaiting->refrence_no}} | {{$awaiting->rfq_date}}</small>
-                                  </div>
+                                    <small class="text-success text-uppercase fw-semibold"><a href="{{ route('rfq.edit', $awaiting->refrence_no) }}">{{$awaiting->refrence_no}}</a> | {{$awaiting->rfq_date}}</small>
+                                  </div> 
                                   <h6 class="mb-0">{{clits($awaiting->client_id)->client_name}}</h6>
                                   <p class="text-muted mb-0 text-nowrap">{{ fbuyers($awaiting->contact_id)->first_name ?? '' }} {{fbuyers($awaiting->contact_id)->last_name ?? '' }}</p>
                                 </div>
@@ -576,7 +561,7 @@
                                 </span>
                                 <div class="timeline-event ps-0 pb-0">
                                   <div class="timeline-header">
-                                    <small class="text-success text-uppercase fw-semibold">{{$issued->refrence_no}} | {{$issued->rfq_date}}</small>
+                                    <small class="text-success text-uppercase fw-semibold"><a href="{{ route('rfq.edit', $issued->refrence_no) }}">{{$issued->refrence_no}}</a> | {{$issued->rfq_date}}</small>
                                   </div>
                                   <h6 class="mb-0">{{clits($issued->client_id)->client_name}}</h6>
                                   <p class="text-muted mb-0 text-nowrap">{{ fbuyers($issued->contact_id)->first_name ?? '' }} {{fbuyers($issued->contact_id)->last_name ?? '' }}</p>

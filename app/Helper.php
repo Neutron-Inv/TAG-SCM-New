@@ -128,11 +128,62 @@
         ->count();
     }
 
-    function TotalrfqQuote()
+    function TotalrfqQuoteUSD()
     {
     return \DB::table('client_rfqs')
         ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'USD')
         ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteNGN()
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'NGN')
+        ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteUSDEMP($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'USD')
+        ->where('company_id', $company_id)
+        ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteNGNEMP($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'NGN')
+        ->where('company_id', $company_id)
+        ->sum('total_quote');
+    }
+    
+    function TopPerformer($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->join('employers', 'client_rfqs.employee_id', '=', 'employers.employee_id')
+        ->whereYear('client_rfqs.rfq_date', date('Y'))
+        ->where('client_rfqs.company_id', $company_id)
+        ->where('client_rfqs.status', 'PO Issued')
+        ->groupBy('client_rfqs.employee_id', 'employers.full_name')
+        ->orderByRaw('COUNT(*) DESC')
+        ->value('employers.full_name');
+    }
+    
+    function TopPerformerCount($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('company_id', $company_id)
+        ->where('status', 'PO Issued')
+        ->groupBy('employee_id')
+        ->selectRaw('COUNT(*) as count')
+        ->orderByRaw('COUNT(*) DESC')
+        ->value('count');
     }
 
     function TotalpoQuoteForeign()

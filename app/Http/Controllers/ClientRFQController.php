@@ -539,7 +539,7 @@ class ClientRFQController extends Controller
 
         $rec_mail = $request->input("rec_email");
         $quotation_recipient = $request->input("quotation_recipient");
-        
+        $extra_note = $request->input('extra_note');
 
         
         $file = $request->quotation_file;
@@ -561,7 +561,11 @@ class ClientRFQController extends Controller
                 
             $cli_title = clis($rfq->client_id);
             $resultt = json_decode($cli_title, true);
+            $client_name = $resultt[0]['client_name'];
+            $assigned_details = empDetails($rfq->employee_id);
+            $assigned = $assigned_details->full_name;
             $pdfname = "TAG Energy Quotation TE-" . $resultt[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no) . ", " . $rfq->description;
+            $rfqcode = "TE-". $resultt[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
             
             // Replace "/" with "-"
             $pdfname = str_replace("/", "-", $pdfname);
@@ -612,10 +616,14 @@ class ClientRFQController extends Controller
             foreach($line_items as $line){
                 $tq = ($line->quantity * $line->unit_cost) + $tq;
             }
-            $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tq' => $tq, 'shi' => $shi, 'shiname' => $shiname, 'tempFilePath' => $tempFilePath, 'tempFileDirs' => $tempFileDirs, 'fileNames' => $fileNames];
+            $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tq' => $tq, 'shi' => $shi, 'shiname' => $shiname, 'tempFilePath' => $tempFilePath, 'tempFileDirs' => $tempFileDirs, 'fileNames' => $fileNames, 'rfqcode' => $rfqcode, 'extra_note' => $extra_note, 'client_name' => $client_name, 'assigned' => $assigned];
             $when = now()->addMinutes(1);
             Mail::to($rec_mail)->cc(str_replace(" ","",$users))->send( new Submission ($data));        
-	        $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Send Request Approval to '. $rec_mail . ' and changed the status to Awaiting Approval <br/>'.$rfq->note;
+            if($extra_note != ""){
+	        $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Sent Request Approval to '. $rec_mail . ' with an extra note stating: '.$extra_note.' and changed the status to Awaiting Approval <br/>'.$rfq->note;
+            }else{
+            $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Sent Request Approval to '. $rec_mail . ' and changed the status to Awaiting Approval <br/>'.$rfq->note;
+            }
             DB::table('client_rfqs')->where(['rfq_id' => $rfq_id])->update(['note' => $newNote, 'status' => 'Awaiting Approval']);
             $his = new RfqHistory([
                 "user_id" => Auth::user()->user_id,
@@ -785,9 +793,16 @@ class ClientRFQController extends Controller
 
         $refrence_no = $request->input('refrence_no');
         $reason = $request->input('reason');
+            
         if(ClientRfq::where('refrence_no', $refrence_no)->exists()){
             if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('HOD'))){
                 $rfq = ClientRfq::where('refrence_no', $refrence_no)->first();
+                $cli_title = clis($rfq->client_id);
+                $resultt = json_decode($cli_title, true);
+                $client_name = $resultt[0]['client_name'];
+                $assigned_details = empDetails($rfq->employee_id);
+                $assigned = $assigned_details->full_name;
+                $rfqcode = "TE-". $resultt[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
                 $emp = Employers::where('employee_id', $rfq->employee_id)->first();
                 $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name. " Changed the Status to Breakdown Approved, The Reason for Approval: <b> $reason  </b>" . ' <br>'.$rfq->note;
                 DB::table('client_rfqs')->where(['rfq_id' => $rfq->rfq_id])->update(['note' => $newNote, "status" => 'Breakdown Approved',]);
@@ -796,9 +811,9 @@ class ClientRFQController extends Controller
                     "rfq_id" => $rfq->rfq_id,
                     "action" => "Approved Breakdown for ".$refrence_no,
                 ]); $his->save();
-                $data = ['rfq' => $rfq, 'reason' => $reason, 'status' => 'APPROVED', 'company' => Companies::where('company_id', $rfq->company_id)->first()];
+                $data = ['rfq' => $rfq, 'reason' => $reason, 'status' => 'Approved', 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'assigned' => $assigned, 'rfqcode' => $rfqcode];
                 // dd($data);
-                Mail::to($emp->email)->cc(['sales@tagenergygroup.net'])->send( new ApproveBreakdown ($data));   
+                Mail::to($emp->email)->cc(['contact@tagenergygroup.net', 'sales@tagenergygroup.net'])->send( new ApproveBreakdown ($data));   
                 return redirect()->route('rfq.edit', [$refrence_no])->with([
                     'refrence_no' => $refrence_no,
                     'success' => 'You have approved the breakdown for approval successfully',
@@ -848,6 +863,12 @@ class ClientRFQController extends Controller
         if(ClientRfq::where('refrence_no', $refrence_no)->exists()){
             if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('HOD'))){
                 $rfq = ClientRfq::where('refrence_no', $refrence_no)->first();
+                $cli_title = clis($rfq->client_id);
+                $resultt = json_decode($cli_title, true);
+                $client_name = $resultt[0]['client_name'];
+                $assigned_details = empDetails($rfq->employee_id);
+                $assigned = $assigned_details->full_name;
+                $rfqcode = "TE-". $resultt[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
                 $emp = Employers::where('employee_id', $rfq->employee_id)->first();
                 $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name. " Changed the Status to Breakdown Declined, The Reason for Disapproval: <b> $reason  </b>" . ' <br>'.$rfq->note;
                 DB::table('client_rfqs')->where(['rfq_id' => $rfq->rfq_id])->update(['note' => $newNote, "status" => 'Breakdown Declined',]);
@@ -856,8 +877,8 @@ class ClientRFQController extends Controller
                     "rfq_id" => $rfq->rfq_id,
                     "action" => "Declined Breakdown for ".$refrence_no,
                 ]); $his->save();
-                $data = ['rfq' => $rfq, 'reason' => $reason, 'status' => 'DECLINED', 'company' => Companies::where('company_id', $rfq->company_id)->first()];
-                Mail::to($emp->email)->cc(['sales@tagenergygroup.net'])->send( new ApproveBreakdown ($data));   
+                $data = ['rfq' => $rfq, 'reason' => $reason, 'status' => 'Declined', 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'assigned' => $assigned, 'rfqcode' => $rfqcode];
+                Mail::to($emp->email)->cc(['contact@tagenergygroup.net', 'sales@tagenergygroup.net'])->send( new ApproveBreakdown ($data));   
                 return redirect()->route('rfq.edit', [$refrence_no])->with([
                     'refrence_no' => $refrence_no,
                     'success' => 'You have Declined the breakdown successfully',
@@ -1230,8 +1251,8 @@ class ClientRFQController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $refrence_no)
-    {
+     public function update(Request $request, $refrence_no)
+        {
         // if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin'))  OR (Auth::user()->hasRole('Client'))){
             $refrence = ClientRfq::where('refrence_no', $refrence_no)->first();
             $details = $this->model->show($refrence->rfq_id);
@@ -1307,56 +1328,60 @@ class ClientRFQController extends Controller
 	        $intrest = $request->input("intrest_rate");
             $duration = $request->input("duration");
 
+            $supplier_cof = [];
+
+            // Loop through one of the arrays (assuming they have the same length)
+            foreach ($percent as $key => $sp_cof) {
+                // Check if the corresponding index exists in the other array
+                if (isset($intrest[$key])) {
+                    // Add the values to the data array
+                    $supplier_cof[] = [
+                        'percent' => $sp_cof,
+                        'interest' => $intrest[$key],
+                        'duration' => $duration[$key]
+                    ];
+                }
+            }
+
+	        $percent_logistics = $request->input("percent_logistics");
             $intrest_logistics = $request->input("intrest_logistics");
             $duration_logistics = $request->input("duration_logistics");
             $costOfFunds =$request->input("cost_of_funds");
+
+            $logistics_cof = [];
+
+            // Loop through one of the arrays (assuming they have the same length)
+            foreach ($percent_logistics as $key => $lg_cof) {
+                // Check if the corresponding index exists in the other array
+                if (isset($intrest_logistics[$key])) {
+                    // Add the values to the data array
+                    $logistics_cof[] = [
+                        'percent' => $lg_cof,
+                        'interest' => $intrest_logistics[$key],
+                        'duration' => $duration_logistics[$key]
+                    ];
+                }
+            }
             
-            if($request->has("intrest_percent_1") && $request->input("intrest_percent_1") > 0){
-                $percent_supplier_1 = $request->input("intrest_percent_1");
-                $intrest_rate_1 = $request->input("intrest_rate_1");
-                $duration_1 = $request->input("duration_1");
+            $percent_others = $request->input("percent_others");
+            $intrest_others = $request->input("intrest_others");
+            $duration_others = $request->input("duration_others");
 
-                if($request->has("intrest_percent_2") && $request->input("intrest_percent_2") > 0){
-                    $percent_supplier_2 = $request->input("intrest_percent_2");
-                    $intrest_rate_2 = $request->input("intrest_rate_2");
-                    $duration_2 = $request->input("duration_2");
-                }else{
-                    $percent_supplier_2 = "";
-                    $intrest_rate_2 = "";
-                    $duration_2 = "";
+            $others_cof = [];
+
+            // Loop through one of the arrays (assuming they have the same length)
+            foreach ($percent_others as $key => $ot_cof) {
+                // Check if the corresponding index exists in the other array
+                if (isset($intrest_others[$key])) {
+                    // Add the values to the data array
+                    $others_cof[] = [
+                        'percent' => $ot_cof,
+                        'interest' => $intrest_others[$key],
+                        'duration' => $duration_others[$key]
+                    ];
                 }
-            }else{
-                $percent_supplier_1 = "";
-                $intrest_rate_1 = "";
-                $duration_1 = "";
-                $percent_supplier_2 = "";
-                    $intrest_rate_2 = "";
-                    $duration_2 = "";
             }
-
-            if($request->has("percent_logistics_1") && $request->input("percent_logistics_1") > 0){
-                $percent_logistics_1 = $request->input("percent_logistics_1");
-                $intrest_logistics_1 = $request->input("intrest_logistics_1");
-                $duration_logistics_1 = $request->input("duration_logistics_1");
-
-                if($request->has("percent_logistics_2") && $request->input("percent_logistics_2") > 0){
-                    $percent_logistics_2 = $request->input("percent_logistics_2");
-                    $intrest_logistics_2 = $request->input("intrest_logistics_2");
-                    $duration_logistics_2 = $request->input("duration_logistics_2");
-                }else{
-                    $percent_logistics_2 = "";
-                    $intrest_logistics_2 = "";
-                    $duration_logistics_2 = "";
-                }
-            }else{
-                $percent_logistics_1 = "";
-                $intrest_logistics_1 = "";
-                $duration_logistics_1 = "";
-                
-                $percent_logistics_2 = "";
-                $intrest_logistics_2 = "";
-                $duration_logistics_2 = "";
-            }
+            
 
             // Assuming you have retrieved the values from the form
             $miscCostSupplierValues = $_POST['misc_cost_supplier'];
@@ -1395,9 +1420,33 @@ class ClientRFQController extends Controller
                     ];
                 }
             }
+            
+            // Assuming you have retrieved the values from the form
+            $othersCostSupplierValues = $request->input('misc_cost_others');
+            $othersAmountSupplierValues = $request->input('misc_amount_others');
+
+            // Create an array to hold the values
+            $data_others = [];
+
+            // Loop through one of the arrays (assuming they have the same length)
+            foreach ($othersCostSupplierValues as $key => $otherValue) {
+                // Check if the corresponding index exists in the other array
+                if (isset($othersAmountSupplierValues[$key])) {
+                    // Add the values to the data array
+                    $data_others[] = [
+                        'desc' => $otherValue,
+                        'amount' => $othersAmountSupplierValues[$key],
+                    ];
+                }
+            }
 
             $Json_supplier = json_encode($data_supplier);
             $Json_logistics = json_encode($data_logistics);
+            $Json_others = json_encode($data_others);
+            $json_supplier_cof = json_encode($supplier_cof);
+            $json_logistics_cof = json_encode($logistics_cof);
+            $json_others_cof = json_encode($others_cof);
+
             
             if($request->input("currency") == 'USD'){
                 $total_dollar_quote = $request->input("total_quote");
@@ -1460,26 +1509,12 @@ class ClientRFQController extends Controller
                 "technical_note" => $request->input("technical_note"),
                 "vendor_id" => $request->input('vendor_id'),
                 "oversized" => $request->input('oversized'),
-                "percent_supplier" => $request->input('intrest_percent'),
-                "intrest_rate" => $request->input('intrest_rate'),
-                "duration" => $duration,
-                "percent_supplier_1" => $percent_supplier_1,
-                "intrest_rate_1" => $intrest_rate_1,
-                "duration_1" => $duration_1,
-                "percent_supplier_2" => $percent_supplier_2,
-                "intrest_rate_2" => $intrest_rate_2,
-                "duration_2" => $duration_2,
-                "percent_logistics" => $request->input('percent_logistics'),
-                "intrest_logistics" => $intrest_logistics,
-                "duration_logistics" => $duration_logistics,
-                "percent_logistics_1" => $percent_logistics_1,
-                "intrest_logistics_1" => $intrest_logistics_1,
-                "duration_logistics_1" => $duration_logistics_1,
-                "percent_logistics_2" => $percent_logistics_2,
-                "intrest_logistics_2" => $intrest_logistics_2,
-                "duration_logistics_2" => $duration_logistics_2,
+                "supplier_cof" => $json_supplier_cof,
+                "logistics_cof" => $json_logistics_cof,
+                "others_cof" => $json_others_cof,
                 "misc_cost_supplier" => $Json_supplier,
                 "misc_cost_logistics" => $Json_logistics,
+                "misc_cost_others" => $Json_others,
                 "online_submission" => $request->input("online_submission"),
                 "currency" => $request->input("currency"),
                 "fund_transfer_charge" => $request->input("fund_transfer_charge"),

@@ -51,7 +51,6 @@
             font-size: 28pt;
             font-family: Tw Cen MT Condensed,sans-serif;
             margin-bottom: .0rem;
-            border-box;
             margin-top: 0;
             font-weight: 700;
             line-height: 1.2;
@@ -93,7 +92,7 @@
         #footer { position: fixed; left: 20px; bottom: 30px; right: 0px; height: 46px; }
         #footer .page:after { content: counter(page, upper-roman); }
     </style>
-    <body class="po" style="border-box;margin: 0;font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #333333;text-align: left;background-color: #fff;padding: 0;font: normal .875rem 'Open Sans', sans-serif;-webkit-print-color-adjust: exact;background: ;min-height: 100%;position: relative;min-width: 992px!important;">
+    <body class="po" style="border-box;font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,&quot;Helvetica Neue&quot;,Arial,&quot;Noto Sans&quot;,sans-serif,&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Noto Color Emoji&quot;;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #333333;text-align: left;background-color: #fff;padding: 0;font: normal .875rem 'Open Sans', sans-serif;-webkit-print-color-adjust: exact;background: ;min-height: 100%;position: relative;min-width: 100%!important;">
         
     @foreach (getLogo($rfq->company_id) as $item)
     @php $logsign = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->footer; @endphp

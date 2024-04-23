@@ -14,7 +14,7 @@
                                 <img src="{{asset('admin/img/img2.jpeg')}}" alt="logo" style="width:100px; height:100px" align="center" />
                             </div> --}}
                             <a href="/" class="login-logo">
-                                TAG SCM
+                                TAGSourcing
                              </a>
                             @include('layouts.alert')
                             <h5 align="center">Please Login to your Account.</h5>

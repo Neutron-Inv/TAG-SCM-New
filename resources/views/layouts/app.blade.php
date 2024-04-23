@@ -43,6 +43,7 @@ data-template="horizontal-menu-template">
     <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/select2/select2.css')}}" />
     <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css')}}" />
     <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.3.1/css/buttons.dataTables.min.css">
 
         <!-- Page CSS -->
         <link rel="stylesheet" href="{{asset('admin/assets/vendor/css/pages/cards-advance.css')}}" />
@@ -106,6 +107,30 @@ data-template="horizontal-menu-template">
 
         .table-container{
           width:100%;
+        }
+        
+        /* Style for buttons container */
+        .dataTables_wrapper .dt-buttons {
+            margin-bottom: 10px;
+        }
+        
+        /* Style for individual buttons */
+        .dt-button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        
+        /* Hover state for buttons */
+        .dt-button:hover {
+            background-color: #45a049; /* Darker green */
         }
       </style>
     {{-- <link rel="stylesheet" href="{{asset('admin/printer.css')}}" type="text/css" media="print" /> --}}
@@ -206,8 +231,11 @@ data-template="horizontal-menu-template">
     <script src="{{asset('admin/vendor/rating/raty-custom.js')}}"></script>
     <script src="{{asset('admin/vendor/datatables/dataTables.min.js')}}"></script>
     <script src="{{asset('admin/vendor/datatables/dataTables.bootstrap.min.js')}}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script src="{{asset('admin/vendor/datatables/custom/custom-datatables.js')}}"></script>
     <script src="{{asset('admin/vendor/datatables/custom/fixedHeader.js')}}"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
     <script src="{{asset('admin/vendor/bs-select/bs-select.min.js')}}"></script>
     <script src="{{asset('admin/vendor/datepicker/js/picker.js')}}"></script>
     <script src="{{asset('admin/vendor/datepicker/js/picker.date.js')}}"></script>

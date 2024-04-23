@@ -87,9 +87,32 @@ $(document).ready(function(){
 	var table = $('#fixedHeader').DataTable({
 		fixedHeader: true,
 		'iDisplayLength': 10,
-
+		dom: 'lBfrtip',
         buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
+            {
+                extend: 'copy',
+                exportOptions: {
+                    modifier: {
+                        search: 'applied'
+                    }
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    modifier: {
+                        search: 'applied'
+                    }
+                }
+            },
+            {
+                extend: 'csv',
+                exportOptions: {
+                    modifier: {
+                        search: 'applied'
+                    }
+                }
+            }
         ]
 
 	});

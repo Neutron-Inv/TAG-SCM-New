@@ -237,7 +237,7 @@
 
                 @endif
 
-                @if (Auth::user()->hasRole('Employer') OR(Auth::user()->hasRole('HOD')))
+                @if (Auth::user()->hasRole('Employer') OR (Auth::user()->hasRole('HOD')))
                     
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('shipper.index') }}">
@@ -264,18 +264,22 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" href="{{ route('product.index') }}">
-                            <i class="icon-list nav-icon"></i>
-                            Products
-                        </a>
-                    </li>
-                    <li class="menu-item">
                         <a class="menu-link" href="{{ route('po.reports') }}">
                             <i class="icon-shopping_cart nav-icon"></i>
                             PO Reports
                         </a>
                     </li>
 
+                @endif
+                
+                @if(Auth::user()->hasRole('HOD'))
+                
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('product.index') }}">
+                            <i class="icon-list nav-icon"></i>
+                            Products
+                        </a>
+                    </li>
                 @endif
 
                 @if (Auth::user()->hasRole('Shipper'))
