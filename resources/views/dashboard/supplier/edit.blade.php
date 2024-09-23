@@ -438,7 +438,7 @@
                                                 <select class="form-control selectpicker" data-live-search="true" required name="tamap">
                                                     <option data-tokens="{{ $ven->tamap }}" value="{{ $ven->tamap }}">{{ $ven->tamap ?? '' }}</option>
                                                     <option value=""> </option>
-                                                    <option value="NO"> No </option>
+                                                    <option value="No"> No </option>
                                                     <option value="Yes"> Yes </option>
                                                 </select>
 
@@ -446,6 +446,28 @@
 
                                             @if ($errors->has('tamap'))
                                                 <div class="" style="color:red">{{ $errors->first('tamap') }}</div>
+                                            @endif
+                                        </div>
+
+                                    </div>
+                                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="nameOnCard">Agency Letter</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon6"><i class="icon-edit" style="color:#28a745"></i></span>
+                                                </div>
+                                                <select class="form-control selectpicker" data-live-search="true" required name="agency">
+                                                    <option data-tokens="{{ $ven->agency }}" value="{{ $ven->agency }}">{{ $ven->agency ?? '' }}</option>
+                                                    <option value=""> </option>
+                                                    <option value="No"> No </option>
+                                                    <option value="Yes"> Yes </option>
+                                                </select>
+
+                                            </div>
+
+                                            @if ($errors->has('agency'))
+                                                <div class="" style="color:red">{{ $errors->first('agency') }}</div>
                                             @endif
                                         </div>
 
@@ -526,6 +548,7 @@
                                                     <th>Country Code</th>
                                                     <th>Desc</th>
                                                     <th>Tamap</th>
+                                                    <th>Agency Letter</th>
                                                     <th>Address</th>
 
                                                 </tr>
@@ -580,6 +603,7 @@
 
                                                         </td>
                                                         <td>{{ $shippers->tamap ?? '' }} </td>
+                                                        <td>{{ $shippers->agency ?? '' }} </td>
                                                         <td>
                                                             <a href="" data-toggle="modal" data-target=".bd-example-modals-lx-{{ $num }}">
                                                                 {{ substr($shippers->address, 0, 30) ?? 'N/A' }}

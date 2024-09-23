@@ -14,17 +14,17 @@ class ClientPo extends Model
     protected $guard_name = 'web';
     protected $fillable = [
 
-        'company_id', 'client_id', 'rfq_id', 'rfq_number', 'status', 'po_number', 'description', 'po_date', 'po_receipt_date', 'est_production_time', 
+        'company_id', 'client_id', 'rfq_id', 'rfq_number', 'status', 'po_number', 'description', 'product', 'po_date', 'po_receipt_date', 'est_production_time', 
         'est_ddp_lead_time', 'delivery_due_date', 'est_delivery_date', 'delivery_location', 'delivery_terms', 'po_value_foreign', 'po_value_naira', 
         'payment_terms', 'employee_id', 'supplier_proforma_foreign', 'supplier_proforma_naira', 'shipping_cost', 'po_issued_to_supplier', 
         'payment_details_received', 'payment_made', 'payment_confirmed', 'work_order', 'shipment_initiated', 'shipment_arrived', 'docs_to_shipper', 
         'delivered_to_customer', 'delivery_note_submitted', 'customer_paid', 'payment_due', 'note', 'status_2', 'ex_works_date', 'transport_mode', 
         'shipping_reliability', 'shipping_on_time_delivery', 'shipping_pricing', 'shipping_communication', 'shipping_rater', 'shipping_comment', 
         'shipping_overall_rating', 'survey_sent', 'survey_sent_date', 'survey_completed', 'survey_completion_date', 'contact_id', 
-        'tag_comment', 'supplier_ref_number', 'actual_delivery_date', 'timely_delivery', 'shipper_id',
+        'tag_comment', 'supplier_ref_number', 'actual_delivery_date', 'timely_delivery', 'shipper_timely_delivery', 'shipper_id',
 
         'delivery', 'technical_notes', 'hs_codes', 'total_packaged_weight', 'estimated_packaged_dimensions', 
-        'hs_codes_po', 'delivery_location_po', 'port_of_discharge', 'payment_terms_client', 'freight_charges_suplier'
+        'hs_codes_po', 'delivery_location_po', 'port_of_discharge', 'payment_terms_client', 'freight_charges_suplier', 'schedule'
 
     ];
 

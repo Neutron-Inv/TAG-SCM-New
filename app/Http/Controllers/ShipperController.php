@@ -50,9 +50,11 @@ class ShipperController extends Controller
             $user = User::where('email', Auth::user()->email)->first();
             $employee = Employers::where('email', Auth::user()->email)->first();
             $company = Companies::where('company_id', $employee->company_id)->first();
+            
+            $countries = Country::orderby('name', 'asc')->get();
             $shipper = Shippers::where('company_id', $company->company_id)->orderBy('shipper_name', 'asc')->get();
             return view('dashboard.shippers.index')->with([
-                'company' => $company, "shipper" => $shipper,
+                'company' => $company, "shipper" => $shipper,"countries" => $countries
 
             ]);
         }elseif(Auth::user()->hasRole('Shipper')){
@@ -146,7 +148,7 @@ class ShipperController extends Controller
 
     public function store(Request $request)
     {
-        if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin'))){
+        if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('HOD')) OR (Auth::user()->hasRole('Employer'))){
 
             $this->validate($request, [
                 'company_id' => ['required', 'string', 'max:199'],

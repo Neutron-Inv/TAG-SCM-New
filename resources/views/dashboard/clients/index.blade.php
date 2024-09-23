@@ -385,11 +385,14 @@
                                                                 </a> --}}
                                                             @endif
 
-                                                            <a href="{{ route('rfq.create',$clients->client_id) }}" title="Create Client RFQ" class="" onclick="return(confirmToRFQ());">
+                                                            <a href="{{ route('rfq.create',$clients->client_id) }}" title="Create Client RFQ" class="text-nowrap" onclick="return(confirmToRFQ());">
                                                                 <i class="icon-book" style="color:#6610f2"></i> Create RFQ
-                                                            </a>
+                                                            </a><br>
                                                             <a href="{{ route('client.details',$clients->client_id) }}" title="View Client" class="">
                                                                 <i class="icon-list" style="color:#6610f2"></i> View
+                                                            </a><br>
+                                                            <a href="{{ route('client.projects',$clients->client_id) }}" title="View Projects" class="">
+                                                                <i class="icon-list" style="color:#9510f2"></i> Projects
                                                             </a>
 
 

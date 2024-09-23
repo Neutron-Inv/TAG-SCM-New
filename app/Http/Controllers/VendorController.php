@@ -157,7 +157,8 @@ class VendorController extends Controller
                 'contact_email' => ['required', 'email', 'max:199', 'unique:vendors'],
                 'country_code' => ['required', 'string', 'max:199'],
                 'tamap' => ['required', 'string', 'max:199'],
-                'description' => ['required', 'string', 'max:199'],
+                'agency' => ['required', 'string', 'max:199'],
+                'description' => ['required', 'string', 'max:300'],
                 'address' => ['required', 'string', 'max:199'],
             ]);
 
@@ -182,6 +183,7 @@ class VendorController extends Controller
                     "contact_email" => $request->input("contact_email"),
                     "country_code" => strtoupper($request->input("country_code")),
                     "tamap" => $request->input("tamap"),
+                    "agency" => $request->input("agency"),
                     "description" => $request->input("description"),
                     "address" => $request->input("address"),
                     "vendor_code" => strtoupper($request->input("vendor_code")),
@@ -195,9 +197,17 @@ class VendorController extends Controller
                     "activities" => 'Added ' . $request->input('contact_email') . ' details as a Supplier ',
                 ]);
 
-                $cut = explode(" ", $request->input("vendor_name"));
-                $first_name = $cut[0];
-                $last_name = $cut[1];
+                // Check if the input contains a space
+                if (strpos($input, ' ') !== false) {
+                    // Split the input into first and last name
+                    $cut = explode(" ", $input, 2);
+                    $first_name = $cut[0];
+                    $last_name = $cut[1];
+                } else {
+                    // If no space is found, set the first name and leave the last name empty
+                    $first_name = $input;
+                    $last_name = ''; // Or you can set it to null or another default value
+                }
 
 
                 $datum = new User([
@@ -304,7 +314,8 @@ class VendorController extends Controller
                 'contact_email' => ['required', 'email', 'max:199',],
                 'country_code' => ['required', 'string', 'max:199'],
                 'tamap' => ['required', 'string', 'max:199'],
-                'description' => ['required', 'string', 'max:199'],
+                'agency' => ['required', 'string', 'max:199'],
+                'description' => ['required', 'string', 'max:300'],
                 'address' => ['required', 'string', 'max:199'],
             ]);
 
@@ -324,6 +335,7 @@ class VendorController extends Controller
                 "contact_email" => $request->input("contact_email"),
                 "country_code" => strtoupper($request->input("country_code")),
                 "tamap" => $request->input("tamap"),
+                "agency" => $request->input("agency"),
                 "description" => $request->input("description"),
                 "address" => $request->input("address"),
                 "vendor_code" => strtoupper($request->input("vendor_code"))

@@ -137,7 +137,7 @@
 									<table class="table m-0">
                                         <thead class=" text-white">
                                             <tr>
-                                                <th>Total Numbers of POs Delivered till date</th>
+                                                <th>Total Numbers of POs Delivered from January {{date('Y')}} till December {{date('Y')}}</th>
                                                 <th>Total Numbers of POs Delivered on time</th>
                                                 <th> Total Numbers of POs Delivered Late </th>
 
@@ -147,10 +147,16 @@
                                         </thead>
                                         <tbody>
                                             
-                                            <td> {{ count(getPOInfo()) ?? 0 }} </td>
-                                            <td class="text-align"> {{ count(getPOInfoCon('YES')) ?? 0 }} </td>
-                                            <td class="text-align">{{ count(getPOInfoCon('NO')) ?? 0 }} </td>
-                                            <td> {{ round((count(getPOInfoCon('YES')) / count(getPOInfo())) * 100,2) ?? 0}}% </td>
+                                            <td> {{ count(getyearPOInfo()) ?? 0 }} </td>
+                                            <td class="text-align"> {{ count(getyearPOInfoCon('YES')) ?? 0 }} </td>
+                                            <td class="text-align">{{ count(getyearPOInfoCon('NO')) ?? 0 }} </td>
+                                            <td> 
+                                        @if(count(getyearPOInfo()) == 0)
+                                        0%
+                                        @else
+                                         {{ round((count(getyearPOInfoCon('YES')) / count(getyearPOInfo())) * 100,2) ?? 0}}%
+                                         @endif
+                                            </td>
                                         </tbody>
                                     </table>
                                 </div>
@@ -181,7 +187,9 @@
                                                 <th> DELIVERY DATE </th>
 
                                                 <th>ACTUAL DELIVERY DATE</th>
+                                                <th>TOTAL NUMBER OF DAYS FROM PO TO DELIVERY</th>
                                                 <th> ONTIME DELIVERY ? </th>
+                                                <th> SHIPPER ONTIME DELIVERY ? </th>
 
                                                 <th>OEM</th>
                                                 <th>SHIPPER </th>
@@ -198,10 +206,23 @@
                                                     <td> {{ $rfqs->rfq->refrence_no ?? 'Null' }}</td>
                                                     <td> {{ $rfqs->description ?? '' }}</td>
 
-                                                    <td>{{ $rfqs->po_receipt_date ?? ' ' }} </td>
+                                                    <td>{{ $rfqs->po_date ?? ' ' }} </td>
                                                     <td>{{ $rfqs->delivery_due_date  ?? ' ' }} </td>
                                                     <td> {{ $rfqs->actual_delivery_date ?? '' }}</td>
-                                                    <td>{{ $rfqs->timely_delivery ?? ' ' }}</td>
+                                                    <td> @if($rfqs->po_date && $rfqs->actual_delivery_date)
+                                                        {{ \Carbon\Carbon::parse($rfqs->po_date)->diffInDays(\Carbon\Carbon::parse($rfqs->actual_delivery_date)) }}
+                                                    @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($rfqs->actual_delivery_date && $rfqs->delivery_due_date)
+                                                        @if(\Carbon\Carbon::parse($rfqs->actual_delivery_date)->greaterThan(\Carbon\Carbon::parse($rfqs->delivery_due_date)))
+                                                            No
+                                                        @else
+                                                            Yes
+                                                        @endif
+                                                    @endif
+                                                    </td>
+                                                    <td>{{ $rfqs->shipper_timely_delivery ?? 'Null' }} </td>
                                                     <td> {{ $rfqs->rfq->vendor->vendor_name ?? 'Null' }}</td>
                                                     <td>{{ $rfqs->rfq->shipper->shipper_name ?? 'Null' }}</td>
                                                     
@@ -229,27 +250,61 @@
 									<table class="table m-0">
                                         <thead class=" text-white">
                                             <tr>
-                                                
+                                                <th>S/N</th>
                                                 <th>SHIPPER</th>
-                                                <th>TOTAL PO COLLECTED</th>
-                                                <th> TOTAL PO DELIVRED ON-TIME </th>
+                                                <th>TOTAL PO DELIVERED</th>
+                                                <th> TOTAL PO DELIVERED ON-TIME </th>
                                                 <th>PERFORMANCE INDEX (%)</th>
                                                 
                                             </tr>
                                         </thead>
+                                        @php 
+                                        $totalPO = 0;
+                                        $totalOntimePO = 0;
+                                        $count = 0;
+                                        $totalindex = 0;
+                                        @endphp
                                         <tbody>
                                             @foreach ($shipper as $item)
+                                            @if(count(countShipperPOyearly($item->shipper_id)) != 0)
                                                 <tr>
+                                                    <td>
+                                                    @php $count += 1; @endphp
+                                                    {{ $count }}
+                                                    </td>
                                                     <td>
                                                         @foreach (getSh($item->shipper_id) as $it)
                                                             {{ $it->shipper_name ?? ' N/A' }}
                                                         @endforeach
                                                     </td>
-                                                    <td> {{ count(countShipperPO($item->shipper_id)) ?? 0 }}</td>
-                                                    <td>{{ count(countShipperPOCon($item->shipper_id,'YES')) ?? 0}} </td>
-                                                    <td>{{ round((count(countShipperPOCon($item->shipper_id,'YES'))  / count(countShipperPO($item->shipper_id))) * 100,2) ?? 0 }}%</td>
-                                                </tr>
+                                                    <td>
+                                        @php $totalPO += count(countShipperPOyearly($item->shipper_id)) ?? 0 @endphp                
+                                                         {{ count(countShipperPOyearly($item->shipper_id)) ?? 0 }}</td>
+                                                    <td>
+                                        @php $totalOntimePO += count(countShipperPOCon($item->shipper_id,'YES')) ?? 0 @endphp  
+                                                        {{ count(countShipperPOCon($item->shipper_id,'YES')) ?? 0}} </td>
+                                                    <td>
+                                        @if(count(countShipperPOyearly($item->shipper_id)) == 0)
+                                        0%
+                                        @else   
+                                        {{ round((count(countShipperPOCon($item->shipper_id,'YES'))  / count(countShipperPOyearly($item->shipper_id))) * 100,2) ?? 0 }}%
+                                        
+                                        @php $totalindex +=  round((count(countShipperPOCon($item->shipper_id,'YES'))  / count(countShipperPOyearly($item->shipper_id))) * 100,2) ?? 0; @endphp
+                                        @endif
+                                        </td>
+                                             </tr>   
+                                            @endif
                                             @endforeach
+                                            @php
+                                            $avgindex = $totalindex/$count;
+                                            @endphp
+                                            <tr>
+                                            <td></td>
+                                            <td> <b>Total</b></td>
+                                            <td> <b>{{ $totalPO }}</b></td>
+                                            <td> <b>{{ $totalOntimePO }} </b></td>
+                                            <td>{{ number_format($avgindex,2) }}%</td>
+                                            </tr>
                                             
                                         </tbody>
                                     </table>
@@ -263,11 +318,58 @@
 
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-12">
                     <div class="form-group">
-                        <A href="{{ route('po.report.sendReport') }}" class="btn btn-primary" style="float: right;">Send Report</a>
+                        <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#customModals">Send YTD Report</button> 
                             
                     </div>
                 </div>
             </div>
          </div>
+    </div>
+
+    <div class="modal fade bd-example-modal-lg" id="customModals" tabindex="-1" role="dialog" aria-labelledby="customModalTwoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customModalTwoLabel">Send monthly RFQs and POs Report</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('po.report.sendReport') }}" class="" method="POST" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="modal-body">
+    
+                        <div class="row gutters">
+                            <div class="col-md-4 col-sm-4 col-4">
+                                <label for="recipient-name" class="col-form-label">Recipient:</label>
+                                <input type="email" class="form-control" id="recipient-email" name="rec_email"
+                                value="contact@tagenergygroup.net">
+                                @if ($errors->has('rec_email'))
+                                    <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
+                                @endif
+                            </div>
+                            
+                            <div class="col-md-8 col-sm-8 col-8">
+                                <label for="recipient-name" class="col-form-label">CC Email:</label>
+                                <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="sales@tagenergygroup.net; mary.nwaogwugwu@tagenergygroup.net">
+                                @if ($errors->has('report_recipient'))
+                                    <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer custom">
+    
+                        <div class="left-side">
+                            <button type="button" class="btn btn-link danger" data-dismiss="modal">Cancel</button>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="right-side">
+                            <button type="submit" class="btn btn-link success">Send Report</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 @endsection

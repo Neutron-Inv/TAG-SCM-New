@@ -574,11 +574,11 @@
 
                                                         <td>{{ $num }}
 
-                                                            <a href="{{ route('contact.edit',$contacts->contact_id) }}" title="Edit Client Contact" onclick="return(confirmToEdit());">
+                                                            <a href="{{ route('contact.edit',$contacts->contact_id) }}" title="Edit Client Contact" onclick="return confirm('Want to Edit Client Contact?');">
                                                                 <i class="icon-edit" style="color:blue"></i>
                                                             </a>
                                                             @if (Gate::allows('SuperAdmin', auth()->user()))
-                                                                {{-- <a href="{{ route('contact.delete',$contacts->contact_id) }}" title="Delete The Client ContactC" class="" onclick="return(confirmToDelete());">
+                                                                {{-- <a href="{{ route('contact.delete',$contacts->contact_id) }}" title="Delete The Client ContactC" class="" onclick="return confirm('Want to Edit Client Contact?');">
                                                                     <i class="icon-delete" style="color:red"></i>
                                                                 </a> --}}
                                                             @endif

@@ -128,11 +128,96 @@
         ->count();
     }
 
-    function TotalrfqQuote()
+    function TotalrfqQuoteUSD()
     {
     return \DB::table('client_rfqs')
         ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'USD')
         ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteGBP()
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'GBP')
+        ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteEUR()
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'EUR')
+        ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteNGN()
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'NGN')
+        ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteUSDEMP($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'USD')
+        ->where('company_id', $company_id)
+        ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteGBPEMP($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'GBP')
+        ->where('company_id', $company_id)
+        ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteEUREMP($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'EUR')
+        ->where('company_id', $company_id)
+        ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteNGNEMP($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'NGN')
+        ->where('company_id', $company_id)
+        ->sum('total_quote');
+    }
+    
+    function TopPerformer($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->join('employers', 'client_rfqs.employee_id', '=', 'employers.employee_id')
+        ->whereYear('client_rfqs.rfq_date', date('Y'))
+        ->where('client_rfqs.company_id', $company_id)
+        ->where('client_rfqs.status', 'PO Issued')
+        ->groupBy('client_rfqs.employee_id', 'employers.full_name')
+        ->orderByRaw('COUNT(*) DESC')
+        ->value('employers.full_name');
+    }
+    
+    function TopPerformerCount($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('company_id', $company_id)
+        ->where('status', 'PO Issued')
+        ->groupBy('employee_id')
+        ->selectRaw('COUNT(*) as count')
+        ->orderByRaw('COUNT(*) DESC')
+        ->value('count');
     }
 
     function TotalpoQuoteForeign()
@@ -719,7 +804,12 @@
 
     function sumNgnClientRFQCompany($company_id)
     {
-        return \DB::table('client_rfqs')->where('company_id', $company_id)->sum('value_of_quote_usd');
+        return \DB::table('client_rfqs')->where('company_id', $company_id)->where('currency', 'NGN')->sum('total_quote');;
+    }
+    
+    function sumUsdClientRFQCompany($company_id)
+    {
+        return \DB::table('client_rfqs')->where('company_id', $company_id)->where('currency', 'USD')->sum('total_quote');
     }
 
     function sumNgnClientRFQNgn()
@@ -779,12 +869,30 @@
     {
         return \DB::table('client_pos')->get();
     }
+    
+    function getyearPOInfo()
+    {
+        return \DB::table('client_pos')
+        ->whereYear('actual_delivery_date', date('Y'))
+        ->whereIn('status',['Delivered', 'Partial Delivery', 'Awaiting GRN', 'Invoicing', 'Invoiced', 'Paid'])
+        ->get();
+    }
 
     function getPOInfoCon($condition)
     {
         return \DB::table('client_pos')->where([
             "timely_delivery" => $condition
         ])->get();
+    }
+    
+    function getyearPOInfoCon($condition)
+    {
+        return \DB::table('client_pos')->where([
+            "timely_delivery" => $condition
+        ])
+        ->whereYear('actual_delivery_date', date('Y'))
+        ->whereIn('status',['Delivered', 'Partial Delivery', 'Awaiting GRN', 'Invoicing', 'Invoiced', 'Paid'])
+        ->get();
     }
 
     function countShipperPO($shipper_id)
@@ -793,13 +901,48 @@
             "shipper_id" => $shipper_id
         ])->get();
     }
+    
+    function countShipperPOyearly($shipper_id)
+    {
+        return \DB::table('client_pos')
+        ->join('client_rfqs', 'client_pos.rfq_id', '=','client_rfqs.rfq_id')
+        ->where([
+            "client_pos.shipper_id" => $shipper_id
+        ])
+        ->whereYear('client_pos.actual_delivery_date', date('Y'))
+        ->where('client_rfqs.incoterm', '!=', 'Ex Works')
+        ->whereIn('client_pos.status',['Delivered', 'Partial Delivery', 'Awaiting GRN', 'Invoicing', 'Invoiced', 'Paid'])
+        ->get();
+    }
 
     function countShipperPOCon($shipper_id, $condition)
     {
         return \DB::table('client_pos')->where([
             "shipper_id" => $shipper_id, "timely_delivery" => $condition
-        ])->get();
+        ])
+        ->whereIn('status',['Delivered', 'Partial Delivery', 'Awaiting GRN', 'Invoicing', 'Invoiced', 'Paid'])
+        ->whereYear('actual_delivery_date', date('Y'))
+        ->get();
     }
+    
+    function getProductRfq($client_id, $product_name)
+    {
+        return \DB::table('client_rfqs')
+        ->where(["client_id" => $client_id])
+        ->where('product', $product_name)
+        ->whereYear('rfq_date', now()->year)
+        ->get();
+    }
+    
+    function getProductPo($client_id, $product_name)
+    {
+        return \DB::table('client_pos')
+        ->where(["client_id" => $client_id])
+        ->where('product', $product_name)
+        ->whereYear('po_date', now()->year)
+        ->get();
+    }
+
 
     function getValveRfq($client_id)
     {
@@ -841,7 +984,8 @@
     {
         return \DB::table('client_rfqs')
         ->where(["client_id" => $client_id])
-        ->where('description', 'like', '%bolts and nuts%')
+        ->where('description', 'like', '%bolt%')
+        ->where('description', 'like', '%nut%')
         ->whereYear('rfq_date', now()->year)
         ->get();
     }
@@ -850,7 +994,8 @@
     {
         return \DB::table('client_pos')
         ->where(["client_id" => $client_id])
-        ->where('description', 'like', '%bolts and nuts%')
+        ->where('description', 'like', '%bolt%')
+        ->where('description', 'like', '%nut%')
         ->whereYear('po_date', now()->year)
         ->get();
     }
@@ -898,7 +1043,7 @@
         return \DB::table('client_rfqs')
         ->where(["client_id" => $client_id])
         ->where('description', 'like', '%rotork%')
-        ->where('description', 'like', '%actuator%')
+        ->orwhere('description', 'like', '%actuator%')
         ->whereYear('rfq_date', now()->year)
         ->get();
     }
@@ -908,7 +1053,7 @@
         return \DB::table('client_pos')
         ->where(["client_id" => $client_id])
         ->where('description', 'like', '%rotork%')
-        ->where('description', 'like', '%actuator%')
+        ->orwhere('description', 'like', '%actuator%')
         ->whereYear('po_date', now()->year)
         ->get();
     }
@@ -917,11 +1062,13 @@
     {
         return \DB::table('client_rfqs')
         ->where(["client_id" => $client_id])
-        ->where('description', 'not like','%valve%')
-        ->where('description', 'not like', '%gasket%')
-        ->where('description','not like', '%bolts and nuts%')
+        ->where('description','not like','%valve%')
+        ->where('description','not like', '%gasket%')
+        ->where('description','not like', '%bolt%')
+        ->where('description','not like', '%nut%')
         ->where('description','not like', '%flange%')
-        ->where('description','not like', '%pipe fittings%')
+        ->where('description','not like', '%pipe%')
+        ->where('description','not like', '%fitting%')
         ->where('description','not like', '%rotork%')
         ->where('description','not like', '%actuator%')
         ->where('description','not like', '%flange management service%')
@@ -935,9 +1082,11 @@
         ->where(["client_id" => $client_id])
         ->where('description', 'not like', '%valve%')
         ->where('description', 'not like', '%gasket%')
-        ->where('description', 'not like', '%bolts and nuts%')
+        ->where('description','not like', '%bolt%')
+        ->where('description','not like', '%nut%')
         ->where('description', 'not like', '%flange%')
-        ->where('description', 'not like', '%pipe fittings%')
+        ->where('description', 'not like', '%pipe%')
+        ->where('description', 'not like', '%fitting%')
         ->where('description', 'not like', '%rotork%')
         ->where('description', 'not like', '%actuator%')
         ->where('description', 'not like', '%flange management service%')
@@ -1249,14 +1398,20 @@ function getTotalPoc($client_id, $start_date = null, $end_date = null)
         return $query->get();
     }
 
-        function getnotes($rfq_id)
-        {
-            // Assuming the "client_rfqs" table has a "description" column
-            $query = DB::table('client_rfqs')
-                ->select('note')
-                ->where('rfq_id', $rfq_id)
-                ->first();
-    
-            return $query;
-        }
+    function getnotes($rfq_id)
+    {
+        // Assuming the "client_rfqs" table has a "description" column
+        $query = DB::table('client_rfqs')
+            ->select('note')
+            ->where('rfq_id', $rfq_id)
+            ->first();
+
+        return $query;
+    }
+        
+    function getproducts()
+    {
+        return \DB::table('products')->orderBy('product_name')
+        ->get();
+    }
 ?>

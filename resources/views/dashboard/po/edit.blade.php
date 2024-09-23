@@ -77,6 +77,27 @@
 
                                         </div>
                                     </div>
+                                    
+                                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="inputName">Schedule</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="icon-list" style="color:#28a745"></i></span>
+                                                </div>
+<select class="form-control selectpicker" data-live-search="true" required name="schedule" id="status">
+    <option value="On Schedule" {{ $details->schedule == 'On Schedule' ? 'selected' : '' }}>On Schedule</option>
+    <option value="Off Schedule" {{ $details->schedule == 'Off Schedule' ? 'selected' : '' }}>Off Schedule</option>
+    <option value="Stalled" {{ $details->schedule == 'Stalled' ? 'selected' : '' }}>Stalled</option>
+</select>
+                                            </div>
+
+                                            @if ($errors->has('schedule'))
+                                                <div class="" style="color:red">{{ $errors->first('schedule') }}</div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    
                                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label for="email">Buyer</label><div class="input-group">
@@ -219,8 +240,8 @@
                                                     <span class="input-group-text" id="basic-addon2"><i class="icon-calendar" style="color:#28a745"></i></span>
                                                 </div>
 
-                                                <input type="text" class="form-control datepicker-date-format2" required name="po_date"
-                                                value="{{ $details->po_date ?? ''}}" placeholder="PO Date">
+                                                <input type="date" class="form-control datepicJker-date-format2" required name="po_date"
+                                                value="{{ $details->po_date ?? ''}}">
                                             </div>
                                             @if ($errors->has('po_date'))
                                                 <div class="" style="color:red">{{ $errors->first('po_date') }}</div>
@@ -236,7 +257,7 @@
                                                     <span class="input-group-text" id="basic-addon2"><i class="icon-calendar" style="color:#28a745"></i></span>
                                                 </div>
 
-                                                <input type="text" class="form-control datepicker-date-format2" required name="delivery_due_date"
+                                                <input type="date" class="form-control dateJpicker-date-format2" required name="delivery_due_date"
                                                 value="{{$details->delivery_due_date}}" placeholder="Delivery Due Date">
                                             </div>
                                             @if ($errors->has('delivery_due_date'))
@@ -253,7 +274,7 @@
                                                     <span class="input-group-text" id="basic-addon2"><i class="icon-calendar" style="color:#28a745"></i></span>
                                                 </div>
 
-                                                <input type="text" class="form-control datepicker-date-format2" required name="actual_delivery_date"
+                                                <input type="date" class="form-control dateJpicker-date-format2" required name="actual_delivery_date"
                                                 value="{{$details->actual_delivery_date ?? ''}}" placeholder="Delivery Due Date">
                                             </div>
                                             @if ($errors->has('actual_delivery_date'))
@@ -287,6 +308,30 @@
 
                                         </div>
                                     </div>
+                                    
+                                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="frieght_charges">Shipper On-Time Delivery</label><div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon3"><i class="icon-list" style="color:#28a745"></i></span>
+                                                </div>
+                                                <?php
+                                                $term = array('NO', 'YES'); ?>
+                                                <select class="form-control selectpicker" data-live-search="true" required name="shipper_timely_delivery">
+                                                    <option data-tokens="{{ $details->timely_delivery }}" value="{{ $details->shipper_timely_delivery }}"> {{ $details->shipper_timely_delivery }}</option>
+                                                    <option value=""> </option>
+                                                    @foreach ($term as $terms)
+                                                        <option data-tokens="{{ $terms }}" value="{{ $terms }}"> {{ $terms }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            @if ($errors->has('timely_delivery'))
+                                                <div class="" style="color:red">{{ $errors->first('timely_delivery') }}</div>
+                                            @endif
+
+                                        </div>
+                                    </div>
 
 
                                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
@@ -295,8 +340,17 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text" id="basic-addon2"><i class="icon-documents" style="color:#28a745"></i></span>
                                                 </div>
-                                                <input class="form-control" name="product" value="{{ $rfq->product ?? '' }}" id="lastName" readonly placeholder="Enter Product" type="text"
-                                                aria-describedby="basic-addon2">
+                                                
+                            @php
+                            $products = getproducts();
+                            @endphp
+                            <select class="form-control selectpicker" data-live-search="true" required name="product">
+                                @foreach($products as $product)
+                                    <option value="{{ $product->product_name }}" @if($product->product_name == $rfq->product) selected @endif>
+                                        {{ $product->product_name }}
+                                    </option>
+                                @endforeach
+                            </select>
                                             </div>
                                             @if ($errors->has('product'))
                                                 <div class="" style="color:red">{{ $errors->first('product') }}</div>
@@ -365,7 +419,7 @@
                                                     <span class="input-group-text" id="basic-addon2"><i class="icon-calendar" style="color:#28a745"></i></span>
                                                 </div>
 
-                                                <input type="text" class="form-control" required name="total_po_usd"
+                                                <input type="number" class="form-control" required name="total_po_usd"
                                                 value="{{number_format((float)$details->po_value_foreign, 2, '.', '') ?? ''}}" placeholder="Total PO USD" ondrop="return false;" onpaste="return false;">
                                             </div>
                                             @if ($errors->has('total_po_usd'))
@@ -383,7 +437,7 @@
                                                     <span class="input-group-text" id="basic-addon2"><i class="icon-calendar" style="color:#28a745"></i></span>
                                                 </div>
 
-                                                <input type="text" class="form-control" required name="total_po_ngn"
+                                                <input type="number" class="form-control" required name="total_po_ngn"
                                                 value="{{number_format($details->po_value_naira) ?? ""}}" placeholder="Total PO NGN" ondrop="return false;" onpaste="return false;">
                                             </div>
                                             @if ($errors->has('total_po_ngn'))
@@ -681,12 +735,15 @@
                                                     <span class="input-group-text" id="basic-addon3"><i class="icon-database" style="color:#28a745"></i></span>
                                                 </div>
                                                 <select class="form-control selectpicker" data-live-search="true" required name="shipper_id">
-                                                    {{-- @foreach ($shipper as $shippers) --}}
-                                                        <option data-tokens="{{ $rfq->shipper->shipper_name }}" value="{{ $rfq->shipper->shipper_id }}">
-                                                                {{ $rfq->shipper->shipper_name }}
-                                                        </option>
+                                                    <option data-tokens="{{ $rfq->shipper->shipper_name ?? '' }}" value="{{ $rfq->shipper->shipper_id ?? '' }}">
+                                                    {{ $rfq->shipper->shipper_name ?? '' }}
+                                                </option>
+                                        @foreach ($shipper as $shippers)
+                                        <option data-tokens="{{ $shippers->shipper_name ?? '' }}" value="{{ $shippers->shipper_id ?? '' }}">
+                                                    {{ $shippers->shipper_name ?? '' }}
+                                                </option>
 
-                                                    {{-- @endforeach --}}
+                                        @endforeach
 
                                                 </select>
                                             </div>
@@ -1041,7 +1098,13 @@
                                             <div class="card-header">
                                                 <div class="card-title">Technical Note</div>
                                             </div>
-                                            <textarea class="summernote1" name="technical_note" placeholder="Please enter technical note (if any)." style="" required>{!! $details->technical_notes !!}</textarea>
+                                        <textarea class="summernote1" name="technical_note" placeholder="Please enter technical note (if any)." style="" required>
+                                        @if(!empty($details->technical_notes))
+                                            {!! $details->technical_notes !!}
+                                        @else
+                                            N/A
+                                        @endif
+                                    </textarea>
                                             @if ($errors->has('technical_note'))
                                                 <div class="" style="color:red">{{ $errors->first('technical_note') }}</div>
                                             @endif
@@ -1085,45 +1148,51 @@
                                         </div>
 
                                     </div>
-                                    @if (file_exists('document/po/'.$details->po_id.'/'))
-
-                                        <div class="row gutters">
-                                            <?php
-                                           $dir = 'document/po/'.$details->po_id.'/';
-                                            $files = scandir($dir);
-                                            $total = count($files) - 2;
-                                            $file = 'document/po/'.$details->po_id.'/';
-                                            if (is_dir($file)){
-                                                if ($opendirectory = opendir($file)){  $num =1;
-                                                    while (($file = readdir($opendirectory)) !== false){?>
-
-                                                        <?php $len = strlen($file); ?>
-                                                            @if($len > 2)
-
-                                                                <a href="{{ asset('document/po/'.$details->po_id.'/'.$file) }}" target="_blank">
-                                                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12" style="margin-left:;">
-                                                                        <div class="icon-tiles" style="background: -webkit-linear-gradient(45deg, #3949ab, #4fc3f7); color:white; height:70px; width:250px" >
-                                                                            <h6>{{ substr($file,0, 30) }}</h6>
-                                                                            {{-- <img src="{{asset('admin/img/icons/contract.png')}}" style="height:120px; width:180px" alt="Files " /> --}}
-                                                                        </div>
-                                                                    </div>
-                                                                </a>
-                                                                <a href="{{route('remove.po.file',[$details->po_id,$file])}}" title="{{ 'Delete '.$file}}"
-                                                                    onclick="return(confirmToDeleteFile());">
-                                                                    <span class="icon-delete" style="color:red;" style="padding-left:-10px;"></span>
-                                                                </a>
-
-                                                            @endif
-
-                                                        <?php $num++;
-
-                                                    }
-                                                    closedir($opendirectory);
-                                                }
-                                            } ?>
-
-                                        </div>
-                                    @endif
+                                                                                @if (file_exists('document/po/'.$details->po_id.'/'))
+                                                <table class="table" id="fixedHeader">
+                                                    <thead>
+                                            <h3>Files</h3>
+                                                        <tr>
+                                                            <th>File Name</th>
+                                                            <th>Date Created</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                                        $dir = 'document/po/'.$details->po_id.'/';
+                                                        $files = scandir($dir);
+                                                        $total = count($files) - 2;
+                                            
+                                                        if (is_dir($dir) && $total > 0) {
+                                                            if ($opendirectory = opendir($dir)) {
+                                                                while (($file = readdir($opendirectory)) !== false) {
+                                                                    $len = strlen($file);
+                                            
+                                                                    if ($len > 2) {
+                                                                        ?>
+                                                                        <tr>
+                                                                            <td>{{ substr($file, 0, 40) }}</td>
+                                                                            <td>{{ date("Y-m-d H:i:s", filectime($dir . $file)) }}</td>
+                                                                            <td class="file-menu">
+                                                                                    <a href="{{ asset('document/po/'.$details->po_id.'/'.$file) }}" target="_blank">View</a> &nbsp | &nbsp
+                                                                                    <a href="{{ route('remove.po.file', [$details->po_id, $file]) }}" title="{{ 'Delete '.$file }}" onclick="return(confirmToDeleteFile());">Delete</a>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <?php
+                                                                    }
+                                                                }
+                                                                closedir($opendirectory);
+                                                            }
+                                                        } else {
+                                                            echo "<tr><td colspan='3'>No files available.</td></tr>";
+                                                        }
+                                                        ?>
+                                                    </tbody>
+                                                </table>
+                                            @else
+                                                No files available.
+                                            @endif
 
 
                                     <div class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-12" align="right">

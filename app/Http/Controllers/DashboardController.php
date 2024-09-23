@@ -29,13 +29,14 @@ class DashboardController extends Controller
             $client = DB::table('client_rfqs')->select('client_id')->distinct('client_id')->orderBy('client_id', 'asc')->get();
             // dd($client);
             $employee = Employers::all();
-            $rfq = ClientRfq::orderBy('rfq_id', 'desc')->get();
+            $rfq = ClientRfq::orderBy('rfq_id', 'desc')->limit(400)->get();
+            $rfqcount = ClientRfq::orderBy('rfq_id', 'desc')->get();
             $po = ClientPo::orderBy('po_id', 'desc')->get();
             // $comp = Clients::orderBy('client_name', 'asc')->get();
             $filter = DB::table('client_rfqs')->select('product')->distinct('product')->orderBy('product', 'asc')->get();
             return view("dashboard.index")->with([ 'filter' => $filter,
                 'client' => $client, "company" => $company, 'shipper' => $shipper, 'vendor' => $vendor, "employee" => $employee,
-                'rfq' => $rfq, 'po' => $po,
+                'rfq' => $rfq, 'rfqcount' => $rfqcount, 'po' => $po,
             ]);
 
         }elseif(auth()->user()->hasRole('Admin')){
@@ -45,13 +46,14 @@ class DashboardController extends Controller
             // $client = Clients::where('company_id', $company->company_id)->get();
             $client = DB::table('client_rfqs')->where('company_id', $company->company_id)->select('client_id')->distinct('client_id')->orderBy('client_id', 'asc')->get();
             $employee = Employers::where('company_id', $company->company_id)->get();
-            $rfq = ClientRfq::where('company_id', $company->company_id)->orderBy('rfq_id', 'desc')->get();
+            $rfq = ClientRfq::where('company_id', $company->company_id)->orderBy('rfq_id', 'desc')->limit(400)->get();
+            $rfqcount = ClientRfq::where('company_id', $company->company_id)->orderBy('rfq_id', 'desc')->get();
             $po = ClientPo::where('company_id', $company->company_id)->orderBy('po_id', 'desc')->get();
             // $comp = Clients::where('company_id', $company->company_id)->orderBy('client_name', 'asc')->get();
             $filter = DB::table('client_rfqs')->where('company_id', $company->company_id)->select('product')->distinct('product')->orderBy('product', 'asc')->get();
             return view("dashboard.index")->with([ 'filter' => $filter,
                 'client' => $client, "company" => $company, 'shipper' => $shipper, 'vendor' => $vendor, "employee" => $employee,
-                'rfq' => $rfq, 'po' => $po
+                'rfq' => $rfq, 'rfqcount' => $rfqcount, 'po' => $po
             ]);
         }elseif(auth()->user()->hasRole('Employer') OR (auth()->user()->hasRole('HOD'))){
             $user = User::where('email', Auth::user()->email)->first();
@@ -65,7 +67,8 @@ class DashboardController extends Controller
             $employee = Employers::where('email', Auth::user()->email)->first();
             $company = Companies::where('company_id', $employee->company_id)->first();
 
-            $rfq = ClientRfq::where('company_id', $employee->company_id)->orderBy('created_at','desc')->get();
+            $rfq = ClientRfq::where('company_id', $employee->company_id)->orderBy('created_at','desc')->limit(400)->get();
+            $rfqcount = ClientRfq::where('company_id', $employee->company_id)->orderBy('created_at','desc')->get();
             // $client = Clients::where('company_id', $company->company_id)->orderBy('client_name', 'asc')->get();
             $client = DB::table('client_rfqs')->where('company_id', $company->company_id)->select('client_id')->distinct('client_id')->orderBy('client_id', 'asc')->get();
             $po = ClientPo::where('company_id', $company->company_id)->orderBy('po_id', 'desc')->get();
@@ -75,7 +78,7 @@ class DashboardController extends Controller
             $filter = DB::table('client_rfqs')->where('company_id', $company->company_id)->select('product')->distinct('product')->orderBy('product', 'asc')->get();
             return view("dashboard.index")->with([ 'filter' => $filter,
                 "rfq" => $rfq, "employee" => $employee, 'client' => $client, 'po' => $po, 'company' => $company, 
-                'vendor' => $vendor, 'shipper' => $shipper
+                'vendor' => $vendor, 'rfqcount' => $rfqcount, 'shipper' => $shipper
             ]);
         }elseif(auth()->user()->hasRole('Contact')){
             $contact = ClientContact::where('email', Auth::user()->email)->first();

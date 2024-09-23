@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 class ApproveBreakdown extends Mailable
 {
     use Queueable, SerializesModels;
-
+ 
     /**
      * Create a new message instance.
      *
@@ -31,6 +31,8 @@ class ApproveBreakdown extends Mailable
         $reason = $this->data['reason'];
         $status = $this->data['status'];
         $company = $this->data['company'];
+        $rfqcode = $this->data['rfqcode'];
+        $assigned = $this->data['assigned'];
         $company_id = $rfq->company_id;
         if($company_id == 1){
             $sender =  'contact@enabledsolutions.net';
@@ -52,9 +54,9 @@ class ApproveBreakdown extends Mailable
             $sender = $name->email;
             $reply = $name->email;
         }
-        $mail = $this->replyTo($reply, $company->company_name)->subject($status. ' BREAKDOWN FOR ' .$rfq->rfq_number.': '. $rfq->refrence_no . ', '. strtoupper($rfq->product))->view('emails.rfq.breakdown')
+        $mail = $this->replyTo($reply, $company->company_name)->subject($status. ' to Submit Price Quotation for ' .$rfqcode.' : , '.$rfq->description)->view('emails.rfq.breakdown')
         ->with([
-            'rfq' => $rfq,'sender' => $sender, 'reply' => $reply, 'reason' => $reason, 'status' => $status
+            'rfq' => $rfq,'sender' => $sender, 'reply' => $reply, 'reason' => $reason, 'status' => $status, 'assigned' => $assigned
         ]);
         return $mail;
     }

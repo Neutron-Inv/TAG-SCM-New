@@ -1,4 +1,4 @@
-<aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0" style="z-index:5000 !important;">
+<aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0" style="position: relative; width:96.5%; margin:auto;">
     <div class="container-xxl d-flex">
         <ul class="menu-inner">
         <li class="menu-item">
@@ -151,6 +151,9 @@
                                 <a class="menu-link" href="{{ route('unit.index') }}">Unit of Measurements</a>
                             </li>
                             <li class="menu-item">
+                                <a class="menu-link" href="{{ route('product.index') }}">Products</a>
+                            </li>
+                            <li class="menu-item">
                                 <a class="menu-link" href="{{ route('users.index') }}">Super Users</a>
                             </li>
                         </ul>
@@ -234,7 +237,7 @@
 
                 @endif
 
-                @if (Auth::user()->hasRole('Employer') OR(Auth::user()->hasRole('HOD')))
+                @if (Auth::user()->hasRole('Employer') OR (Auth::user()->hasRole('HOD')))
                     
                     <li class="menu-item">
                         <a class="menu-link" href="{{ route('shipper.index') }}">
@@ -267,6 +270,16 @@
                         </a>
                     </li>
 
+                @endif
+                
+                @if(Auth::user()->hasRole('HOD'))
+                
+                    <li class="menu-item">
+                        <a class="menu-link" href="{{ route('product.index') }}">
+                            <i class="icon-list nav-icon"></i>
+                            Products
+                        </a>
+                    </li>
                 @endif
 
                 @if (Auth::user()->hasRole('Shipper'))
@@ -329,14 +342,14 @@
                         Reports
                     </a>
                     <ul class="menu-sub">
-                        <li>
+                        <li class="menu-item">
                             <a class="menu-link" href="{{ route('po.report.weekly') }}">Weekly Reports</a>
                         </li>
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('po.report.monthly') }}">Monthly Reports</a>
                         </li>
                         <li class="menu-item">
-                            <a class="menu-link" href="{{ route('po.report.index') }}">Yearly Reports</a>
+                            <a class="menu-link" href="{{ route('po.report.index') }}">YTD On-Time Reports</a>
                         </li>
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('po.report.custom') }}">Custom Reports</a>
@@ -346,6 +359,9 @@
                         </li>
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('po.report.clientPo') }}">Client PO Reports</a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="{{ route('po.report.outstanding') }}">Outstanding RFQ Reports</a>
                         </li>
 
                     </ul>

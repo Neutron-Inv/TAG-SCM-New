@@ -635,11 +635,13 @@ class ClientPOController extends Controller
                 'note' => ['required', 'string',],
                 'rfq_note' => ['required', 'string',],
                 'supplier_ref_number' =>['required', 'string'],
-                'actual_delivery_date' => ['required', 'string', 'max:199'],
                 'currency' => ['required', 'string',],
                 'timely_delivery' => ['required', 'string', 'max:199'],
+                'shipper_timely_delivery' => ['required', 'string', 'max:199'],
+                'schedule' => ['required', 'string', 'max:199'],
 
             ]);
+            
 
             $data = ([
                 "po" => $this->model->show($po_id),
@@ -697,7 +699,8 @@ class ClientPOController extends Controller
                 'supplier_ref_number' =>  $request->input("supplier_ref_number"),
                 'actual_delivery_date'  => $request->input("actual_delivery_date"), 
                 'timely_delivery' =>  $request->input("timely_delivery"),
-
+                'shipper_timely_delivery' =>  $request->input("shipper_timely_delivery"),
+                
                 "shipper_id" => $request->input("shipper_id"),
 
                 
@@ -710,6 +713,7 @@ class ClientPOController extends Controller
                 'port_of_discharge' =>  $request->input("port_of_discharge"), 
                 'payment_terms_client' => $request->input("payment_terms_client"),
                 'freight_charges_suplier' => $request->input("freight_charges_suplier"),
+                'schedule' => $request->input("schedule"),
 
             ]);
 
@@ -773,7 +777,13 @@ class ClientPOController extends Controller
 
                 }
                 $oldNote = $request->input('note');
-                $newNote = $oldNote . '<br>'. date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Changed the PO Status to '. $request->input('status') . ' <br>';
+                
+            if($request->input("status") == $details->status){
+                $newNote = $request->input('note');
+            }else{
+                $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Changed the PO Status to '. $request->input('status') . '. <br>'.$oldNote;
+            }
+                
                 DB::table('client_pos')->where(['po_id' => $po_id])->update(['note' => $newNote]);
                 $po =  $this->model->show($po_id);
                 $contact_id =$request->input("contact_id");
@@ -806,7 +816,7 @@ class ClientPOController extends Controller
                 }
                 if($request->input('status') == 'PO Acknowledged'){
                     try{
-                        Mail::to('yg@tagenergygroup.net')->cc(['tolajide75@gmail.com','zainab.adedeji@tagenergygroup.net'])->send( new POAcknowledge ($data));
+                        Mail::to('contact@tagenergygroup.net')->cc(['sales@tagenergygroup.net','mary.nwaogwugwu@tagenergygroup.net'])->send( new POAcknowledge ($data));
                         return redirect()->route("po.details",[$details->po_id])->with("success", "You have Updated PO Successfully");
                     }catch(PDOException $e){
                         return redirect()->route("po.details",[$details->po_id])->with("success", "You have Updated PO Successfully. Mail could not be sent because ". $e->getMessage());

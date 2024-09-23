@@ -40,7 +40,7 @@ $(function(){
 // Row Selection
 $(function(){
 	$('#rowSelection').DataTable({
-		'iDisplayLength': 3,
+		'iDisplayLength': 10,
 	});
 	var table = $('#rowSelection').DataTable();
 
@@ -87,9 +87,40 @@ $(document).ready(function(){
 	var table = $('#fixedHeader').DataTable({
 		fixedHeader: true,
 		'iDisplayLength': 10,
-
+		dom: 'lBfrtip',
         buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
+            {
+                extend: 'copy',
+                exportOptions: {
+                    modifier: {
+                        search: 'applied'
+                    }
+                }
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    modifier: {
+                        search: 'applied'
+                    }
+                }
+            },
+            {
+                extend: 'csv',
+                exportOptions: {
+                    modifier: {
+                        search: 'applied'
+                    }
+                }
+            },
+            // {
+            //     extend: 'docx',
+            //     exportOptions: {
+            //         modifier: {
+            //             search: 'applied'
+            //         }
+            //     }
+            // }
         ]
 
 	});

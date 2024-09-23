@@ -63,7 +63,7 @@
                 <i class="ti ti-pencil ti-sm"></i>
             </div>
             <div class="card-info">
-                <h5 class="mb-0">{{ count($rfq) ?? 0}}</h5>
+                <h5 class="mb-0">{{ count($rfqcount) ?? 0}}</h5>
                 <small>RFQs</small>
             </div>
             </div>
@@ -171,7 +171,7 @@
                         <div class="row">
                           <div class="col-lg-7 col-md-9 col-12 order-2 order-md-1" >
                           <h5 class="text-white mb-0 mt-2">SCM Analytics</h5>
-                            <small>Total {{ Totalpos() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}% Conversion Rate</small>
+                            <small>Total {{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}% Conversion Rate</small>
                             <h6 class="text-white mt-0 mt-md-3 mb-3">Purchase Orders</h6>
                             <div class="row">
                               <div class="col-6">
@@ -223,7 +223,7 @@
                         <small class="d-block mb-1 text-muted">Conversion Overview</small>
                         <p class="card-text text-success">{{date('Y')}}</p>
                       </div>
-                      <h3 class="card-title mb-1">${{ formatNumber(TotalrfqQuote()) }}
+                      <div style="white-space: nowrap !important;">
                       @php
                       function formatNumber($value) {
                           if ($value < 1000) {
@@ -234,14 +234,22 @@
                               return number_format($value / 1000000, 1) . 'm';
                           }
                       }
-                      @endphp</h3>
+                      
+                      @endphp 
+                         
+                      @if(Auth::user()->hasRole('SuperAdmin'))
+                      <h5 class="card-title mb-1">${{ formatNumber(TotalrfqQuoteUSD()) }} | £{{ formatNumber(TotalrfqQuoteGBP()) }} <br/> €{{ formatNumber(TotalrfqQuoteEUR()) }} | ₦{{ formatNumber(TotalrfqQuoteNGN()) }}</h5>
+                      @else
+                      <h5 class="card-title mb-1">${{ formatNumber(TotalrfqQuoteUSDEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }} | £{{ formatNumber(TotalrfqQuoteGBPEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }} <br/>  €{{ formatNumber(TotalrfqQuoteEUREMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }} |  ₦{{ formatNumber(TotalrfqQuoteNGNEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }}</h5>
+                      @endif
+                      </div>
                     </div>
                     <div class="card-body">
                       <div class="row">
                         <div class="col-4">
                           <div class="d-flex gap-2 align-items-center mb-2">
                             <span class="badge bg-label-info p-1 rounded"
-                              ><i class="ti ti-shopping-cart ti-xs"></i
+                              ><i class="ti ti-clipboard ti-xs"></i
                             ></span>
                             <p class="mb-0">RFQs</p>
                           </div>
@@ -260,7 +268,7 @@
                             <p class="mb-0">POs</p>
                             <span class="badge bg-label-primary p-1 rounded"><i class="ti ti-link ti-xs"></i></span>
                           </div>
-                          <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ Totalpos() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}%</h5>
+                          <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}%</h5>
                           <small class="text-muted">{{ Totalpos() }}</small>
                         </div>
                       </div>
@@ -277,8 +285,8 @@
                           <div
                             class="progress-bar bg-primary"
                             role="progressbar"
-                            style="width: {{ Totalpos() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}%"
-                            aria-valuenow="{{ Totalpos() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}"
+                            style="width: {{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}%"
+                            aria-valuenow="{{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}"
                             aria-valuemin="0"
                             aria-valuemax="100"
                           ></div>
@@ -372,10 +380,17 @@
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div class="me-2">
                               <h6 class="mb-0">Top Performer</h6>
-                              <small class="text-muted">Admin Admin</small>
+                              @php
+                              if(Auth::user()->hasRole('SuperAdmin')){
+                              $company_idtp = '2';
+                              }else{
+                              $company_idtp = json_decode(empDet(Auth::user()->email))[0]->company_id;
+                              }
+                              @endphp
+                              <small class="text-muted">{{ TopPerformer($company_idtp) }}</small>
                             </div>
                             <div class="user-progress">
-                              <small>4</small><i class="ti ti-chevron-up text-success ms-3"></i>
+                              <small>{{ TopPerformerCount($company_idtp) }}</small><i class="ti ti-chevron-up text-success ms-3"></i>
                               <small class="text-muted">POs</small>
                             </div>
                           </div>
@@ -453,45 +468,15 @@
                     </div>
                     <div class="card-body">
                       <div class="nav-align-top">
-                        <ul class="nav nav-tabs nav-fill" style="width:100% !important; margin-left:1% !important; " role="tablist">
+                        <ul class="nav nav-tabs nav-fill" style="width:100% !important; font-size: 14px !important; margin-left:0.3% !important; " role="tablist">
                           <li class="nav-item">
-                            <button
-                              type="button"
-                              class="nav-link active"
-                              role="tab"
-                              data-bs-toggle="tab"
-                              data-bs-target="#navs-justified-new"
-                              aria-controls="navs-justified-new"
-                              aria-selected="true"
-                            >
-                              New
-                            </button>
+                            <button type="button" class="nav-link active" data-toggle="tab" data-target="#navs-justified-new" aria-selected="true">New</button>
                           </li>
                           <li class="nav-item">
-                            <button
-                              type="button"
-                              class="nav-link"
-                              role="tab"
-                              data-bs-toggle="tab"
-                              data-bs-target="#navs-justified-link-preparing"
-                              aria-controls="navs-justified-link-preparing"
-                              aria-selected="false"
-                            >
-                              Awaiting Approval
-                            </button>
+                            <button type="button" class="nav-link" data-toggle="tab" data-target="#navs-justified-link-preparing" aria-selected="false">Awaiting Approval</button>
                           </li>
                           <li class="nav-item">
-                            <button
-                              type="button"
-                              class="nav-link"
-                              role="tab"
-                              data-bs-toggle="tab"
-                              data-bs-target="#navs-justified-link-shipping"
-                              aria-controls="navs-justified-link-shipping"
-                              aria-selected="false"
-                            >
-                              PO Issued
-                            </button>
+                            <button type="button" class="nav-link" data-toggle="tab" data-target="#navs-justified-link-shipping" aria-selected="false">PO Issued</button>
                           </li>
                         </ul>
                         <div class="tab-content pb-0">
@@ -509,7 +494,7 @@
                                 </span>
                                 <div class="timeline-event ps-0 pb-0">
                                   <div class="timeline-header">
-                                    <small class="text-success text-uppercase fw-semibold">{{$newrfq->refrence_no}} | {{$newrfq->rfq_date}}</small>
+                                    <small class="text-success text-uppercase fw-semibold"><a href="{{ route('rfq.edit', $newrfq->refrence_no) }}">{{$newrfq->refrence_no}} </a>| {{$newrfq->rfq_date}}</small>
                                   </div>
                                   <h6 class="mb-0">{{clits($newrfq->client_id)->client_name}}</h6>
                                   <p class="text-muted mb-0 text-nowrap">{{ fbuyers($newrfq->contact_id)->first_name ?? '' }} {{fbuyers($newrfq->contact_id)->last_name ?? '' }}</p>
@@ -543,8 +528,8 @@
                                 </span>
                                 <div class="timeline-event ps-0 pb-0">
                                   <div class="timeline-header">
-                                    <small class="text-success text-uppercase fw-semibold">{{$awaiting->refrence_no}} | {{$awaiting->rfq_date}}</small>
-                                  </div>
+                                    <small class="text-success text-uppercase fw-semibold"><a href="{{ route('rfq.edit', $awaiting->refrence_no) }}">{{$awaiting->refrence_no}}</a> | {{$awaiting->rfq_date}}</small>
+                                  </div> 
                                   <h6 class="mb-0">{{clits($awaiting->client_id)->client_name}}</h6>
                                   <p class="text-muted mb-0 text-nowrap">{{ fbuyers($awaiting->contact_id)->first_name ?? '' }} {{fbuyers($awaiting->contact_id)->last_name ?? '' }}</p>
                                 </div>
@@ -576,7 +561,7 @@
                                 </span>
                                 <div class="timeline-event ps-0 pb-0">
                                   <div class="timeline-header">
-                                    <small class="text-success text-uppercase fw-semibold">{{$issued->refrence_no}} | {{$issued->rfq_date}}</small>
+                                    <small class="text-success text-uppercase fw-semibold"><a href="{{ route('rfq.edit', $issued->refrence_no) }}">{{$issued->refrence_no}}</a> | {{$issued->rfq_date}}</small>
                                   </div>
                                   <h6 class="mb-0">{{clits($issued->client_id)->client_name}}</h6>
                                   <p class="text-muted mb-0 text-nowrap">{{ fbuyers($issued->contact_id)->first_name ?? '' }} {{fbuyers($issued->contact_id)->last_name ?? '' }}</p>
@@ -923,22 +908,22 @@
                                                 <th>#</th>
                                                 <th>Status</th>
                                                 <th>Client</th>
-                                                <th hidden>Client RFQ No</th>
+                                                <th>Client RFQ No</th>
                                                 <th>Our Ref No</th>
                                                 <th>Description</th>
                                                 <th>Total Quote (USD) <br />
                                                     @if(Auth::user()->hasRole('SuperAdmin'))
                                                     (${{ number_format(sumNgnClientRFQ(),2) ?? 0.00 }})
                                                     @else
-                                                    (${{ number_format(sumNgnClientRFQCompany($company->company_id),2) ?? 0.00 }})
+                                                    (${{ number_format(sumUsdClientRFQCompany($company->company_id),2) ?? 0.00 }})
                                                     @endif
 
                                                 </th>
                                                 <th>Total Quote (NGN) <br />
                                                     @if(Auth::user()->hasRole('SuperAdmin'))
-                                                        (${{ number_format(sumNgnClientRFQNgn(),2) ?? 0.00 }})
+                                                        (₦{{ number_format(sumNgnClientRFQNgn(),2) ?? 0.00 }})
                                                     @else
-                                                        (${{ number_format(sumNgnClientRFQCompanyNgn($company->company_id),2) ?? 0.00 }})
+                                                        (₦{{ number_format(sumNgnClientRFQCompanyNgn($company->company_id),2) ?? 0.00 }})
                                                     @endif
                                                 </th>
                                                 <th>Buyer</th>
@@ -967,10 +952,12 @@
                                                     <td>
                                                         @if($rfqs->status == 'Quotation Submitted')
                                                             <span class="badge badge-pill badge-info"> {{ $rfqs->status ?? '' }} </span><br>
-                                                            @if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')))
-                                                                <b><a href="{{ route('rfq.send',$rfqs->refrence_no) }}" class="" onclick="return(sendEnq());">
-                                                                    Send Status Enq
-                                                                </a></b>
+                                                            @if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('HOD')) OR (Auth::user()->hasRole('Employer')))
+                                                                <b>
+                                       <a href="#" class="send-enquiry-modal" style="float: right;" data-toggle="modal" data-target="#EnquiryModal" data-rfqid="{{ $rfqs->rfq_id }}">Send Status Enq</a> 
+                                                                <!--<a href="{{ route('rfq.send',$rfqs->refrence_no) }}" class="" onclick="return(sendEnq());">-->
+                                                                <!--    Send Status Enq-->
+                                                                <!--</a></b>-->
                                                             @endif
                                                         @elseif($rfqs->status == 'Received RFQ')
                                                             <span class="badge badge-pill badge-success"> {{ $rfqs->status ?? '' }} </span>
@@ -1000,25 +987,28 @@
                                                     </td>
 
                                                     <td>{{ substr($rfqs->client->client_name, 0,22 ) ?? '' }}</td>
-                                                    <td style="width: 50px" hidden>{{ $rfqs->rfq_number ?? '' }}</td>
+                                                    <td style="width: 50px">{{ $rfqs->rfq_number ?? '' }}</td>
                                                     <td style="width: 50px"><a href="{{ route('rfq.edit', $rfqs->refrence_no) }}" style="color:blue">
                                                         {{ $rfqs->refrence_no ?? '' }} </a>
                                                     </td>
                                                     <td> {{ substr($rfqs->description,0, 50) ?? '' }} </td>
                                                     <td style="width: 50px">
-                                                        @if($rfqs->value_of_quote_usd < 2)
-
-                                                            {{ 'TBD' ?? '0.00'}}
-                                                        @else
-                                                            ${{ number_format((int) $rfqs->value_of_quote_usd,2) ?? '' }}
-                                                        @endif
+       @if($rfqs->currency == 'NGN' || (float) $rfqs->total_quote < 2)
+            {{ 'TBD' ?? '0.00'}}
+        @elseif($rfqs->currency == 'USD')
+            ${{ number_format((float) $rfqs->total_quote, 2) ?? '0.00' }}
+        @elseif($rfqs->currency == 'GBP')
+            £{{ number_format((float) $rfqs->total_quote, 2) ?? '0.00' }}
+        @elseif($rfqs->currency == 'EUR')
+            €{{ number_format((float) $rfqs->total_quote, 2) ?? '0.00' }}
+        @endif
                                                     </td>
                                                     <td>
-                                                        @if($rfqs->value_of_quote_ngn < 2)
-                                                            {{ 'TBD' ?? '0.00'}}
-                                                        @else
-                                                            &#36;{{ number_format((int) $rfqs->value_of_quote_ngn,2) ?? '' }}
-                                                        @endif
+        @if($rfqs->currency != 'NGN' || (float) $rfqs->total_quote < 2)
+            {{ 'TBD' ?? '0.00'}}
+        @else
+            ₦{{ number_format((float) $rfqs->total_quote, 2) ?? '0.00' }}
+        @endif
                                                     </td>
                                                     @if (Gate::allows('SuperAdmin', auth()->user()))
 
@@ -1048,20 +1038,19 @@
                                                         </td>
 
                                                     @endif
-                                                    <td>{{ $rfqs->rfq_date ?? '' }}</td>
-                                                    <td>{{ $rfqs->shipper_submission_date ?? '' }}</td>
-                                                    <td>
-                                                        @if (file_exists('document/rfq/'.$rfqs->rfq_id.'/'))
-                                                            <?php
-                                                            $dir = 'document/rfq/'.$rfqs->rfq_id.'/';
-                                                            $files = scandir($dir);
-                                                            $total = count($files) - 2; ?>
-                                                            {{ $total ?? 0 }}
-
-                                                        @else
-                                                            0
-                                                        @endif
-                                                    </td>
+                                                    <td>{{ isset($rfqs->rfq_date) ? date('d-M-Y, H:i', strtotime($rfqs->rfq_date)) : '' }}</td>
+        <td style=" {{ (date('Y-m-d', strtotime($rfqs->delivery_due_date)) === now()->format('Y-m-d')) ? 'color:red;' : '' }}">
+    {{ isset($rfqs->delivery_due_date) ? date('d-M-Y, H:i', strtotime($rfqs->delivery_due_date)) : '' }}
+</td>
+        <td>
+            @if (file_exists('document/rfq/' . $rfqs->rfq_id . '/'))
+                <a class="open-file-modal" data-rfqid="{{ $rfqs->rfq_id }}" href="#">
+                    {{ count(scandir('document/rfq/' . $rfqs->rfq_id . '/')) - 2 }}
+                </a>
+            @else
+                0
+            @endif
+        </td>
                                                     <td>
                                                         <?php $co = countLineItems($rfqs->rfq_id) ?>
                                                         @if($co > 0 )
@@ -1073,11 +1062,8 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <?php $note = getnotes($rfqs->rfq_id); ?>
-                                                        <a href="" data-toggle="modal" data-target=".bd-example-modal-lx-{{ $rfqs->rfq_id }}">
-                                                        Notes
-                                                        </a>
-                                                    </td>
+    <a href="#" class="open-note-modal" data-rfqid="{{ $rfqs->rfq_id }}">Notes</a>
+</td>
                                                     <td hidden>
                                                         <?php $mesc = getMescCodes($rfqs->rfq_id) ?>
                                                         <p>
@@ -1093,27 +1079,43 @@
                                         </tbody>
                                     </table>
 
-                                    @foreach ($rfq as $rfqs)
-                                    <?php $note = getnotes($rfqs->rfq_id); ?>
-                                        <div class="modal fade bd-example-modal-lx-{{ $rfqs->rfq_id }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel-{{ $rfqs->rfq_id }}" aria-hidden="true">
-                                            <div class="modal-dialog modal-lx-{{ $rfqs->rfq_id }}">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="myLargeModalLabel-{{ $rfqs->rfq_id }}">Notes</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        {!! $note->note ?? 'N/A' !!}
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                      @endforeach
+<div class="modal fade" id="commonModal" tabindex="-1" role="dialog" aria-labelledby="commonModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commonModalLabel">Notes</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be dynamically updated here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileModalLabel">Files</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="fileModalBody">
+                <!-- Content will be dynamically updated here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
                                 </div>
 
                             </div>
@@ -1341,4 +1343,159 @@
     </div>
 </div>
 
+<div class="modal fade" id="EnquiryModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:60%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileModalLabel">Send Quote Status Enquiry</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="fileModalBody">
+                            <form action="{{ route('rfq.send','0') }}" class="" method="POST" enctype="multipart/form-data">
+                {{ csrf_field() }}
+                <div class="modal-body">
+
+                    <div class="row gutters">
+                        <div class="col-md-6 col-sm-6 col-6">
+                            <label for="recipient-name" class="col-form-label">Recipient:</label>
+                            <input type="email" class="form-control" id="buyer-recipient-email" name="rec_email"
+                            value="contact@tagenergygroup.net">
+                            @if ($errors->has('rec_email'))
+                                <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
+                            @endif
+                        </div>
+                        
+                        <div class="col-md-6 col-sm-6 col-6">
+                            <label for="recipient-name" class="col-form-label">CC Email:</label>
+                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="sales@tagenergygroup.net">
+                            @if ($errors->has('report_recipient'))
+                                <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
+                            @endif
+                        </div>
+                        <input type="hidden" name="rfq_id" value="0" id="rfq_idsend">
+                    </div>
+                </div>
+                <div class="modal-footer custom">
+
+                    <div class="left-side" style="float: left;">
+                        <button type="button" class="btn btn-link danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="right-side"  style="float: right;">
+                        <button type="submit" class="btn btn-link success">Send Enquiry</button>
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('.send-enquiry-modal').on('click', function(e) {
+            e.preventDefault();
+
+            var rfqId = $(this).data('rfqid');
+            var modal = $('#EnquiryModal');
+            var getBuyerUrl = 'https://scm.tagenergygroup.net/getbuyer.php';
+
+            // Make an Ajax request to fetch the note content from the endpoint
+            $.ajax({
+                url: getBuyerUrl, 
+                type: 'POST',
+                data: { rfq_id: rfqId },
+                success: function(data) {
+                    // Update the modal body with the fetched note content
+                    modal.find('#buyer-recipient-email').val(data);
+                    modal.find('#rfq_idsend').val(rfqId);
+                    console.log(data);
+                },
+                error: function() {
+                    // Handle error if needed
+                },
+                complete: function() {
+                    // Open the modal after content is loaded
+                    modal.modal('show');
+                }
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $('.open-note-modal').on('click', function(e) {
+            e.preventDefault();
+
+            var rfqId = $(this).data('rfqid');
+            var modal = $('#commonModal');
+            var getNoteUrl = 'https://scm.tagenergygroup.net/getnote.php';
+
+            // Make an Ajax request to fetch the note content from the endpoint
+            $.ajax({
+                url: getNoteUrl, 
+                type: 'POST',
+                data: { rfq_id: rfqId },
+                success: function(data) {
+                    // Update the modal body with the fetched note content
+                    modal.find('.modal-body').html(data);
+                },
+                error: function() {
+                    // Handle error if needed
+                },
+                complete: function() {
+                    // Open the modal after content is loaded
+                    modal.modal('show');
+                }
+            });
+        });
+    });
+</script>
+<script>
+    // Wait for the document to be ready 
+    $(document).ready(function() {
+        // Attach a click event handler to elements with the class 'open-file-modal'
+        $('.open-file-modal').on('click', function(e) {
+            // Prevent the default click behavior
+            e.preventDefault();
+    
+            // Get the value of 'rfqid' attribute from the clicked element
+            var rfqId = $(this).data('rfqid');
+    
+            // Get a reference to the modal element with the ID 'fileModal'
+            var modal = $('#fileModal');
+    
+            // Specify the URL for the Ajax request
+            var getFilesUrl = 'https://scm.tagenergygroup.net/getfile.php';
+    
+            // Make an Ajax request to fetch the files content from the endpoint
+            $.ajax({
+                url: getFilesUrl,
+                type: 'POST',
+                data: { rfq_id: rfqId },
+                dataType: 'json', // Specify the expected data type
+                success: function(response) {
+                    // Update the modal body with the fetched files content
+                    modal.find('.modal-body').html('');
+                    modal.find('.modal-body').append('<p>Directory: ' + response.directory + '</p><ul>');
+                    
+                    // Iterate through the 'files' array in the response and append links
+                    $.each(response.files, function(index, file) {
+                        modal.find('.modal-body').append('<li><a href="' + response.directory + file + '" target="_blank">' + file + '</a></li>');
+                    });
+                    
+                    modal.find('.modal-body').append('</ul>');
+                },
+                error: function() {
+                    // Handle error if needed
+                },
+                complete: function() {
+                    // Open the modal after content is loaded
+                    modal.modal('show');
+                }
+            });
+        });
+    });
+</script>
 @endsection

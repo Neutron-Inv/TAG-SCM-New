@@ -250,7 +250,7 @@
                                          {{ $po->status }}
                                     @else
                                         {{ $rfq->status }}
-                                    @endif}
+                                    @endif
                                 </h6>
                               </div>
                             </div>
@@ -263,11 +263,14 @@
                               <div>
                                 <h6 class="mb-0"><i class="fas fa-user-check ti-sm text-danger ml-1 me-2"></i>Assigned To</h6>
                               </div>
-                              
+                              @php 
+                              $employee = "";
+                              @endphp
                                 @if(request()->has('po_number'))
                                 @php
                                     $employee = empDetails($po->employee_id);
                                 @endphp
+                                @else
                                  @php
                                     $employee = empDetails($rfq->employee_id);
                                 @endphp
@@ -339,23 +342,55 @@
                                                         $sumTotalMiscSupplier = 0;
                                                         $shipper = getSh($rfq->shipper_id);
                                                     @endphp
-                                                    @if(!empty(json_decode($rfq->misc_cost_supplier, true) && array_key_exists('amount', json_decode($rfq->misc_cost_supplier, true))))
-                                                    @foreach(json_decode($rfq->misc_cost_supplier, true) as $item)
-                                                        <tr>
-                                                            <td style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
-                                                            @if($iteml['amount'] != "" && $iteml['amount'] > 0)
-                                                            {{number_format((float)$item['amount'] ,2) ?? 0 }}
-                                                            @endif
-                                                            </td>
-                                                            <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
-                                                                {{ $item['desc'] }}
-                                                            </td>
-                                                        </tr>
-                                                        @php
-                                                            $sumTotalMiscSupplier += $item['amount'];
-                                                        @endphp
-                                                    @endforeach
-                                                    @endif
+                        @if(!empty(json_decode($rfq->misc_cost_supplier, true)))
+                                    @foreach(json_decode($rfq->misc_cost_supplier, true) as $item)
+                                        <tr>
+                                            <td style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
+                                                @if(isset($item['amount']) && is_numeric($item['amount']) && $item['amount'] > 0)
+                                                    {{ number_format((float)$item['amount'], 2) }}
+                                                @endif
+                                            </td>
+                                            <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
+                                                {{ $item['desc'] ?? '' }}
+                                            </td>
+                                        </tr>
+                                        @php
+                                            $sumTotalMiscSupplier += isset($item['amount']) && is_numeric($item['amount']) ? (float)$item['amount'] : 0;
+                                        @endphp
+                                    @endforeach
+                                @endif
+                                
+                                <tr>
+                                                        <td  style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
+                                                             font-size: 10.0pt;font-family: Calibri, sans-serif;">
+                                                            &nbsp;
+                                                        </td>
+                                                        <td  style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
+                                                             font-size: 10.0pt;font-family: Calibri, sans-serif; ">
+                                                             &nbsp;
+                                                        </td>
+                                
+                                @php
+                                $sumTotalMiscOthers = 0;
+                              
+                                @endphp
+        @if(!empty(json_decode($rfq->misc_cost_others, true)))
+                    @foreach(json_decode($rfq->misc_cost_others, true) as $other_item)
+                        <tr>
+                            <td style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
+                                @if(isset($other_item['amount']) && is_numeric($other_item['amount']) && $other_item['amount'] > 0)
+                                    {{ number_format((float)$other_item['amount'], 2) }}
+                                @endif
+                            </td>
+                            <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
+                                {{ $other_item['desc'] ?? '' }}
+                            </td>
+                        </tr>
+                        @php
+                            $sumTotalMiscOthers += isset($other_item['amount']) && is_numeric($other_item['amount']) ? (float)$other_item['amount'] : 0;
+                        @endphp
+                    @endforeach
+                @endif
                                                     <tr>
                                                         <td  style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;">
@@ -375,12 +410,11 @@
                                                             </td>
                                                             <td  style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                                 font-size: 10.0pt;font-family: Calibri, sans-serif; ">
-                                                                {{ $shiname }} Lump Sum
+                                                                {{ $shiname }} Freight Charges
                                                             </td>
                                                         </tr>
                                                         @else
-                                                        @if($shi != null)
-                                                        @if($shi->soncap_charges > 0)
+                                                            @if($shi->soncap_charges > 0)
                                                             <tr>
                                                                 <td  style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                                     font-size: 10.0pt;font-family: Calibri, sans-serif;">
@@ -416,8 +450,7 @@
                                                                 </td>
                                                             </tr>
                                                             @endif
-                                                            
-                                                            @if($shi->customs_duty > 0 )
+                                                            @if($shi->customs_duty > 0)
                                                             <tr>
                                                                 <td  style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                                     font-size: 10.0pt;font-family: Calibri, sans-serif;">
@@ -429,30 +462,28 @@
                                                                 </td>
                                                             </tr>
                                                             @endif
-                                                            @endif
                                                         @endif
                                                     @endif
                                                     @php
                                                         $sumTotalMiscLogistics = 0;
                                                     @endphp
-                                                    @if(!empty(json_decode($rfq->misc_cost_logistics, true) && array_key_exists('amount', json_decode($rfq->misc_cost_logistics, true))))
-                                                    @foreach(json_decode($rfq->misc_cost_logistics, true) as $iteml)
-                                                        <tr>
-                                                            <td style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
-                                                            @if($iteml['amount'] != "" && $iteml['amount'] > 0)
-                                                            {{number_format((float)$iteml['amount'] ,2) ?? 0 }}
-                                                            @endif
-                                                            </td>
-                                                            <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
-                                                                {{ $iteml['desc'] }}
-                                                            </td>
-                                                        </tr>
-
-                                                        @php
-                                                            $sumTotalMiscLogistics += $iteml['amount'];
-                                                        @endphp
-                                                    @endforeach
-                                                    @endif
+            @if(!empty(json_decode($rfq->misc_cost_logistics, true)))
+                @foreach(json_decode($rfq->misc_cost_logistics, true) as $iteml)
+                    <tr>
+                        <td style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
+                            @if(isset($iteml['amount']) && is_numeric($iteml['amount']) && $iteml['amount'] > 0)
+                                {{ number_format((float)$iteml['amount'], 2) }}
+                            @endif
+                        </td>
+                        <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 10.0pt; font-family: Calibri, sans-serif;">
+                            {{ $iteml['desc'] ?? '' }}
+                        </td>
+                    </tr>
+                    @php
+                        $sumTotalMiscLogistics += isset($iteml['amount']) && is_numeric($iteml['amount']) ? (float)$iteml['amount'] : 0;
+                    @endphp
+                @endforeach
+            @endif
                                                     <tr>
                                                         <td  style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;">
@@ -466,22 +497,11 @@
                                                     <tr>
                                                         <td  style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;">
-                                                        <b>{{ number_format(
-                                        (float)$tq +
-                                        (is_numeric($sumTotalMiscLogistics) ? $sumTotalMiscLogistics : 0) +
-                                        (is_numeric($sumTotalMiscSupplier) ? $sumTotalMiscSupplier : 0) +
-                                        (is_numeric($rfq->local_delivery) ? $rfq->local_delivery : 0),
-                                        2
-                                    ) }}</b> 
+                                                        <b>{{ number_format((float)$tq + $sumTotalMiscLogistics + $sumTotalMiscSupplier + $sumTotalMiscOthers + $rfq->local_delivery,2) ?? 0 }}</b> 
                                                         </td>
-@php
-    $tq_numeric = is_numeric($tq) ? (float)$tq : 0;
-    $sumTotalMiscLogistics_numeric = is_numeric($sumTotalMiscLogistics) ? (float)$sumTotalMiscLogistics : 0;
-    $sumTotalMiscSupplier_numeric = is_numeric($sumTotalMiscSupplier) ? (float)$sumTotalMiscSupplier : 0;
-    $rfq_local_delivery_numeric = is_numeric($rfq->local_delivery) ? (float)$rfq->local_delivery : 0;
-
-    $subtotal = $tq_numeric + $sumTotalMiscLogistics_numeric + $sumTotalMiscSupplier_numeric + $rfq_local_delivery_numeric;
-@endphp
+                                                        @php
+                                                            $subtotal = $tq + $sumTotalMiscLogistics + $sumTotalMiscOthers + $sumTotalMiscSupplier + $rfq->local_delivery;
+                                                        @endphp
                                                         <td  style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;">
                                                             {{-- {{ number_format((float)sumTotalQuote($rfq->rfq_id),2) ?? 0}}  --}}
@@ -501,13 +521,27 @@
                                                     <tr>
                                                         <td  style="text-align: right; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;color:red;">
-{{ 
-    is_numeric($rfq->cost_of_funds) ? number_format((float)$rfq->cost_of_funds, 2) : 0 
-}}
+                                                             {{ number_format((float)$rfq->cost_of_funds,2) ?? 0 }} 
                                                         </td>
                                                         <td  style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;">
-                                                            Cost of funds (Subtotal * 1.3% * 4 Months)
+            @php
+            // Decode the JSON string into an array of objects
+                $data = json_decode($rfq->supplier_cof);
+                
+                // Initialize $highest_duration to the duration of the first item
+                $highest_duration = $data[0]->duration;
+                
+                // Loop through the array of objects starting from the second item
+                for ($i = 1; $i < count($data); $i++) {
+                    // Check if the duration of the current item is greater than $highest_duration
+                    if ($data[$i]->duration > $highest_duration) {
+                        // Update $highest_duration with the duration of the current item
+                        $highest_duration = $data[$i]->duration;
+                    }
+                }
+            @endphp
+                                                            Cost of funds (Subtotal * 1.3% * {{ $highest_duration }} Months)
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -580,7 +614,7 @@
                                                         </td>
                                                         <td  style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;">
-                                                            Total Ex-works Cost
+                                                            Total {{ $rfq->incoterm }} Cost
                                                         </td>
                                                     </tr>
                                                     <tr style="background:#f2f2f2;">
@@ -620,7 +654,11 @@
                                                         </td>
                                                         <td  style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;">
+                                        @if($rfq->ncd > 0)
                                                             WHT &amp; NCD  <br> ((Total Quote minus Sub Total 1 * 6%)
+                                        @elseif($rfq->ncd == 0)
+                                                            WHT <br> ((Total Quote minus Sub Total 1 * 5%)
+                                        @endif
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -640,7 +678,7 @@
                                                         </td>
                                                         <td  style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top;
                                                              font-size: 10.0pt;font-family: Calibri, sans-serif;">
-                                                            <b>Net Margin <br>(Total Quote minus (Total DDP Cost + WHT))</b>
+                                                            <b>Net Margin <br>(Total Quote minus ({{ $rfq->incoterm }} + WHT))</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -776,7 +814,7 @@
                             <!-- <input type="email" class="form-control" id="recipient-email" name="rec_email"
                             value="bidadmin@tagenergygroup.net" readonly> -->
                             <input type="email" class="form-control" id="recipient-email" name="rec_email"
-                            value="emmanuel.idowu@tagenergygroup.net">
+                            value="contact@tagenergygroup.net">
                             @if ($errors->has('rec_email'))
                                 <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
                             @endif
@@ -784,8 +822,7 @@
                         
                         <div class="col-md-8 col-sm-8 col-8">
                             <label for="recipient-name" class="col-form-label">CC Email:</label>
-                            <!-- <input type="text" class="form-control" id="recipient-email" name="quotation_recipient" value="contact@tagenergygroup.net; sales@tagenergygroup.net" readonly> -->
-                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="emmanuel@enabledgroup.net; jackomega.idnoble@gmail.com">
+                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="sales@tagenergygroup.net; mary.nwaogwugwu@tagenergygroup.net">
                             @if ($errors->has('report_recipient'))
                                 <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
                             @endif
