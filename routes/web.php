@@ -251,6 +251,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             Route::post("/decline-breakdown-submit", "ClientRFQController@disapproveBreakdown")->name("rfq.disapproveQuote");
 
             Route::get('/pdf/{refrence_no}','ClientRFQController@printPriceQuote')->name('print.Quote');
+            Route::get('/bha/{refrence_no}','ClientRFQController@printBHAQuote')->name('bha.Quote');
 
             Route::post("/generate-report", "ClientRFQController@generateReport")->name("rfq.gen.report");
             Route::get("/download-pdf/{rfq_id}", "ClientRFQController@downloadQuote")->name("rfq.downloadQuote");

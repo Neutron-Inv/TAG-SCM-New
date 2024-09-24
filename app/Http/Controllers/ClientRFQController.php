@@ -954,6 +954,29 @@ class ClientRFQController extends Controller
             ]);
         }
     }
+    
+    public function printBHAQuote($refrence_no)
+    {
+        if(ClientRfq::where('refrence_no', $refrence_no)->exists()){
+            $ref = ClientRfq::where('refrence_no', $refrence_no)->first();
+            $rfq = $this->model->show($ref->rfq_id);
+            $line_items = LineItem::where(['rfq_id' => $ref->rfq_id])->orderBy('created_at','asc')->get();
+            if(count($line_items) > 0){
+                
+                $pdf = PDF::loadView('dashboard.printing.bha', compact('rfq', 'line_items'))->setPaper('a4', 'portrait');
+                $fileName = "BHA Quotation " .$rfq->refrence_no . ", ". $rfq->description.'.pdf';
+
+                return $pdf->stream();
+                
+            }else{
+                return redirect()->back()->with(['error' => "No Line Items was found"]);
+            }
+        }else{
+            return redirect()->back()->with([
+            'error' => "$refrence_no does not Exist for any RFQ",
+            ]);
+        }
+    }
 
     public function store(Request $request)
     {

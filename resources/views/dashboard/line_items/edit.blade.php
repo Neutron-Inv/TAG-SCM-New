@@ -139,10 +139,14 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text" id="basic-addon6"><i class="icon-home" style="color:#28a745"></i></span>
                                                                 </div>
+                                                                
                                                                 <select class="form-control selectpicker" data-live-search="true" required name="vendor_id" required>
-                                                                    <option data-tokens="{{ $rfq->vendor->vendor_name }}" value="{{ $rfq->vendor_id }}">
-                                                                            {{ $rfq->vendor->vendor_name }}
+                                                                    
+                                                                    @foreach($vendor as $vendors)
+                                                                    <option data-tokens="{{ $vendors->vendor_name }}" value="{{ $vendors->vendor_id }}" {{ $line_items->vendor_id == $vendors->vendor_id ? 'selected' : '' }}>
+                                                                            {{ $vendors->vendor_name }}
                                                                     </option>
+                                                                    @endforeach
                                                                 </select>
                                                             </div>
 
@@ -299,6 +303,70 @@
                                                             @endif
                                                         </div>
                                                     </div>
+                                                    
+                                                    @if($rfq->product == "BHA")
+                                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <label for="weight">Weight (in Kg)</label><div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text" id="basic-addon6">
+                                                                        <i class="icon-package" style="color:#28a745"></i>
+                                                                    </span>
+                                                                </div>
+                                                                <input type="number" class="form-control" id="weight" name="weight" value="{{$line_items->weight}}" placeholder="Enter The Weight"
+                                                                aria-describedby="basic-addon6">
+                                                            </div>
+
+                                                            @if ($errors->has('weight'))
+                                                                <div class="" style="color:red">{{ $errors->first('weight') }}</div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <label for="location">Location</label>
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text" id="basic-addon6">
+                                                                        <i class="icon-location" style="color:#28a745"></i>
+                                                                    </span>
+                                                                </div>
+                                                                <select class="form-control" id="location" name="location" aria-describedby="basic-addon6">
+                                                                    <option value="">Select a location</option>
+                                                                    <option value="UK" {{ $line_items->location == 'UK' ? 'selected' : '' }}>UK</option>
+                                                                    <option value="US" {{ $line_items->location == 'US' ? 'selected' : '' }}>US</option>
+                                                                    <option value="China" {{ $line_items->location == 'China' ? 'selected' : '' }}>China/Asia</option>
+                                                                    <option value="Africa" {{ $line_items->location == 'Africa' ? 'selected' : '' }}>Africa</option>
+                                                                    <option value="Middle East" {{ $line_items->location == 'Middle East' ? 'selected' : '' }}>Middle East</option>
+                                                                    <option value="Europe" {{ $line_items->location == 'Europe' ? 'selected' : '' }}>Europe</option>
+                                                                </select>
+                                                            </div>
+                                                    
+                                                            @if ($errors->has('location'))
+                                                                <div style="color:red">{{ $errors->first('location') }}</div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <label for="company_name">Active?</label><div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text" id="basic-addon6">
+                                                                        <i class="icon-table" style="color:#28a745"></i>
+                                                                    </span>
+                                                                </div>
+                                                                <input type="checkbox" class="form-check-input" id="active" name="active" value="1" {{ $line_items->active ? 'checked' : '' }} aria-describedby="basic-addon6">
+                                                            </div>
+
+                                                            @if ($errors->has('active'))
+                                                                <div class="" style="color:red">{{ $errors->first('active') }}</div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    @endif
 
 
                                                 </div>

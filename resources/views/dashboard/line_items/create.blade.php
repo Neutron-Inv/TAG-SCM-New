@@ -153,6 +153,70 @@
                                                             @endif
                                                         </div>
                                                     </div>
+                                                    
+                                                    @if($rfq->product == "BHA")
+                                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <label for="weight">Weight (in Kg)</label><div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text" id="basic-addon6">
+                                                                        <i class="icon-package" style="color:#28a745"></i>
+                                                                    </span>
+                                                                </div>
+                                                                <input type="number" class="form-control" id="weight" name="weight" value="" placeholder="Enter The Weight"
+                                                                aria-describedby="basic-addon6">
+                                                            </div>
+
+                                                            @if ($errors->has('weight'))
+                                                                <div class="" style="color:red">{{ $errors->first('weight') }}</div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <label for="location">Location</label>
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text" id="basic-addon6">
+                                                                        <i class="icon-location" style="color:#28a745"></i>
+                                                                    </span>
+                                                                </div>
+                                                                <select class="form-control" id="location" name="location" aria-describedby="basic-addon6">
+                                                                    <option value="">Select a location</option>
+                                                                    <option value="UK">UK</option>
+                                                                    <option value="US">US</option>
+                                                                    <option value="China">China/Asia</option>
+                                                                    <option value="Africa">Africa</option>
+                                                                    <option value="Middle East">Middle East</option>
+                                                                    <option value="Europe">Europe</option>
+                                                                </select>
+                                                            </div>
+                                                    
+                                                            @if ($errors->has('location'))
+                                                                <div style="color:red">{{ $errors->first('location') }}</div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <label for="company_name">Active?</label><div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text" id="basic-addon6">
+                                                                        <i class="icon-table" style="color:#28a745"></i>
+                                                                    </span>
+                                                                </div>
+                                                                <input type="checkbox" class="form-check-input" id="active" name="active" value="1" checked aria-describedby="basic-addon6">
+                                                            </div>
+
+                                                            @if ($errors->has('active'))
+                                                                <div class="" style="color:red">{{ $errors->first('active') }}</div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    @endif
 
                                                     <input class="form-control" name="unit_cost" id="unit_cost"
                                                         maxlength="" value="0" placeholder="Enter Unit Cost NGN" type="hidden"

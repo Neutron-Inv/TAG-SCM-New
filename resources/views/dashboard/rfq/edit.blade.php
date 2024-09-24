@@ -116,7 +116,11 @@ label {
                                 </div>
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4" align="left">
                                     
-                                    <a  href="{{ route('print.Quote', $details->refrence_no) }}" target="_blank" class="btn btn-info" >  View PDF</a>
+                                    <a  href="{{ route('print.Quote', $details->refrence_no) }}" target="_blank" class="btn btn-info" >  View PDF</a> &nbsp; &nbsp;
+                                   
+                                   @if($details->product == 'BHA1')
+                                   <a  href="{{ route('bha.Quote', $details->refrence_no) }}" target="_blank" class="btn btn-info" >  View BHA Quote</a>
+                                   @endif
                                    
                                 </div>
                                 @if(count(po($details->rfq_id)) > 0)
