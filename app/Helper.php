@@ -1414,4 +1414,59 @@ function getTotalPoc($client_id, $start_date = null, $end_date = null)
         return \DB::table('products')->orderBy('product_name')
         ->get();
     }
+    
+    function freight_pricing($location, $weight){
+        $charge = "";
+        if($location == 'Europe'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 7.5;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 7.5;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 7;
+            }
+        }elseif($location == 'UK'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 7;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 7;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 6.5;
+            }
+        }elseif($location == 'US'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 8.5;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 8.5;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 8;
+            }
+        }elseif($location == 'China'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 12;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 11;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 10;
+            }
+        }elseif($location == 'Middle East'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 11;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 10;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 9;
+            }
+        }elseif($location == 'Africa'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 0;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 0;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 0;
+            }
+        }
+        
+        return $charge;
+    }
 ?>
