@@ -11,43 +11,45 @@ class UserLoginController extends Controller
 
     public function userlogin(Request $request)
     {
+        $validatedData = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+    
         $data = [
-            "email" => $request->input("email"),
-            "password" => $request->input("password"),
+            "email" => $validatedData["email"],
+            "password" => $validatedData["password"],
         ];
-        // $user = User::where('user_id', 1)->first();
-        // $user->assignRole('SuperAdmin');
+    
         if (Auth::attempt($data)) {
-            $usertype = Auth::user()->role;
-            if ((Auth::user()->status == '-1') OR (Auth::user()->user_activation_code == 0)) {
+            // Authentication successful, check if user is active
+            $user = Auth::user();
+            if ($user->status == '-1' || $user->user_activation_code == 0) {
                 $log = new Log([
-                    "user_id" => Auth::user()->user_id,
+                    "user_id" => $user->user_id,
                     "activities" => 'Attempted to Log in',
                 ]);
                 $log->save();
                 return redirect()->back()->with([
-                    "error" => "Ooops!!! You Account has been suspended. Please contact your administrator",
+                    "error" => "Oops!!! Your account has been suspended. Please contact your administrator.",
                 ]);
             } else {
-                if (!empty($usertype)) {
-                    $log = new Log([
-                        "user_id" => Auth::user()->user_id,
-                        "activities" => 'Logged In',
-                    ]);
-                    $log->save();
-                    return redirect()->route("dashboard.index")->with([
-                        "success" => Auth::user()->first_name . ' '.  Auth::user()->last_name . " " . "Welcome To $usertype  Dashboard"
-                    ]);
-                } else {
-                    return redirect()->back()->with([
-                        "error" => "Please login with a valid details",
-                    ]);
-                }
+                // User is active, log the login activity
+                $log = new Log([
+                    "user_id" => $user->user_id,
+                    "activities" => 'Logged In',
+                ]);
+                $log->save();
+    
+                // Redirect user to their intended URL or dashboard
+                return redirect()->intended('/dashboard')->with([
+                    "success" => $user->first_name . ' ' . $user->last_name . " Welcome To $user->role Dashboard",
+                ]);
             }
-
         } else {
+            // Authentication failed, redirect back to login with error message
             return redirect()->back()->with([
-                "error" => "Invalid Username or Password",
+                "error" => "Invalid email or password.",
             ]);
         }
     }

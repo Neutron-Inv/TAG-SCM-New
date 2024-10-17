@@ -637,6 +637,10 @@ class ClientPOController extends Controller
                 'supplier_ref_number' =>['required', 'string'],
                 'currency' => ['required', 'string',],
                 'timely_delivery' => ['required', 'string', 'max:199'],
+<<<<<<< HEAD
+=======
+                'shipper_timely_delivery' => ['required', 'string', 'max:199'],
+>>>>>>> master
                 'schedule' => ['required', 'string', 'max:199'],
 
             ]);
@@ -698,7 +702,8 @@ class ClientPOController extends Controller
                 'supplier_ref_number' =>  $request->input("supplier_ref_number"),
                 'actual_delivery_date'  => $request->input("actual_delivery_date"), 
                 'timely_delivery' =>  $request->input("timely_delivery"),
-
+                'shipper_timely_delivery' =>  $request->input("shipper_timely_delivery"),
+                
                 "shipper_id" => $request->input("shipper_id"),
 
                 

@@ -124,7 +124,7 @@ $result = json_decode($cli_title, true);
                         <p style="font-size: 5pt;font-family: Calibri,sans-serif;margin-bottom: -5px;widows: 1;line-height: 10%;font-weight: 400;">{{ $rfq->client->client_name ?? ' ' }} </p>
                         <p style="font-size: 5pt;font-family: Calibri,sans-serif;margin-top: 0;widows: 1;line-height: 180%;font-weight: 400;"><strong style="font-weight: bolder;">Ref No: TE-{{ $cli->short_code }}-RFQ{{ preg_replace('/[^0-9]/', '', $rfq->refrence_no ?? '') }} </strong></p><br/>
                         <div class="line" style="width: 170px;height: 0.7px;background-color: #000;float:right;margin-top:-27px;margin-right:-10px;"></div>
-                        <img src="https://scm.enabledjobs.com/img/price.png" width="125" style="margin-top:-8.5px;vertical-align: middle;border-style: none;page-break-inside: avoid;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;margin-right:-2px;" alt="Certification">
+                        <img src="https://scm.tagenergygroup.net/img/price.png" width="125" style="margin-top:-8.5px;vertical-align: middle;border-style: none;page-break-inside: avoid;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;margin-right:-2px;" alt="Certification">
                         <br>
                         <p style="font-size: 4.8pt;margin-top: -8px;color:black !important;">{{ date("l, d F Y") }} </p>
                     </div>
@@ -138,13 +138,13 @@ $result = json_decode($cli_title, true);
                             <table class="tablex" style="font-size: 5pt !important; width:300px !important;font-family: Calibri, sans-serif;margin-bottom:opx;color: #000000;background: #ffffff;
                                 border: 0;-webkit-print-color-adjust: exact;margin-left:15px;">
                                 <thead class="text-white" style="font-size: 5pt;font-family: Calibri, sans-serif;color: #000000 !important;">
-                                    <tr style="font-size: 5pt;font-family: Calibri, sans-serif;page-break-inside: avoid;">
+                                    <tr style="font-size: 5pt;font-family: Calibri, sans-serif;page-break-inside: auto;">
                                         <th class="" style="padding-top: 3px;width: 25px;background-color: #C4D79B !important;font-family: Calibri, sans-serif;
                                             font-size: 5pt;
                                             vertical-align: top;font-weight: 600;border: 0; text-align:center;">
                                             <strong style="font-weight: bolder; color: #000000;" >Item </strong>
                                         </th>
-                                        <th class="" style="padding-top: 3px;width: 265px;color: black;background-color: #F0F3F4 !important;text-align: left;
+                                        <th class="" style="padding-top: 3px;width: 265px; max-width: 265px !important; color: black;background-color: #F0F3F4 !important;text-align: left;
                                             font-family: Calibri, sans-serif;font-size: 5pt;
                                             padding: .15rem 0rem .10rem 0rem;vertical-align: top;font-weight: 600;
                                             border: 0;">
@@ -187,14 +187,19 @@ $result = json_decode($cli_title, true);
                                             $percent = $items->unit_frieght;
                                             $unitMargin = (($percent/100) * $items->unit_cost);
                                         @endphp
-                                        <tr style="font-size: 5.0pt; font-family: Calibri, sans-serif; font-weight: 400; border: none !important; margin-bottom:0px;">
+                                        <tr style="font-size: 5.0pt; font-family: Calibri, sans-serif; font-weight: 400; border: none !important; margin-bottom:0px;page-break-inside: auto;">
                                             <td class="list" style="vertical-align: top;padding-top: 2px; background-color: #EBF1DE !important; text-align: center; font-family: Calibri, sans-serif;
                                                 font-size: 5.0pt;">
                                                 {{-- <b>{{ $num }}</b> --}}
                                                 <p style="font-size: 9.0pt; font-family: Calibri, sans-serif;"> <b>{{ $items->item_serialno }} </b></p>
                                             </td>
                                             <td style="padding-top: 2px;">
+                                        @if($items->mesc_code != '' && $items->mesc_code != 'N/A' && $items->mesc_code != 0)
                                                 <p style="font-size: 9.0pt; font-family: Calibri, sans-serif;"> <b>PRODUCT NO: {{ $items->mesc_code }} </b></p><br/>
+<<<<<<< HEAD
+=======
+                                        @endif
+>>>>>>> master
                                                 <p style="font-size: 9.0pt; font-weight: 400; text-align: justify;">
                                                     {!! $items->item_description ?? 'N/A' !!}
                                                 </p>
@@ -222,37 +227,38 @@ $result = json_decode($cli_title, true);
 
                                     <tr style="font-size: 5pt; font-family: Calibri, sans-serif; margin-bottom:0px;">
 
-                                        <td colspan="2" style="background-color:white; padding-top: 3px; border:#000000; font-size: 9.0pt; font-family: Calibri, sans-serif;">
+                                        <td colspan="2" style="background-color:white; padding-top: 6px; border:#000000; font-size: 9.0pt; font-family: Calibri, sans-serif;">
                                         
                                         </td>
 
                                         @php $sumTotalQuote = sumTotalQuote($rfq->rfq_id); $ship=0; @endphp
                                         <td style="background-color:white;"> </td> <td style="background-color:white;"> </td>
 
-                                        <td colspan="3" style="background-color:white; font-size: 9.0pt; font-family: Calibri, sans-serif; margin-left: 100px;" align="left">
+                                        <td colspan="3" style="background-color:white; font-size: 9.0pt; font-family: Calibri, sans-serif; margin-left: 96px;" align="left">
                                             <p style="border-bottom: ridge; border-bottom-color: #000000; border-top: ridge;
-                                                border-top-color: #000000; text-align: center; width: 105%; font-size: 9.0pt; font-family: Calibri, sans-serif;">
+                                                border-top-color: #000000; text-align: center; width: 100.5%; font-size: 9.0pt; font-family: Calibri, sans-serif;margin-top:2px;">
                                                 <strong> Sub total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                 <span style="text-align: right;"> {{ number_format($sumTotalQuote,2 )  }}</strong>
                                             </p>
                                             
                                             <p style="text-align: center; width: 105%; font-size: 9.0pt; font-family: Calibri, sans-serif;">
                                                 <b> &nbsp;Total </b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <strong ><span style="text-align: right;">&nbsp;&nbsp;{{ number_format($sumTotalQuote + $ship, 2) ?? 0 }} </strong>
+                                                <strong ><span style="text-align: right;">{{ number_format($sumTotalQuote + $ship, 2) ?? 0 }} </strong>
                                             </p>
-                                            <p style="border-bottom: ridge; border-bottom-color: #000000; border-top: ridge; border-top-color: #000000; width: 105%;"></p><br/>
-                                            <p style="border-bottom: double; border-bottom-color: #000000; border-top-color: #000000; width: 105%; margin-bottom:0px;"></p><br/>
+                                            <p style="border-bottom: ridge; border-bottom-color: #000000; border-top: ridge; border-top-color: #000000; width: 100.5%;"></p><br/>
+                                            <p style="border-bottom: double; border-bottom-color: #000000; border-top-color: #000000; width: 100.5%; margin-bottom:0px;"></p><br/>
                                         </td>
                                     </tr>
                                     
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="margin-top:-6.5%;">
+                        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9" style="margin-top:-58px;">
                         
                             
                             <p style="font-size: 5pt!important; font-family: Calibri, sans-serif; margin-left:0px; margin-top:0px;"><b style="color:red">
                                 @foreach (explode(';', $rfq->estimated_package_weight ?? '') as $est_weight)
+<<<<<<< HEAD
                                 <b>ESTIMATED PACKAGED WEIGHT: {{ trim($est_weight) }}</b><br/>
                                 @endforeach
                                 @foreach (explode(';', $rfq->estimated_package_dimension ?? '') as $est_dim)
@@ -262,6 +268,23 @@ $result = json_decode($cli_title, true);
                                 <b>HS CODE: {{ trim($hs_code) }}</b><br/>
                                 @endforeach
                                 @if($rfq->certificates_offered != NULL)
+=======
+                                @if(preg_replace('/\D/','',$est_weight) != "")
+                                <b>ESTIMATED PACKAGED WEIGHT: {{ trim($est_weight) }}</b><br/>
+                                @endif
+                                @endforeach
+                                @foreach (explode(';', $rfq->estimated_package_dimension ?? '') as $est_dim)
+                                @if(preg_replace('/\D/','',$est_dim) != "")
+                                <b>ESTIMATED PACKAGED DIMENSION: {{ trim($est_dim) }}</b><br/>
+                                @endif
+                                @endforeach
+                                @foreach (explode(';', $rfq->hs_codes ?? '') as $hs_code)
+                                @if($hs_code != 'N/A')
+                                <b>HS CODE: {{ trim($hs_code) }}</b><br/>
+                                @endif
+                                @endforeach
+                                @if($rfq->certificates_offered != NULL || $rfq->certificates_offered =="")
+>>>>>>> master
                                     <b>CERTIFICATE OFFERED: {{strtoupper($rfq->certificates_offered)}}</b>
                                 @endif
                             </p>
@@ -290,12 +313,19 @@ $result = json_decode($cli_title, true);
                             @php $sn += 1 @endphp
                             
                         @if($rfq->transport_mode == 'Undecided' OR $rfq->incoterm == 'Ex Works')
+<<<<<<< HEAD
                             
+=======
+                             
+>>>>>>> master
                         @else
                             {{ $sn }}. Mode of transportation: {{ $rfq->transport_mode ?? ''}}
                             <br/>
                         @php $sn += 1 @endphp
+<<<<<<< HEAD
                             {{ $sn }}
+=======
+>>>>>>> master
                             @endif
                             {{ $sn }}. Delivery Location: {{ $rfq->delivery_location ?? ''}} 
                             <br/>
@@ -338,7 +368,7 @@ $result = json_decode($cli_title, true);
                             <b>Best Regards </b> <br/>
                             </p> 
                                 @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $logsign = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->signature; @endphp
+                                    @php $logsign = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->signature; @endphp
                                     <img src="{{ $logsign }}" width="80" style="margin-left:0px; margin-top:5px;padding-bottom:10px;" alt="SCM Solutions">
                                 @endforeach
                              <br/><br/>

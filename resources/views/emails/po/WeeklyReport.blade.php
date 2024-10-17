@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <style type="text/css">
+    body{
+        background: white;
+    }
         .container {
             background: white;
             color: black !important;
@@ -54,14 +57,18 @@
         }
     </style>
 </head>
+@php 
+    $start_date = $monday->format('jS F, Y');
+    $end_date = $friday->format('jS F, Y');
+@endphp
 <body>
     <div class="container">
         <p class="email-text">Good Day Sir,</p><br/>
         <p class="email-text">I trust this mail meets you well.</p><br/>
-        <p class="email-text">Please see below tables showing total number of RFQs, POs and Outstanding GRN received from <?php echo now()->startOfWeek()->format('jS F, Y'); ?> to <?php echo now()->startOfWeek()->addDays(4)->format('jS F, Y'); ?></p><br/>
+        <p class="email-text">Please see below tables showing total number of RFQs, POs and Outstanding GRN received from <?php echo $start_date ?> to <?php echo $end_date ?></p><br/>
         <br/>
         <br/>
-        <h5 style="text-align:center; padding:1%;"><b> RFQs for <?php echo now()->startOfWeek()->format('jS F, Y'); ?> to <?php echo now()->startOfWeek()->addDays(4)->format('jS F, Y'); ?> </b></h5>
+        <h5 style="text-align:center; padding:1%;"><b> RFQs for <?php echo $start_date; ?> to <?php echo $end_date; ?> </b></h5>
         <div class="table-container">
             <table class="table">
                 <thead>
@@ -91,7 +98,7 @@
         <br/>
         <br/>
         <br/>
-        <h5 style="text-align:center; padding:1%;"><b> POs for <?php echo now()->startOfWeek()->format('jS F, Y'); ?> to <?php echo now()->startOfWeek()->addDays(4)->format('jS F, Y'); ?> </b></h5>
+        <h5 style="text-align:center; padding:1%;"><b> POs for <?php echo $start_date; ?> to <?php echo $end_date; ?> </b></h5>
         <div class="table-container">
             <table class="table">
                 <thead>
@@ -143,17 +150,32 @@
                             <td> {{ \Carbon\Carbon::parse($item->actual_delivery_date)->addDays(14)->format('d-m-Y') }}</td>
                         </tr>
                     @endforeach
-                    
                 </tbody>
             </table>
+            @if( count($grn) == 0)
+                    <p style="text-align: center;"><br/> No Awaiting GRN</p>
+            @endif
         </div>
         <br/>
         <br/>
 
         <div class="email-text" style="margin-bottom: 40px;">
             <p class="footey">Best Regards,</p>
+            @if (Auth::check())
             <p class="footey">{{ Auth::user()->first_name . ' '. strtoupper(Auth::user()->last_name) }},</p>
-            <p class="footey">Procurement Associate</p>
+            <p class="footey">@if(Auth::user()->role == 'HOD' ) 
+                                        {{ 'SCM Lead' }} 
+                                        @elseif(Auth::user()->role == 'Employer' )
+                                        {{ 'Procurement Associate' }} 
+                                        @elseif(Auth::user()->role == 'SuperAdmin' )
+                                        {{ 'SCM Admin' }}
+                                        @else
+                                        {{ 'Procurement Associate' }}
+                                        @endif</p>
+            @else
+             <p class="footey">TAGSourcing Team,</p>
+            <p class="footey">Automated Report</p>
+            @endif
             <p class="footey">PHONE: +234 1 342 8420 | +234 906 243 5410</p>
             <p class="footey">EMAIL: <a href="mailto:sales@tagenergygroup.net">sales@tagenergygroup.net</a></p>
             <img src="https://scm.enabledjobs.com/admin/img/signature.jpg" alt="SCM" style="width: 100%;">

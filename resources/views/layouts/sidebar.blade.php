@@ -342,14 +342,14 @@
                         Reports
                     </a>
                     <ul class="menu-sub">
-                        <li>
+                        <li class="menu-item">
                             <a class="menu-link" href="{{ route('po.report.weekly') }}">Weekly Reports</a>
                         </li>
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('po.report.monthly') }}">Monthly Reports</a>
                         </li>
                         <li class="menu-item">
-                            <a class="menu-link" href="{{ route('po.report.index') }}">Yearly Reports</a>
+                            <a class="menu-link" href="{{ route('po.report.index') }}">YTD On-Time Reports</a>
                         </li>
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('po.report.custom') }}">Custom Reports</a>
@@ -359,6 +359,9 @@
                         </li>
                         <li class="menu-item">
                             <a class="menu-link" href="{{ route('po.report.clientPo') }}">Client PO Reports</a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="{{ route('po.report.outstanding') }}">Outstanding RFQ Reports</a>
                         </li>
 
                     </ul>

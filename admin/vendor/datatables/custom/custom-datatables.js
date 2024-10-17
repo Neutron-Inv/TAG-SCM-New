@@ -40,7 +40,7 @@ $(function(){
 // Row Selection
 $(function(){
 	$('#rowSelection').DataTable({
-		'iDisplayLength': 3,
+		'iDisplayLength': 10,
 	});
 	var table = $('#rowSelection').DataTable();
 
@@ -112,7 +112,19 @@ $(document).ready(function(){
                         search: 'applied'
                     }
                 }
+<<<<<<< HEAD
             }
+=======
+            },
+            // {
+            //     extend: 'docx',
+            //     exportOptions: {
+            //         modifier: {
+            //             search: 'applied'
+            //         }
+            //     }
+            // }
+>>>>>>> master
         ]
 
 	});

@@ -250,7 +250,7 @@
                                          {{ $po->status }}
                                     @else
                                         {{ $rfq->status }}
-                                    @endif}
+                                    @endif
                                 </h6>
                               </div>
                             </div>
@@ -263,11 +263,14 @@
                               <div>
                                 <h6 class="mb-0"><i class="fas fa-user-check ti-sm text-danger ml-1 me-2"></i>Assigned To</h6>
                               </div>
-                              
+                              @php 
+                              $employee = "";
+                              @endphp
                                 @if(request()->has('po_number'))
                                 @php
                                     $employee = empDetails($po->employee_id);
                                 @endphp
+                                @else
                                  @php
                                     $employee = empDetails($rfq->employee_id);
                                 @endphp

@@ -151,10 +151,27 @@
                                         data-max="20" style="font-family: Calibri, sans-serif; margin-top: 0px;margin-bottom: 0px;font-size: 11px;line-height: 24px;
                                         background-color: #ffffff;color: #424651;padding-left: 24px;padding-right: 24px;padding-top: -150px;padding-bottom: 16px;">
                                         <p style="color: #203864; font-size: 9.0pt;
+<<<<<<< HEAD
                                             font-family: Calibri, sans-serif; margin-top:-20px;">  Good Afternoon Sir/Madam, <br>
                                             RFQ with The RFQ Number {{ $rfq->refrence_no }}  has been {{ $status }} due to the below reason <br>
                                             <span style="color:red;">{{ $reason }}</span>   . <br>
                                             Please click this link to view more details about the RFQ.
+=======
+                                            font-family: Calibri, sans-serif; margin-top:-20px;">  Dear {{ $assigned }}, <br>
+                                            The RFQ Number {{ $rfq->refrence_no }} 
+                                            @if($status== 'Approved')
+                                            has been 
+                                            @else 
+                                            was 
+                                            @endif
+                                            {{ $status }} 
+                                            @if($status== 'Approved')
+                                            for immediate submission. <br>
+                                            @else 
+                                            due to the below reason. <br>
+                                            <span style="color:red;">{{ $reason }}</span>   . <br>
+                                            @endif
+>>>>>>> master
                                             <a href="https://scmtagenergygroup.net/dashboard/request-for-quotation/edit/{{ $rfq->refrence_no }}" style="color: blue"> 
                                                 View RFQ Details</a>
                                         </p>

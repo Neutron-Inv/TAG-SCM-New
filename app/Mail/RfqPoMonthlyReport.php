@@ -30,6 +30,8 @@ class RfqPoMonthlyReport extends Mailable
     {
         $po = $this->data['po'];
         $rfq = $this->data['rfq'];
-        $mail = $this->subject("TAG Year to Date List of RFQ's & PO's for ". date('Y'))->markdown('emails.po.TAGMonthly')->with(compact('rfq','po'));
+        $product = $this->data['product'];
+        $topclients = $this->data['topclients'];
+        $mail = $this->subject("TAG Year to Date List of RFQ's & PO's for ". date('Y'))->markdown('emails.po.TAGMonthly')->with(compact('rfq','po', 'product', 'topclients'));
     }
 }

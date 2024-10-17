@@ -137,7 +137,7 @@
 									<table class="table m-0">
                                         <thead class=" text-white">
                                             <tr>
-                                                <th>Total Numbers of POs Delivered till date</th>
+                                                <th>Total Numbers of POs Delivered from January {{date('Y')}} till December {{date('Y')}}</th>
                                                 <th>Total Numbers of POs Delivered on time</th>
                                                 <th> Total Numbers of POs Delivered Late </th>
 
@@ -147,10 +147,16 @@
                                         </thead>
                                         <tbody>
                                             
-                                            <td> {{ count(getPOInfo()) ?? 0 }} </td>
-                                            <td class="text-align"> {{ count(getPOInfoCon('YES')) ?? 0 }} </td>
-                                            <td class="text-align">{{ count(getPOInfoCon('NO')) ?? 0 }} </td>
-                                            <td> {{ round((count(getPOInfoCon('YES')) / count(getPOInfo())) * 100,2) ?? 0}}% </td>
+                                            <td> {{ count(getyearPOInfo()) ?? 0 }} </td>
+                                            <td class="text-align"> {{ count(getyearPOInfoCon('YES')) ?? 0 }} </td>
+                                            <td class="text-align">{{ count(getyearPOInfoCon('NO')) ?? 0 }} </td>
+                                            <td> 
+                                        @if(count(getyearPOInfo()) == 0)
+                                        0%
+                                        @else
+                                         {{ round((count(getyearPOInfoCon('YES')) / count(getyearPOInfo())) * 100,2) ?? 0}}%
+                                         @endif
+                                            </td>
                                         </tbody>
                                     </table>
                                 </div>
@@ -183,6 +189,7 @@
                                                 <th>ACTUAL DELIVERY DATE</th>
                                                 <th>TOTAL NUMBER OF DAYS FROM PO TO DELIVERY</th>
                                                 <th> ONTIME DELIVERY ? </th>
+                                                <th> SHIPPER ONTIME DELIVERY ? </th>
 
                                                 <th>OEM</th>
                                                 <th>SHIPPER </th>
@@ -214,7 +221,12 @@
                                                             Yes
                                                         @endif
                                                     @endif
+<<<<<<< HEAD
                                                 </td>
+=======
+                                                    </td>
+                                                    <td>{{ $rfqs->shipper_timely_delivery ?? 'Null' }} </td>
+>>>>>>> master
                                                     <td> {{ $rfqs->rfq->vendor->vendor_name ?? 'Null' }}</td>
                                                     <td>{{ $rfqs->rfq->shipper->shipper_name ?? 'Null' }}</td>
                                                     
@@ -242,27 +254,61 @@
 									<table class="table m-0">
                                         <thead class=" text-white">
                                             <tr>
-                                                
+                                                <th>S/N</th>
                                                 <th>SHIPPER</th>
-                                                <th>TOTAL PO COLLECTED</th>
-                                                <th> TOTAL PO DELIVRED ON-TIME </th>
+                                                <th>TOTAL PO DELIVERED</th>
+                                                <th> TOTAL PO DELIVERED ON-TIME </th>
                                                 <th>PERFORMANCE INDEX (%)</th>
                                                 
                                             </tr>
                                         </thead>
+                                        @php 
+                                        $totalPO = 0;
+                                        $totalOntimePO = 0;
+                                        $count = 0;
+                                        $totalindex = 0;
+                                        @endphp
                                         <tbody>
                                             @foreach ($shipper as $item)
+                                            @if(count(countShipperPOyearly($item->shipper_id)) != 0)
                                                 <tr>
+                                                    <td>
+                                                    @php $count += 1; @endphp
+                                                    {{ $count }}
+                                                    </td>
                                                     <td>
                                                         @foreach (getSh($item->shipper_id) as $it)
                                                             {{ $it->shipper_name ?? ' N/A' }}
                                                         @endforeach
                                                     </td>
-                                                    <td> {{ count(countShipperPO($item->shipper_id)) ?? 0 }}</td>
-                                                    <td>{{ count(countShipperPOCon($item->shipper_id,'YES')) ?? 0}} </td>
-                                                    <td>{{ round((count(countShipperPOCon($item->shipper_id,'YES'))  / count(countShipperPO($item->shipper_id))) * 100,2) ?? 0 }}%</td>
-                                                </tr>
+                                                    <td>
+                                        @php $totalPO += count(countShipperPOyearly($item->shipper_id)) ?? 0 @endphp                
+                                                         {{ count(countShipperPOyearly($item->shipper_id)) ?? 0 }}</td>
+                                                    <td>
+                                        @php $totalOntimePO += count(countShipperPOCon($item->shipper_id,'YES')) ?? 0 @endphp  
+                                                        {{ count(countShipperPOCon($item->shipper_id,'YES')) ?? 0}} </td>
+                                                    <td>
+                                        @if(count(countShipperPOyearly($item->shipper_id)) == 0)
+                                        0%
+                                        @else   
+                                        {{ round((count(countShipperPOCon($item->shipper_id,'YES'))  / count(countShipperPOyearly($item->shipper_id))) * 100,2) ?? 0 }}%
+                                        
+                                        @php $totalindex +=  round((count(countShipperPOCon($item->shipper_id,'YES'))  / count(countShipperPOyearly($item->shipper_id))) * 100,2) ?? 0; @endphp
+                                        @endif
+                                        </td>
+                                             </tr>   
+                                            @endif
                                             @endforeach
+                                            @php
+                                            $avgindex = $totalindex/$count;
+                                            @endphp
+                                            <tr>
+                                            <td></td>
+                                            <td> <b>Total</b></td>
+                                            <td> <b>{{ $totalPO }}</b></td>
+                                            <td> <b>{{ $totalOntimePO }} </b></td>
+                                            <td>{{ number_format($avgindex,2) }}%</td>
+                                            </tr>
                                             
                                         </tbody>
                                     </table>

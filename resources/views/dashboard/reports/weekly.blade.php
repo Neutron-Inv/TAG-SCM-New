@@ -275,6 +275,9 @@
                                 <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
                             @endif
                         </div>
+                        
+                        <input type="text" value="{{ $start_date}}" name="start_date_report" hidden>
+                        <input type="text" value="{{ $end_date}}" name="end_date_report" hidden>
                     </div>
                 </div>
                 <div class="modal-footer custom">

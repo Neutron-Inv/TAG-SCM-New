@@ -80,28 +80,36 @@
     </head>
     <body marginwidth="0" marginheight="0" style="margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; width: 100%; background-color: #dbe5ea;" offset="0" topmargin="0" leftmargin="0">
 
-        <table data-module="header-primary-link" data-visible="false" data-thumb="https://scm.enabledjobs.com/admin/img/img1.jpeg"
-            width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation">
+
+        <table data-module="content0" data-thumb="http://www.stampready.net/dashboard/editor/user_uploads/zip_uploads/2018/11/19/uRdwfpZ0XIMDsFv8rCVTaOcb/account_temporary_password/thumbnails/content.png"
+            class="o_block" width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation"style="max-width: 632px;margin: 0 auto;">
+
             <tbody>
+                                    
                 <tr>
-                    <td class="o_bg-light o_px-xs o_pt-lg o_xs-pt-xs" align="center" data-bgcolor="Bg Light" style="background-color: #dbe5ea;padding-left: 8px;padding-right: 8px;padding-top: 32px;">
-                        <table class="o_block" width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation" style="max-width: 632px;margin: 0 auto;">
+                    <td class="o_bg-light o_px-xs" align="center" data-bgcolor="Bg Light" style="background-color: #dbe5ea;padding-left: 8px;padding-right: 8px;">
+
+
+                        <table class="o_block" width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation" style="max-width: 632px !important;margin: 0 auto;">
                             <tbody>
+                                
+                                
+                                
                                 <tr>
                                     <td class="o_re o_bg-primary o_px o_pb-md o_br-t" align="center" data-bgcolor="Bg Primary" style="font-size: 0;vertical-align: top;background-color: white;
-                                    border-radius: 4px 4px 0px 0px;padding-left: 16px;padding-right: 16px;padding-bottom: 24px;">
+                                    border-radius: 4px 4px 0px 0px;padding-left: 17px;padding-right: 15px;padding-bottom: 24px;">
 
-                                        <div class="o_col o_col-4" style="display: inline-block;vertical-align: top;width: 100%;max-width: 200px;">
+                                        <div class="o_col o_col-4" style="display: inline-block;vertical-align: top;width: 100%;">
                                             <div style="font-size: 24px; line-height: 24px; height: 24px;">&nbsp; </div>
                                             <div class="o_px-xs o_sans o_text o_left o_xs-center" data-size="Text Default" data-min="12" data-max="20" style="font-family: Helvetica, Arial, sans-serif;margin-top: 0px;margin-bottom: 0px;font-size: 16px;
-                                                line-height: 24px;text-align: left;padding-left: 8px;padding-right: 8px;">
-                                                <p style="margin-top: 0px;margin-bottom: 0px;"><a class="o_text-white" href="https://scm.enabledjobs.com/dashboard" data-color="White" style="text-decoration: none;outline: none;color: #ffffff;">
+                                                line-height: 24px;text-align: left;padding-left: 9px;padding-right: 6px;">
+                                                <p style="margin-top: 0px;margin-bottom: 0px;"><a class="o_text-white" href="https://scm.tagenergygroup.net/dashboard" data-color="White" style="text-decoration: none;outline: none;color: #ffffff;">
                                                    
                                                     @foreach (getLogo($rfq->company_id) as $item)
-                                                        @php $log = 'https://scm.enabledjobs.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
+                                                        @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                                         <img src="{{$log}}" width="46" height="26" alt="SCM"
-                                                        style="max-width: 136px;-ms-interpolation-mode: bicubic;vertical-align: middle;border: 0;line-height: 100%;height: auto;
-                                                        outline: none;text-decoration: none; margin-left:50px;" data-crop="false" alt="Logo" align="center" 
+                                                        style="max-width: 136px;vertical-align: middle;border: 0;line-height: 100%;height: auto;
+                                                        outline: none;text-decoration: none;" data-crop="false" alt="Logo" align="left" 
                                                         >
                                                     @endforeach
                                                     </a>
@@ -112,51 +120,41 @@
 
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <table data-module="spacer0" data-thumb="http://www.stampready.net/dashboard/editor/user_uploads/zip_uploads/2018/11/19/uRdwfpZ0XIMDsFv8rCVTaOcb/account_temporary_password/thumbnails/spacer.png" width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation">
-            <tbody>
-                <tr>
-                    <td class="o_bg-light o_px-xs" align="center" data-bgcolor="Bg Light" style="background-color: #dbe5ea;padding-left: 8px;padding-right: 8px;">
-
-                        <table class="o_block" width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation" style="max-width: 632px;margin: 0 auto;">
-                            <tbody>
-                                <tr>
-                                    <td class="o_bg-white" style="font-size: 24px;line-height: 24px;height: 24px;background-color: #ffffff;" data-bgcolor="Bg White">&nbsp; </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table data-module="content0" data-thumb="http://www.stampready.net/dashboard/editor/user_uploads/zip_uploads/2018/11/19/uRdwfpZ0XIMDsFv8rCVTaOcb/account_temporary_password/thumbnails/content.png"
-            width="100%" cellspacing="0" style="" cellpadding="0" border="0" role="presentation">
-            <tbody>
-                <tr>
-                    <td class="o_bg-light o_px-xs" align="center" data-bgcolor="Bg Light" style="background-color: #dbe5ea;padding-left: 8px;padding-right: 8px;">
 
 
-                        <table class="o_block" width="100%" cellspacing="0" cellpadding="0" border="0" role="presentation" style="max-width: 632px;margin: 0 auto;">
-                            <tbody>
 
+                        <tr>
+                        <td class="o_re o_bg-primary o_px o_pb-md o_br-t" align="center" data-bgcolor="Bg Primary" style="font-size: 0;vertical-align: top;background-color: white;
+                                    border-radius: 4px 4px 0px 0px;padding-left: 16px;padding-right: 16px;padding-bottom: 9px;">&nbsp; </td>
+                
+                        </tr>
+                            @php
+                            $buyer = buyers($rfq->contact_id);
+                            @endphp
+                
+                
                                 <tr>
                                     <td class="o_bg-white o_px-md o_py o_sans o_text o_text-secondary" align="left" data-bgcolor="Bg White" data-color="Secondary" data-size="Text Default" data-min="12"
                                         data-max="20" style="font-family: Calibri, sans-serif; margin-top: 0px;margin-bottom: 0px;font-size: 11px;line-height: 24px;
                                         background-color: #ffffff;color: #424651;padding-left: 24px;padding-right: 24px;padding-top: -150px;padding-bottom: 16px;">
                                         <p style="color: #203864; font-size: 9.0pt;
-                                            font-family: Calibri, sans-serif; margin-top:-20px;">  Good Afternoon Sir/Madam, <br>
-                                                Thank you very much for this opportunity, please see our enclosed Price quotation. <br>
-                                                Kindly let us know if you have any questions and/or require further clarifications 
-                                                with regards to this submission. <br>
+                                            font-family: Calibri, sans-serif; margin-top:-20px;"> Dear {{$buyer[0]->first_name.' '.$buyer[0]->last_name}}, <br>
+                                            Good day, I trust this mail finds you well. <br>
+                                                Thank you very much for this opportunity, please see our enclosed Price quotation for the purchase of {{$rfq->description}}. <br>
+                                        @if(!empty(preg_replace('/\s/','',$extra_note)) || preg_replace('/\s/','',$extra_note) != "")
+                                        {!!$extra_note!!}<br>
+                                        @endif
+                                                Kindly let us know if you have any questions and/or require further clarifications with regards to this submission. <br>
                                                 Hope to hear from you soon. <br>
-                                            <p style="font-size: 7.5pt;font-family: Arial,sans-serif; color: #1F497D;">Best Regards,<br> {{ Auth::user()->first_name . ' '. strtoupper(Auth::user()->last_name) }}, <br> SCM Specialist II <br>
+                                            <p style="font-size: 7.5pt;font-family: Arial,sans-serif; color: #1F497D;">Best Regards,<br> {{ Auth::user()->first_name . ' '. strtoupper(Auth::user()->last_name) }}, <br> @if(Auth::user()->role == 'HOD' ) 
+                                        {{ 'SCM Lead' }} 
+                                        @elseif(Auth::user()->role == 'Employer' )
+                                        {{ 'Procurement Associate' }} 
+                                        @elseif(Auth::user()->role == 'SuperAdmin' )
+                                        {{ 'SCM Admin' }}
+                                        @else
+                                        {{ 'Procurement Associate' }}
+                                        @endif <br>
                                                 PHONE</span></b><span style="font-size:7.5pt; font-family:&quot;Arial&quot;,sans-serif; color:#1F3864; mso-fareast-language:ZH-CN">
                                                     : +234 1 342 8420&nbsp;| </span>
                                                     <span style="font-size:7.5pt; font-family:&quot;Arial&quot;,sans-serif; color:#1F4E79; mso-fareast-language:EN-GB">
@@ -167,8 +165,7 @@
                                                 </span>
 
                                             </p>
-                                            <img src="https://scm.enabledjobs.com/admin/img/signature.jpg" alt="SCM" style="width: 100%;"> <br>
-                                            <p class="o_mb-xs" style="margin-top: 0px;margin-bottom: 8px; color: black; text-center" align="center">©Enabled Business Solution. All rights reserved.</p>
+                                            <img src="https://scm.tagenergygroup.net/admin/img/signature.jpg" alt="SCM" style="max-width:632px !important;"> <br>
                                             </table>
                                     </td>
                                 </tr>

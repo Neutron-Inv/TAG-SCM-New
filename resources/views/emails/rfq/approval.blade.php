@@ -588,7 +588,15 @@
                                                         </tr>
                                                     </tbody>
                                                 </table><br><br>
-                                                <p style="font-size: 8.5pt;font-family: Arial,sans-serif; color: #1F497D;">Best Regards,<br> {{ Auth::user()->first_name . ' '. strtoupper(Auth::user()->last_name) }}, <br> SCM Associate <br>
+                                                <p style="font-size: 8.5pt;font-family: Arial,sans-serif; color: #1F497D;">Best Regards,<br> {{ Auth::user()->first_name . ' '. strtoupper(Auth::user()->last_name) }}, <br>@if(Auth::user()->role == 'HOD' ) 
+                                        {{ 'SCM Lead' }} 
+                                        @elseif(Auth::user()->role == 'Employer' )
+                                        {{ 'Procurement Associate' }} 
+                                        @elseif(Auth::user()->role == 'SuperAdmin' )
+                                        {{ 'SCM Admin' }}
+                                        @else
+                                        {{ 'Procurement Associate' }}
+                                        @endif <br>
                                                     PHONE</span></b><span style="font-size:7.5pt; font-family:&quot;Arial&quot;,sans-serif; color:#1F3864; mso-fareast-language:ZH-CN">
                                                         : +234 1 342 8420&nbsp;| </span>
                                                         <span style="font-size:7.5pt; font-family:&quot;Arial&quot;,sans-serif; color:#1F4E79; mso-fareast-language:EN-GB">

@@ -60,6 +60,10 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             Route::post("/save", "ClientController@store")->name("client.save");
             Route::get("/edit/{client_id}", "ClientController@edit")->name("client.edit");
             Route::get("/details/{client_id}", "ClientController@show")->name("client.details");
+            Route::get("/projects/{client_id}", "ClientProjectController@index")->name("client.projects");
+            Route::post("/projects/save", "ClientProjectController@store")->name("project.save");
+            Route::post("/projects/update/{project_id}", "ClientProjectController@update")->name("project.update");
+            Route::get("/projects/edit/{project_id}", "ClientProjectController@edit")->name("project.edit");
             Route::get("/delete/{client_id}", "ClientController@destroy")->name("client.delete");
             Route::post("/update/{client_id}", "ClientController@update")->name("client.update");
             Route::get("/recyclebin", "ClientController@bin")->name("client.restore");
@@ -227,7 +231,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             Route::get("/delete/{refrence_no}", "ClientRFQController@destroy")->name("rfq.delete");
             Route::post("/update/{refrence_no}", "ClientRFQController@update")->name("rfq.update");
             Route::get("/list", "ClientRFQController@list")->name("rfq.list");
-            Route::get("/send-status-enq/{refrence_no}", "ClientRFQController@sendEnq")->name("rfq.send");
+            Route::post("/send-status-enq/{refrence_no}", "ClientRFQController@sendEnq")->name("rfq.send");
             Route::get("/history", "ClientRFQController@history")->name("rfq.history");
             Route::get("/history/{rfq_id}", "ClientRFQController@singleHistory")->name("rfq.log");
             Route::get("/shipper_quote/{rfq_id}", "ShipperQuoteController@create")->name("rfq.shipper.quote");
@@ -247,6 +251,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             Route::post("/decline-breakdown-submit", "ClientRFQController@disapproveBreakdown")->name("rfq.disapproveQuote");
 
             Route::get('/pdf/{refrence_no}','ClientRFQController@printPriceQuote')->name('print.Quote');
+            Route::get('/bha/{refrence_no}','ClientRFQController@printBHAQuote')->name('bha.Quote');
 
             Route::post("/generate-report", "ClientRFQController@generateReport")->name("rfq.gen.report");
             Route::get("/download-pdf/{rfq_id}", "ClientRFQController@downloadQuote")->name("rfq.downloadQuote");
@@ -277,6 +282,11 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
         Route::group(["prefix" => "purchase-order-reports"], function () {
             Route::get("/yearly", "ReportController@createReport")->name("po.report.index");
             Route::get("/weekly", "ReportController@weekly")->name("po.report.weekly");
+<<<<<<< HEAD
+=======
+            Route::get("/outstanding", "ReportController@outstanding")->name("po.report.outstanding");
+            Route::post("/sendOutstandingReport", "ReportController@sendOutstandingReport")->name("po.report.sendOutstandingReport");
+>>>>>>> master
             Route::any("/weekly/fetch", "ReportController@weeklyedit")->name("po.report.weekly.fetch");
             Route::get("/clientPoReport", "ReportController@clientPo")->name("po.report.clientPo");
             Route::get("/monthly", "ReportController@monthly")->name("po.report.monthly");
@@ -285,9 +295,10 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             Route::get("/rfq/report", "ReportController@rfq")->name("po.report.rfq");
             Route::POST("/custom/client", "ReportController@customedit")->name("po.report.fetch");
             Route::GET("/custom/ClientPoEdit", "ReportController@ClientPoEdit")->name("po.report.ClientPoEdit");
-            Route::get("/send", "ReportController@sendReport")->name("po.report.sendReport");
+            Route::POST("/send", "ReportController@sendReport")->name("po.report.sendReport");
             Route::post("/sendRfqPoMonthly", "ReportController@sendRfqPoMonthlyReport")->name("po.report.sendRfqPoMonthlyReport");
             Route::post("/sendSaipemReport", "ReportController@sendSaipemReport")->name("po.report.sendSaipemReport");
+            Route::post("/sendBHAReport", "ReportController@sendBHAReport")->name("po.report.sendBHAReport");
             Route::post("/sendWeeklyReport", "ReportController@sendWeeklyReport")->name("po.report.sendWeeklyReport");
             Route::post("/sendCustomReport", "ReportController@sendCustomReport")->name("po.report.sendCustomReport");
             Route::post("/sendClientPoReport", "ReportController@sendClientPoReport")->name("po.report.sendClientPoReport");

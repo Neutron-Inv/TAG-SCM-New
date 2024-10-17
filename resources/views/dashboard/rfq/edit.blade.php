@@ -116,7 +116,11 @@ label {
                                 </div>
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4" align="left">
                                     
-                                    <a  href="{{ route('print.Quote', $details->refrence_no) }}" target="_blank" class="btn btn-info" >  View PDF</a>
+                                    <a  href="{{ route('print.Quote', $details->refrence_no) }}" target="_blank" class="btn btn-info" >  View PDF</a> &nbsp; &nbsp;
+                                   
+                                   @if($details->product == 'BHA')
+                                   <a  href="{{ route('bha.Quote', $details->refrence_no) }}" target="_blank" class="btn btn-info" >  View BHA Quote</a>
+                                   @endif
                                    
                                 </div>
                                 @if(count(po($details->rfq_id)) > 0)
@@ -1920,7 +1924,7 @@ $(document).ready(function() {
                                                         </div>
                                                         <input class="form-control" name="total_quote" id="total_quote"
                                                          value="{{ round($sumTotalQuote,2) ?? '0'}}" placeholder="Enter Total Quote" type="text"
-                                                        aria-describedby="basic-addon3" readonly>
+                                                        aria-describedby="basic-addon3">
                                                     </div>
 
                                                     @if ($errors->has('total_quote'))
@@ -2042,7 +2046,7 @@ $(document).ready(function() {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon6"><i class="icon-code" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="hs_codes" placeholder="Enter HS Codes" type="text" aria-describedby="basic-addon6" value="{{ $details->hs_codes}}" maxlength="150">
+                                                        <input class="form-control" name="hs_codes" placeholder="Enter HS Codes" type="text" aria-describedby="basic-addon6" value="{{ $details->hs_codes ? $details->hs_codes : 'N/A' }}" maxlength="150">
                                                     </div>
                                                     @if ($errors->has('hs_codes'))
                                                         <div class="" style="color:red">{{ $errors->first('hs_codes') }}</div>
@@ -2063,7 +2067,7 @@ $(document).ready(function() {
                                                             <option value="USD">USD</option>
                                                             <option value="NGN"> NGN </option>
                                                             <option value="EUR"> EUR </option>
-                                                            <option value="GNP"> GNP </option>
+                                                            <option value="GBP"> GBP </option>
 
                                                         </select>
 
@@ -2555,12 +2559,8 @@ $(document).ready(function() {
                                                 <div class="row gutters">
                                                     <div class="col-md-5 col-sm-5 col-5">
                                                         <label for="recipient-name" class="col-form-label">Recipient:</label>
-                                                        <select class="form-control selectpicker" data-live-search="true" required name="email">
                                                             @foreach (buyers($details->contact_id) as $items)
-                                                                <option data-tokens="{{ $items->email ?? 'N/A' }}"
-                                                                    value="{{  $items->email  }}">
-                                                                    {{ $items->email ?? 'N/A' }}
-                                                                </option>
+                                        <input type="text" class="form-control" id="recipient-name" name="email" value="{{  $items->email  }}" required>
                                                             @endforeach
                                                             <option value="emmanuel.idowu@tagenergygroup.net">Emmanuel.idowu@tagenergygroup.net</option>
                                                         </select>
@@ -2569,21 +2569,24 @@ $(document).ready(function() {
                                                             <div class="" style="color:red">{{ $errors->first('email') }}</div>
                                                         @endif
                                                     </div>
-                                                    {{-- <div class="col-md-5 col-sm-5 col-5">
-
-                                                        <label for="recipient-name" class="col-form-label">File:</label>
-                                                        <input type="file" class="form-control" id="file-name" name="file[]" required multiple>
-                                                        @if ($errors->has('file'))
-                                                            <div class="" style="color:red">{{ $errors->first('file') }}</div>
-                                                        @endif
-                                                    </div> --}}
 
                                                     <div class="col-md-7 col-sm-7 col-7">
                                                         <label for="recipient-name" class="col-form-label">CC Email</label>
 
-                                                        <input type="text" class="form-control" id="recipient-email" name="recipient" value="{{ old('recipient') }}" required>
+                                                        <input type="text" class="form-control" id="recipient-email" name="recipient" value="sales@tagenergygroup.net" required>
                                                         @if ($errors->has('recipient'))
                                                             <div class="" style="color:red">{{ $errors->first('recipient') }}</div>
+                                                        @endif
+
+
+                                                    </div>
+                                                    
+                                                    <div class="col-md-12 col-sm-12 col-12">
+                                                        <label for="recipient-name" class="col-form-label">BCC Email</label>
+
+                                                        <input type="text" class="form-control" id="recipient-email" name="bcc" value="contact@tagenergygroup.net">
+                                                        @if ($errors->has('bcc'))
+                                                            <div class="" style="color:red">{{ $errors->first('bcc') }}</div>
                                                         @endif
 
 
@@ -2592,9 +2595,35 @@ $(document).ready(function() {
                                                     <div class="col-md-12 col-sm-12 col-12">
                                                         <label for="additional-file" class="col-form-label">Additional File</label>
 
-                                                        <input type="file" class="form-control" id="additional-file" name="additional-file">
+                                                        <input type="file" class="form-control" id="additional-file" name="quotation_file[]" multiple>
 
                                                     </div>
+                                                    
+                                                    <!--<div class="col-md-12 col-sm-12 col-12">-->
+                                                    <!--    <label for="message_id" class="col-form-label">In Reply To (Message ID)</label>-->
+
+                                                    <!--    <input type="text" class="form-control" id="message_id" name="message_id" required>-->
+                                                    <!--</div>-->
+                                                    
+                                                    <!--<div class="col-md-12 col-sm-12 col-12">-->
+                                                    <!--    <label for="references" class="col-form-label">References (References ID)</label>-->
+
+                                                    <!--    <input type="text" class="form-control" id="references" name="references" required>-->
+                                                    <!--</div>-->
+                                                    
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <div class="form-group">
+            
+                                            <div class="card m-0"><label for="extra_note">Extra Note:</label>
+                                                <textarea class="summernote" name="extra_note" placeholder="Please enter Extra Note Here">
+                                                </textarea>
+                                                @if ($errors->has('extra_note'))
+                                                    <div class="" style="color:red">{{ $errors->first('extra_note') }}</div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                                    
                                                     <input type="hidden" name="rfq_id" value="{{ $details->rfq_id }}">
                                                 </div>
                                             </div>
@@ -2988,7 +3017,11 @@ $(document).ready(function() {
                 for( var o = 0; o < miscOthers.length; o++ )
                 {
                     var oo = o+1;
+<<<<<<< HEAD
                     const miscAmountOthers = parseFloat($("#misc_amount_others_" + ll).val()) || 0; // Correct the selector
+=======
+                    const miscAmountOthers = parseFloat($("#misc_amount_others_" + oo).val()) || 0; // Correct the selector
+>>>>>>> master
                     totalMiscOthers += miscAmountOthers;
                 };
                                                     
@@ -3009,6 +3042,7 @@ $(document).ready(function() {
                 const GrossMargin = TotalQuote - supplierQuote;
                 const PercentGrossMargin = (GrossMargin / supplierQuote) * 100;
                 const Total_Quote = ((MarkUp) * supplierQuote) + supplierQuote;
+<<<<<<< HEAD
 
                 $("#fund_transfer_charge").val(fundsTransferCharge.toFixed(2));
                 $("#vat_transfer_charge").val(vatcharge.toFixed(2));
@@ -3025,6 +3059,26 @@ $(document).ready(function() {
         }
         }
 
+=======
+                
+                console.log(subTotalCost);
+                
+                $("#fund_transfer_charge").val(fundsTransferCharge.toFixed(2));
+                $("#vat_transfer_charge").val(vatcharge.toFixed(2));
+                $("#fund_transfer").val(FundTransfer.toFixed(2));
+                $("#wht").val(Wht.toFixed(2));
+                $("#ncd").val(Ncd.toFixed(2));
+                $("#net_percentage_margin").val(PercentNetMargin.toFixed(2));
+                $("#net_percentage").val(NetMargin.toFixed(2));
+                $("#net_value").val(GrossMargin.toFixed(2));
+                $("#percent_margin").val(PercentGrossMargin.toFixed(2));
+                $("#total_quote").val(Total_Quote.toFixed(2));
+                $("#percent_margin").val(PercentGrossMargin.toFixed(2));
+            }, 500); // Delay for 1 second (1000 milliseconds)
+        }
+        }
+
+>>>>>>> master
 
 
 
@@ -3061,7 +3115,11 @@ $(document).ready(function() {
                 for( var o = 0; o < miscOthers.length; o++ )
                 {
                     var oo = o+1;
+<<<<<<< HEAD
                     const miscAmountOthers = parseFloat($("#misc_amount_others_" + ll).val()) || 0; // Correct the selector
+=======
+                    const miscAmountOthers = parseFloat($("#misc_amount_others_" + oo).val()) || 0; // Correct the selector
+>>>>>>> master
                     totalMiscOthers += miscAmountOthers;
                 };
             
@@ -3080,7 +3138,12 @@ $(document).ready(function() {
             const PercentNetMargin = (NetMargin/Total_quotee) * 100;
             const GrossMargin = Total_quotee - supplierQuote;
             const PercentGrossMargin = (GrossMargin / supplierQuote) * 100;
+<<<<<<< HEAD
         
+=======
+            
+            console.log('Subtotal: '+subTotalCost);
+>>>>>>> master
             //console.log('percent Net Margin: '+PercentNetMargin);
             return PercentNetMargin.toFixed(2);
         }
@@ -3118,7 +3181,11 @@ $(document).ready(function() {
                 for( var o = 0; o < miscOthers.length; o++ )
                 {
                     var oo = o+1;
+<<<<<<< HEAD
                     const miscAmountOthers = parseFloat($("#misc_amount_others_" + ll).val()) || 0; // Correct the selector
+=======
+                    const miscAmountOthers = parseFloat($("#misc_amount_others_" + oo).val()) || 0; // Correct the selector
+>>>>>>> master
                     totalMiscOthers += miscAmountOthers;
                 };
             
@@ -3138,7 +3205,11 @@ $(document).ready(function() {
             const GrossMargin = Total_quotee - supplierQuote;
             const PercentGrossMargin = (GrossMargin / supplierQuote) * 100;
         
+<<<<<<< HEAD
             //console.log('percent Net Margin: '+PercentNetMargin);
+=======
+            console.log('Subtotal: '+subTotalCost);
+>>>>>>> master
             return NetMargin.toFixed(2);
         }
                                             

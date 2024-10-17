@@ -54,9 +54,13 @@ class ApproveBreakdown extends Mailable
             $sender = $name->email;
             $reply = $name->email;
         }
+<<<<<<< HEAD
         $mail = $this->replyTo($reply, $company->company_name)->subject($status. ' to Submit Price Quotation for ' .$rfqcode.' : '. $assigned . ', '.$rfq->description)->view('emails.rfq.breakdown')
+=======
+        $mail = $this->replyTo($reply, $company->company_name)->subject($status. ' to Submit Price Quotation for ' .$rfqcode.' : , '.$rfq->description)->view('emails.rfq.breakdown')
+>>>>>>> master
         ->with([
-            'rfq' => $rfq,'sender' => $sender, 'reply' => $reply, 'reason' => $reason, 'status' => $status
+            'rfq' => $rfq,'sender' => $sender, 'reply' => $reply, 'reason' => $reason, 'status' => $status, 'assigned' => $assigned
         ]);
         return $mail;
     }

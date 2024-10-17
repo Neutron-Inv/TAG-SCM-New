@@ -136,6 +136,25 @@
         ->sum('total_quote');
     }
     
+<<<<<<< HEAD
+=======
+    function TotalrfqQuoteGBP()
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'GBP')
+        ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteEUR()
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'EUR')
+        ->sum('total_quote');
+    }
+    
+>>>>>>> master
     function TotalrfqQuoteNGN()
     {
     return \DB::table('client_rfqs')
@@ -153,6 +172,27 @@
         ->sum('total_quote');
     }
     
+<<<<<<< HEAD
+=======
+    function TotalrfqQuoteGBPEMP($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'GBP')
+        ->where('company_id', $company_id)
+        ->sum('total_quote');
+    }
+    
+    function TotalrfqQuoteEUREMP($company_id)
+    {
+    return \DB::table('client_rfqs')
+        ->whereYear('rfq_date', date('Y'))
+        ->where('currency', 'EUR')
+        ->where('company_id', $company_id)
+        ->sum('total_quote');
+    }
+    
+>>>>>>> master
     function TotalrfqQuoteNGNEMP($company_id)
     {
     return \DB::table('client_rfqs')
@@ -835,12 +875,30 @@
     {
         return \DB::table('client_pos')->get();
     }
+    
+    function getyearPOInfo()
+    {
+        return \DB::table('client_pos')
+        ->whereYear('actual_delivery_date', date('Y'))
+        ->whereIn('status',['Delivered', 'Partial Delivery', 'Awaiting GRN', 'Invoicing', 'Invoiced', 'Paid'])
+        ->get();
+    }
 
     function getPOInfoCon($condition)
     {
         return \DB::table('client_pos')->where([
             "timely_delivery" => $condition
         ])->get();
+    }
+    
+    function getyearPOInfoCon($condition)
+    {
+        return \DB::table('client_pos')->where([
+            "timely_delivery" => $condition
+        ])
+        ->whereYear('actual_delivery_date', date('Y'))
+        ->whereIn('status',['Delivered', 'Partial Delivery', 'Awaiting GRN', 'Invoicing', 'Invoiced', 'Paid'])
+        ->get();
     }
 
     function countShipperPO($shipper_id)
@@ -849,13 +907,48 @@
             "shipper_id" => $shipper_id
         ])->get();
     }
+    
+    function countShipperPOyearly($shipper_id)
+    {
+        return \DB::table('client_pos')
+        ->join('client_rfqs', 'client_pos.rfq_id', '=','client_rfqs.rfq_id')
+        ->where([
+            "client_pos.shipper_id" => $shipper_id
+        ])
+        ->whereYear('client_pos.actual_delivery_date', date('Y'))
+        ->where('client_rfqs.incoterm', '!=', 'Ex Works')
+        ->whereIn('client_pos.status',['Delivered', 'Partial Delivery', 'Awaiting GRN', 'Invoicing', 'Invoiced', 'Paid'])
+        ->get();
+    }
 
     function countShipperPOCon($shipper_id, $condition)
     {
         return \DB::table('client_pos')->where([
             "shipper_id" => $shipper_id, "timely_delivery" => $condition
-        ])->get();
+        ])
+        ->whereIn('status',['Delivered', 'Partial Delivery', 'Awaiting GRN', 'Invoicing', 'Invoiced', 'Paid'])
+        ->whereYear('actual_delivery_date', date('Y'))
+        ->get();
     }
+    
+    function getProductRfq($client_id, $product_name)
+    {
+        return \DB::table('client_rfqs')
+        ->where(["client_id" => $client_id])
+        ->where('product', $product_name)
+        ->whereYear('rfq_date', now()->year)
+        ->get();
+    }
+    
+    function getProductPo($client_id, $product_name)
+    {
+        return \DB::table('client_pos')
+        ->where(["client_id" => $client_id])
+        ->where('product', $product_name)
+        ->whereYear('po_date', now()->year)
+        ->get();
+    }
+
 
     function getValveRfq($client_id)
     {
@@ -1327,4 +1420,62 @@ function getTotalPoc($client_id, $start_date = null, $end_date = null)
         return \DB::table('products')->orderBy('product_name')
         ->get();
     }
+<<<<<<< HEAD
+=======
+    
+    function freight_pricing($location, $weight){
+        $charge = "";
+        if($location == 'Europe'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 7.5;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 7.5;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 7;
+            }
+        }elseif($location == 'UK'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 7;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 7;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 6.5;
+            }
+        }elseif($location == 'US'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 8.5;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 8.5;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 8;
+            }
+        }elseif($location == 'China'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 12;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 11;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 10;
+            }
+        }elseif($location == 'Middle East'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 11;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 10;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 9;
+            }
+        }elseif($location == 'Africa'){
+            if($weight > 0 && $weight <= 50){
+                $charge = 0;
+            }elseif($weight > 50 && $weight <= 100){
+                $charge = 0;
+            }elseif($weight > 100 && $weight <= 150){
+                $charge = 0;
+            }
+        }
+        
+        return $charge;
+    }
+>>>>>>> master
 ?>

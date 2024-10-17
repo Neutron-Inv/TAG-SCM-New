@@ -337,6 +337,9 @@ class LineItemController extends Controller
                     "unit_cost_naira" => $line_items->unit_cost_naira,
                     "total_cost_naira" => $line_items->total_cost_naira,
                     "item_description" => $line_items->item_description,
+                    "weight" => $line_items->weight,
+                    "location" => $line_items->location,
+                    "active" => $line_items->active,
                     "mesc_code" => $line_items->mesc_code,
 
                 ]);
@@ -516,6 +519,9 @@ class LineItemController extends Controller
                 "total_price" => $total_quote,
                 "unit_cost" => $request->input("unit_cost"),
                 "item_description" => $request->input("item_description"),
+                "weight" => $request->input("weight"),
+                "location" => $request->input("location"),
+                "active" => $request->input("active"),
                 "mesc_code" => $mesc_code
 
             ]);

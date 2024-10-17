@@ -308,6 +308,30 @@
 
                                         </div>
                                     </div>
+                                    
+                                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="frieght_charges">Shipper On-Time Delivery</label><div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon3"><i class="icon-list" style="color:#28a745"></i></span>
+                                                </div>
+                                                <?php
+                                                $term = array('NO', 'YES'); ?>
+                                                <select class="form-control selectpicker" data-live-search="true" required name="shipper_timely_delivery">
+                                                    <option data-tokens="{{ $details->timely_delivery }}" value="{{ $details->shipper_timely_delivery }}"> {{ $details->shipper_timely_delivery }}</option>
+                                                    <option value=""> </option>
+                                                    @foreach ($term as $terms)
+                                                        <option data-tokens="{{ $terms }}" value="{{ $terms }}"> {{ $terms }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            @if ($errors->has('timely_delivery'))
+                                                <div class="" style="color:red">{{ $errors->first('timely_delivery') }}</div>
+                                            @endif
+
+                                        </div>
+                                    </div>
 
 
                                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
@@ -395,7 +419,7 @@
                                                     <span class="input-group-text" id="basic-addon2"><i class="icon-calendar" style="color:#28a745"></i></span>
                                                 </div>
 
-                                                <input type="text" class="form-control" required name="total_po_usd"
+                                                <input type="number" class="form-control" required name="total_po_usd"
                                                 value="{{number_format((float)$details->po_value_foreign, 2, '.', '') ?? ''}}" placeholder="Total PO USD" ondrop="return false;" onpaste="return false;">
                                             </div>
                                             @if ($errors->has('total_po_usd'))
@@ -413,7 +437,7 @@
                                                     <span class="input-group-text" id="basic-addon2"><i class="icon-calendar" style="color:#28a745"></i></span>
                                                 </div>
 
-                                                <input type="text" class="form-control" required name="total_po_ngn"
+                                                <input type="number" class="form-control" required name="total_po_ngn"
                                                 value="{{number_format($details->po_value_naira) ?? ""}}" placeholder="Total PO NGN" ondrop="return false;" onpaste="return false;">
                                             </div>
                                             @if ($errors->has('total_po_ngn'))
@@ -1062,7 +1086,7 @@
 
                                             </div>
                                         </div>
-                                        <input type="hidden" name="rater" value="<?php echo Auth::user()->first_name . ' '. Auth::user()->last_name ?>">
+                                        <input type="hidden" name="rater" value="{{ $details->shipping_rater ?? ''}}">
 
                                     @endif
                                 </div>

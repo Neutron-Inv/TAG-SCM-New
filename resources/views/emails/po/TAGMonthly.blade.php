@@ -62,7 +62,7 @@
         </style>
     </head>
 
-<body>
+<body style="background:white;">
     <div class="container" style="background: white; color:black !important;">
         
 <div class="row">
@@ -107,11 +107,11 @@
                                     <thead style="color:black;"> <!-- Top-level header -->
                                     <tr>
                                     <th colspan="1" style="text-align:center; background-color:white;"></th>
-                                    <th colspan="2" style="text-align:center; background-color:#8ea9db; border: 1px solid #000; font-weight: bold;">NLNG</th>
-                                    <th colspan="2" style="text-align:center; background-color:#f4b084; border: 1px solid #000; font-weight: bold;">TOTAL</th>
-                                    <th colspan="2" style="text-align:center; background-color:#ffd966; border: 1px solid #000; font-weight: bold;">SHELL</th>
-                                    <th colspan="2" style="text-align:center; background-color:#00b0f0; border: 1px solid #000; font-weight: bold;">SAIPEM</th>
-                                    <th colspan="2" style="text-align:center; background-color:#a5a5a5; border: 1px solid #000; font-weight: bold;">DAEWOO</th>
+                                    <th colspan="2" style="text-align:center; background-color:#8ea9db; border: 1px solid #000; font-weight: bold;"> {{clis($topclients[0])[0]->client_name}}</th>
+                                    <th colspan="2" style="text-align:center; background-color:#f4b084; border: 1px solid #000; font-weight: bold;"> {{clis($topclients[1])[0]->client_name}}</th>
+                                    <th colspan="2" style="text-align:center; background-color:#ffd966; border: 1px solid #000; font-weight: bold;"> {{clis($topclients[2])[0]->client_name}}</th>
+                                    <th colspan="2" style="text-align:center; background-color:#00b0f0; border: 1px solid #000; font-weight: bold;"> {{clis($topclients[3])[0]->client_name}}</th>
+                                    <th colspan="2" style="text-align:center; background-color:#a5a5a5; border: 1px solid #000; font-weight: bold;"> {{clis($topclients[4])[0]->client_name}}</th>
                                     </tr>
                                     <tr>
                                     <th style="text-align:center; background-color:white; font-weight: bold;">PRODUCTS</th>
@@ -128,33 +128,38 @@
                                     </tr>
 
                                 </thead>
-                                        <tbody style="color:black;">
-                                        <tr style="color:black;">
-                                        <td style="font-weight:bold;text-align:left;padding: 3px 7px;">VALVES</td>
-                                        <td>{{ count(getValveRfq('114')) ?? 0 }}</td>
-                                        <td>{{ count(getValvePo('114')) ?? 0 }}</td>
-                                        <td>{{ count(getValveRfq('148')) ?? 0 }}</td>
-                                        <td>{{ count(getValvePo('148')) ?? 0 }}</td>
-                                        <td>{{ count(getValveRfq('2')) ?? 0 }}</td>
-                                        <td>{{ count(getValvePo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getValveRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getValvePo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getValveRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getValvePo('167')) ?? 0 }}</td>
+                                        <tbody>
+                                        @foreach($product as $item)
+                                        <tr>
+                                            <td style="font-weight:bold;text-align:left;padding: 3px 7px;">{{$item}}</td>
+                                             <td>{{ count(getProductRfq($topclients[0], $item)) ?? 0 }}</td>
+                                        <td>{{ count(getProductPo($topclients[0],$item)) ?? 0 }}</td>
+                                        <td>{{ count(getProductRfq($topclients[1], $item)) ?? 0 }}</td>
+                                        <td>{{ count(getProductPo($topclients[1],$item)) ?? 0 }}</td>
+                                        <td>{{ count(getProductRfq($topclients[2], $item)) ?? 0 }}</td>
+                                        <td>{{ count(getProductPo($topclients[2],$item)) ?? 0 }}</td>
+                                        <td>{{ count(getProductRfq($topclients[3], $item)) ?? 0 }}</td>
+                                        <td>{{ count(getProductPo($topclients[3],$item)) ?? 0 }}</td>
+                                        <td>{{ count(getProductRfq($topclients[4], $item)) ?? 0 }}</td>
+                                        <td>{{ count(getProductPo($topclients[4],$item)) ?? 0 }}</td>
                                         </tr>
-                                        <tr style="color:black;">
-                                        <td style="font-weight:bold;text-align:left;padding: 3px 7px;">GASKET</td>
-                                        <td>{{ count(getGasketRfq('114')) ?? 0 }}</td>
-                                        <td>{{ count(getGasketPo('114')) ?? 0 }}</td>
-                                        <td>{{ count(getGasketRfq('148')) ?? 0 }}</td>
-                                        <td>{{ count(getGasketPo('148')) ?? 0 }}</td>
-                                        <td>{{ count(getGasketRfq('2')) ?? 0 }}</td>
-                                        <td>{{ count(getGasketPo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getGasketRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getGasketPo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getGasketRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getGasketPo('167')) ?? 0 }}</td>
+                                        @endforeach
+                                        
+                                        
+                                        <tr>
+                                        <td style="font-weight:bold;text-align:left; padding: 3px 7px;">TOTAL</td>
+                                        <td>{{ count(getTotalRfq($topclients[0])) ?? 0 }}</td>
+                                        <td>{{ count(getTotalPo($topclients[0])) ?? 0 }}</td>
+                                        <td>{{ count(getTotalRfq($topclients[1])) ?? 0 }}</td>
+                                        <td>{{ count(getTotalPo($topclients[1])) ?? 0 }}</td>
+                                        <td>{{ count(getTotalRfq($topclients[2])) ?? 0 }}</td>
+                                        <td>{{ count(getTotalPo($topclients[2])) ?? 0 }}</td>
+                                        <td>{{ count(getTotalRfq($topclients[3])) ?? 0 }}</td>
+                                        <td>{{ count(getTotalPo($topclients[3])) ?? 0 }}</td>
+                                        <td>{{ count(getTotalRfq($topclients[4])) ?? 0 }}</td>
+                                        <td>{{ count(getTotalPo($topclients[4])) ?? 0 }}</td>
                                         </tr>
+<<<<<<< HEAD
                                         <tr style="color:black;">
                                         <td style="font-weight:bold;text-align:left;padding: 3px 7px;">BOLTS & NUTS</td>
                                         <td>{{ count(getBoltAndNutRfq('114')) ?? 0 }}</td>
@@ -253,6 +258,15 @@
                                         <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('2')) > 0) ? (count(getTotalPo('2')) / count(getTotalRfq('2')) * 100) : 0 }}%</td>
                                         <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('266')) > 0) ? (count(getTotalPo('266')) / count(getTotalRfq('266')) * 100) : 0 }}%</td>
                                         <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('167')) > 0) ? (count(getTotalPo('167')) / count(getTotalRfq('167')) * 100) : 0 }}%</td>
+=======
+                                        <tr>
+                                        <td style="font-weight:bold;text-align:left;">PO Conversion Rate</td>
+                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[0])) > 0) ? number_format((count(getTotalPo($topclients[0])) / count(getTotalRfq($topclients[0])) * 100), 2) : 0.00 }}%</td>
+                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[1])) > 0) ? number_format((count(getTotalPo($topclients[1])) / count(getTotalRfq($topclients[1])) * 100), 2) : 0.00 }}%</td>
+                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[2])) > 0) ? number_format((count(getTotalPo($topclients[2])) / count(getTotalRfq($topclients[2])) * 100), 2) : 0.00}}%</td>
+                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[3])) > 0) ? number_format((count(getTotalPo($topclients[3])) / count(getTotalRfq($topclients[3])) * 100), 2) : 0.00 }}%</td>
+                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[4])) > 0) ? number_format((count(getTotalPo($topclients[4])) / count(getTotalRfq($topclients[4])) * 100), 2) : 0.00 }}%</td>
+>>>>>>> master
                                         </tr>
                                         </tbody>
                                     </table>
@@ -263,7 +277,15 @@
             <div class="col-md-12" style="margin-bottom: 40px;">
                 <p style="font-size: 8.0pt;font-family: Arial,sans-serif; color: #1F497D;"> Best Regards,  <br/>
                     {{ Auth::user()->first_name . ' '. strtoupper(Auth::user()->last_name) }}, 
-                    <br> Procurement Associate <br>
+                    <br> @if(Auth::user()->role == 'HOD' ) 
+                                        {{ 'SCM Lead' }} 
+                                        @elseif(Auth::user()->role == 'Employer' )
+                                        {{ 'Procurement Associate' }} 
+                                        @elseif(Auth::user()->role == 'SuperAdmin' )
+                                        {{ 'SCM Admin' }}
+                                        @else
+                                        {{ 'Procurement Associate' }}
+                                        @endif <br>
                     PHONE</span></b><span style="font-size:8.0pt; font-family:&quot;Arial&quot;,sans-serif; color:#1F3864; mso-fareast-language:ZH-CN">
                         : +234 1 342 8420&nbsp;| </span>
                         <span style="font-size:8.0pt; font-family:&quot;Arial&quot;,sans-serif; color:#1F4E79; mso-fareast-language:EN-GB">

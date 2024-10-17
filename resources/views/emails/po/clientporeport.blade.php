@@ -33,7 +33,11 @@ hr {
                                                     Thank you.
                                                 </p><br/>
                                                 
+<<<<<<< HEAD
                 <table style="width:40%; font-size: 14px; margin-left:3% !important;">
+=======
+                <table style="width:70%; max-width: 400px; font-size: 14px; margin-left:3% !important;">
+>>>>>>> master
                     <thead>
                         <th style="width:20%;">Key</th>
                         <th style="width:70%;"></th>
@@ -67,7 +71,11 @@ hr {
                     <div class="table-container">
                     <div class="table-responsive">
                                 <h4 class="table-title" style="text-align:center; vertical-align:center; padding:1%;"><b> {{ $clients_det->client_name}} PO Status update for <?php echo date('Y'); ?> </b></h4>
+<<<<<<< HEAD
                         <table class="table" style="border-collapse: collapse; width: 98%; color:black !important; margin-left:3% !important; margin-right:-3% !important; display: flex;position: relative;">
+=======
+                        <table class="table" style="border-collapse: collapse; width: 98%; color:black !important; margin-left:3% !important; margin-right:-3% !important; position: relative;">
+>>>>>>> master
                             <thead class="">
                                 <tr>
                                 <th style="width: 3%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;text-align: center;">S/N</th>
