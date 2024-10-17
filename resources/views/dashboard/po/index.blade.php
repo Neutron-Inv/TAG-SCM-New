@@ -134,18 +134,18 @@
                                         
                         @php
                         $cleaned_value_foreign = preg_replace('/\D/', '', $rfqs->po_value_foreign);
-                        $formatted_value_foreign = number_format($cleaned_value_foreign, 2);
+                        $formatted_value_foreign = number_format($rfqs->po_value_foreign, 2);
 
                         @endphp
                         
                         <td>
                             <span class="icon-dollar-sign"></span> 
-                            {{ is_numeric($formatted_value_foreign) ? $formatted_value_foreign : '0.00' }}
+                            {{ $formatted_value_foreign ? $formatted_value_foreign : '0.00' }}
                         </td>
                         
                         @php
                         $cleaned_value = preg_replace('/\D/', '', $rfqs->po_value_naira);
-                        $formatted_value_naira = number_format($cleaned_value, 2);
+                        $formatted_value_naira = number_format($rfqs->po_value_naira, 2);
 
                         @endphp
                                                                             <td>&#8358;{{ $formatted_value_naira ?? '0.00'}}</td>

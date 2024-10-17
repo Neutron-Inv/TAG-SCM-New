@@ -198,14 +198,14 @@ class VendorController extends Controller
                 ]);
 
                 // Check if the input contains a space
-                if (strpos($input, ' ') !== false) {
+                if (strpos($request->input("vendor_name"), ' ') !== false) {
                     // Split the input into first and last name
-                    $cut = explode(" ", $input, 2);
+                    $cut = explode(" ", $request->input("vendor_name"), 2);
                     $first_name = $cut[0];
                     $last_name = $cut[1];
                 } else {
                     // If no space is found, set the first name and leave the last name empty
-                    $first_name = $input;
+                    $first_name = $request->input("vendor_name");
                     $last_name = ''; // Or you can set it to null or another default value
                 }
 

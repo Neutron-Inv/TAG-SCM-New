@@ -118,7 +118,7 @@ label {
                                     
                                     <a  href="{{ route('print.Quote', $details->refrence_no) }}" target="_blank" class="btn btn-info" >  View PDF</a> &nbsp; &nbsp;
                                    
-                                   @if($details->product == 'BHA1')
+                                   @if($details->product == 'BHA')
                                    <a  href="{{ route('bha.Quote', $details->refrence_no) }}" target="_blank" class="btn btn-info" >  View BHA Quote</a>
                                    @endif
                                    

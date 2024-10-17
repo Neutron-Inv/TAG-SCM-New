@@ -1086,7 +1086,7 @@
 
                                             </div>
                                         </div>
-                                        <input type="hidden" name="rater" value="<?php echo Auth::user()->first_name . ' '. Auth::user()->last_name ?>">
+                                        <input type="hidden" name="rater" value="{{ $details->shipping_rater ?? ''}}">
 
                                     @endif
                                 </div>

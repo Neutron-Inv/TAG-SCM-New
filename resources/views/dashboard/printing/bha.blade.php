@@ -4,7 +4,7 @@
 $cli_title = clis($rfq->client_id);
 $result = json_decode($cli_title, true);
 
-    $title = "TAG Energy Quotation TE-" . $result[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no) . ", " . $rfq->description;
+    $title = "BHA Quotation TE-" . $result[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no) . ", " . $rfq->description;
     set_time_limit(900);
 ?>
 @extends('layouts.bhaHead')
@@ -20,18 +20,18 @@ $count = 1;
     @php
     $comp = comp($rfq->company_id);
     $uom = getUOM($line_item->uom);
-    
+    $total_cost = $line_item->quantity * $line_item->unit_cost;
     $freight_charge = freight_pricing($line_item->location, $line_item->weight);
     $freight = (int)$freight_charge * (int)$line_item->weight;
-    $subtotal_cif = $freight + $line_item->total_quote;
+    $subtotal_cif = $freight + $total_cost;
     $duty = 0.20 * $subtotal_cif;
     $surcharge = 0.07 * $duty;
     $etls = 0.005 * $subtotal_cif;
-    $ciss = 0.01 * $line_item->total_quote;
+    $ciss = 0.01 * $total_cost;
     $vat = 0.075 * ($subtotal_cif + $duty + $surcharge + $etls +$ciss);
     $local_handling = 0.01 * $subtotal_cif;
     $subtotal_b = $subtotal_cif + $duty + $surcharge + $etls + $ciss + $vat + $local_handling;
-    $mark_up = 0;
+    $mark_up = 0.09 * $subtotal_b;
     $total_selling = $subtotal_b + $mark_up;
     @endphp
         <div class="col-12" style="flex: 0 0 100%; position: relative; text-align: center; font-size: 7px !important;margin-bottom:10px; display: block !important;"><b>{{strtoupper($comp[0]->company_name)}} COMMERCIAL SUBMISSION</b></div>
@@ -47,11 +47,11 @@ $count = 1;
                 <thead style="background-color: #f2f2f2; font-weight: bold; vertical-align:bottom;">
                     <tr>
                     <th style="width:2%;">S/N</th>
-                    <th style="width:45%;">Items </th>
+                    <th style="width:43%;">Items </th>
                     <th style="width:13%;">Unit of Measure ({{$uom[0]->unit_name}})</th>
                     <th style="width:10%;">Rate ({{$rfq->currency}})</th>
                     <th style="width:10%;">Total Price ({{$rfq->currency}})</th>
-                    <th style="width:20%;">Guidance</th>
+                    <th style="width:22%;">Guidance</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,8 +66,8 @@ $count = 1;
                                                 </p>
                         </td>
                         <td>{{$line_item->quantity ?? 0}}</td>
-                        <td>{{number_format($line_item->unit_quote, 2) ?? 0}}</td>
-                        <td>{{number_format($line_item->total_quote, 2) ?? 0}}</td>
+                        <td>{{number_format($line_item->unit_cost, 2) ?? 0}}</td>
+                        <td style="text-align:right !important;">{{number_format($total_cost, 2) ?? 0}}</td>
                         <td>This will be the ex-works/OEM price for the item including all discounts and export documentation. $100 here is an assumption</td>
                     </tr>
                     <tr style="background-color:#c5d9f1; font-weight:bold !important; vertical-align:bottom !important;">
@@ -75,7 +75,7 @@ $count = 1;
                         <td><b>FOB</b></td>
                         <td>LOT</td>
                         <td></td>
-                        <td>{{number_format($line_item->total_quote, 2) ?? 0}}</td>
+                        <td style="text-align:right !important;">{{number_format($total_cost, 2) ?? 0}}</td>
                         <td></td>
                     </tr>
                     <tr style="background-color:#fff; vertical-align:bottom !important;">
@@ -83,7 +83,7 @@ $count = 1;
                         <td>Freight</td>
                         <td>LOT</td>
                         <td style="background-color:#fcd5b4;"></td>
-                        <td>{{number_format($freight,2) ?? 0}}</td>
+                        <td style="text-align:right !important;">{{number_format($freight,2) ?? 0}}</td>
                         <td>Will be extracted from table 2.0 below based on item weight i.e Price/KG * Item weight</td>
                     </tr>
                     <tr style="background-color:#c5d9f1; font-weight:bold !important;">
@@ -91,7 +91,7 @@ $count = 1;
                         <td><b>Subtotal - A CIF</b></td>
                         <td>LOT</td>
                         <td></td>
-                        <td>{{number_format($subtotal_cif,2)}}</td>
+                        <td style="text-align:right !important;">{{number_format($subtotal_cif,2)}}</td>
                         <td></td>
                     </tr>
                     <tr style="background-color:#fff;">
@@ -99,7 +99,7 @@ $count = 1;
                         <td>Duty (% of CIF)</td>
                         <td>%</td>
                         <td style="background-color:#fcd5b4;">20%</td>
-                        <td>{{number_format($duty,2)}}</td>
+                        <td style="text-align:right !important;">{{number_format($duty,2)}}</td>
                         <td>item HS code</td>
                     </tr>
                     <tr style="background-color:#fff;">
@@ -107,7 +107,7 @@ $count = 1;
                         <td>Surcharge (% of Duty)</td>
                         <td>%</td>
                         <td>7.0%</td>
-                        <td>{{number_format($surcharge,2)}}</td>
+                        <td style="text-align:right !important;">{{number_format($surcharge,2)}}</td>
                         <td>Statutory rate. DO NOT ALTER</td>
                     </tr>
                     <tr style="background-color:#fff;">
@@ -115,7 +115,7 @@ $count = 1;
                         <td>ETLS (% of CIF)</td>
                         <td>%</td>
                         <td>0.5%</td>
-                        <td>{{number_format($etls,2)}}</td>
+                        <td style="text-align:right !important;">{{number_format($etls,2)}}</td>
                         <td>Statutory rate. DO NOT ALTER</td>
                     </tr>
                     <tr style="background-color:#fff;">
@@ -123,7 +123,7 @@ $count = 1;
                         <td>CISS (% of FOB)</td>
                         <td>%</td>
                         <td>1.0%</td>
-                        <td>{{number_format($ciss,2)}}</td>
+                        <td style="text-align:right !important;">{{number_format($ciss,2)}}</td>
                         <td>Statutory rate. DO NOT ALTER</td>
                     </tr>
                     <tr style="background-color:#fff;">
@@ -131,7 +131,7 @@ $count = 1;
                         <td>CUSTOM VAT</td>
                         <td>%</td>
                         <td style="background-color:#fcd5b4;">7.5%</td>
-                        <td>{{number_format($vat,2)}}</td>
+                        <td style="text-align:right !important;">{{number_format($vat,2)}}</td>
                         <td>depending item HS code.</td>
                     </tr>
                     <tr style="background-color:#fff;">
@@ -139,7 +139,7 @@ $count = 1;
                         <td>Local Handling (% of CIF)</td>
                         <td>%</td>
                         <td>1.0%</td>
-                        <td>{{number_format($local_handling,2)}}</td>
+                        <td style="text-align:right !important;">{{number_format($local_handling,2)}}</td>
                         <td>Statutory rate. DO NOT ALTER</td>
                     </tr>
                     <tr style="background-color:#fff;">
@@ -147,7 +147,7 @@ $count = 1;
                         <td>Subtotal - B Total Landing cost</td>
                         <td></td>
                         <td></td>
-                        <td>{{number_format($subtotal_b,2)}}</td>
+                        <td style="text-align:right !important;">{{number_format($subtotal_b,2)}}</td>
                         <td></td>
                     </tr>
                     <tr style="background-color:#fff; vertical-align:bottom !important;">
@@ -155,7 +155,7 @@ $count = 1;
                         <td>Markup (% of SUBTOTAL B)</td>
                         <td>%</td>
                         <td style="background-color:#fff000;">9.0%</td>
-                        <td>{{number_format($mark_up,2)}}</td>
+                        <td style="text-align:right !important;">{{number_format($mark_up,2)}}</td>
                         <td>
                             Vendor to insert their mark-up
                             percentage. This should
@@ -167,7 +167,7 @@ $count = 1;
                         <td><b>Total Selling Price (Subtotal B+Mark up)= C</b></td>
                         <td></td>
                         <td></td>
-                        <td>{{number_format($total_selling,2)}}</td>
+                        <td style="text-align:right !important;">{{number_format($total_selling,2)}}</td>
                         <td></td>
                     </tr>
                 </tbody>
@@ -200,11 +200,24 @@ $count = 1;
         </div> 
         </div>
         
-        <div>&nbsp;</div>
+        <div class="col-9" style="display:flex; color: #0000ff;">
+        <table style="font-size:7px !important; left:0px !important; margin-left:-17px; border:1px solid white !important; border-collapse: collapse; width:95%; vertical-align:bottom !important;">
+                <thead style="background-color: #fff; font-weight: bold; vertical-align:bottom; border:1px solid white !important;">
+                    <tr>
+                    <th style="width:3%; border:1px solid white !important;">&nbsp;&nbsp;</th>
+                    <th style="width:43%; border:1px solid white !important;"></th>
+                    <th style="width:13%; border:1px solid white !important;">NET VALUE</th>
+                    <th style="width:10%; border:1px solid white !important;"></th> 
+                <th style="width:10%; border:1px solid white !important; text-align:right; !important">{{number_format($total_selling,2)}}</th>
+                    <th style="width:21%; border:1px solid white !important;"></th>
+                    </tr>
+                </thead>
+        </table>
+        </div>
         
         <div>
                 <p style="line-height: 7px;"><b>Table 2.0</b><br/>
-                Guidance: input actual rates per kg in USD</p>
+                Guidance: Input actual rates per kg in USD</p>
         </div>
         
          <div class="col-11" style="">
