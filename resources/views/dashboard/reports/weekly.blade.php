@@ -1,4 +1,4 @@
-<?php $title = 'Generate Yearly Report'; ?>
+<?php $title = 'Generate Weekly Report'; ?>
 @php
     use Carbon\Carbon;
 @endphp

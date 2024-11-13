@@ -112,9 +112,6 @@ $(document).ready(function(){
                         search: 'applied'
                     }
                 }
-<<<<<<< HEAD
-            }
-=======
             },
             // {
             //     extend: 'docx',
@@ -124,7 +121,6 @@ $(document).ready(function(){
             //         }
             //     }
             // }
->>>>>>> master
         ]
 
 	});

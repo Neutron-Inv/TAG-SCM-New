@@ -12,10 +12,7 @@ class Product extends Model
     public $primaryKey = 'product_id';
     protected $guard_name = 'web';
     protected $fillable = [
-<<<<<<< HEAD
-=======
         'company_id',
->>>>>>> master
         'product_name',
     ];
 

@@ -2562,7 +2562,6 @@ $(document).ready(function() {
                                                             @foreach (buyers($details->contact_id) as $items)
                                         <input type="text" class="form-control" id="recipient-name" name="email" value="{{  $items->email  }}" required>
                                                             @endforeach
-                                                            <option value="emmanuel.idowu@tagenergygroup.net">Emmanuel.idowu@tagenergygroup.net</option>
                                                         </select>
 
                                                         @if ($errors->has('email'))
@@ -3017,11 +3016,7 @@ $(document).ready(function() {
                 for( var o = 0; o < miscOthers.length; o++ )
                 {
                     var oo = o+1;
-<<<<<<< HEAD
-                    const miscAmountOthers = parseFloat($("#misc_amount_others_" + ll).val()) || 0; // Correct the selector
-=======
                     const miscAmountOthers = parseFloat($("#misc_amount_others_" + oo).val()) || 0; // Correct the selector
->>>>>>> master
                     totalMiscOthers += miscAmountOthers;
                 };
                                                     
@@ -3042,24 +3037,6 @@ $(document).ready(function() {
                 const GrossMargin = TotalQuote - supplierQuote;
                 const PercentGrossMargin = (GrossMargin / supplierQuote) * 100;
                 const Total_Quote = ((MarkUp) * supplierQuote) + supplierQuote;
-<<<<<<< HEAD
-
-                $("#fund_transfer_charge").val(fundsTransferCharge.toFixed(2));
-                $("#vat_transfer_charge").val(vatcharge.toFixed(2));
-                $("#fund_transfer").val(FundTransfer.toFixed(2));
-                $("#wht").val(Wht.toFixed(2));
-                $("#ncd").val(Ncd.toFixed(2));
-                $("#net_percentage_margin").val(PercentNetMargin.toFixed(2));
-                $("#net_percentage").val(NetMargin.toFixed(2));
-                $("#net_value").val(GrossMargin.toFixed(2));
-                $("#percent_margin").val(PercentGrossMargin.toFixed(2));
-                $("#total_quote").val(Total_Quote.toFixed(2));
-                $("#percent_margin").val(PercentGrossMargin.toFixed(2));
-            }, 500); // Delay for 1 second (1000 milliseconds)
-        }
-        }
-
-=======
                 
                 console.log(subTotalCost);
                 
@@ -3078,7 +3055,6 @@ $(document).ready(function() {
         }
         }
 
->>>>>>> master
 
 
 
@@ -3115,11 +3091,7 @@ $(document).ready(function() {
                 for( var o = 0; o < miscOthers.length; o++ )
                 {
                     var oo = o+1;
-<<<<<<< HEAD
-                    const miscAmountOthers = parseFloat($("#misc_amount_others_" + ll).val()) || 0; // Correct the selector
-=======
                     const miscAmountOthers = parseFloat($("#misc_amount_others_" + oo).val()) || 0; // Correct the selector
->>>>>>> master
                     totalMiscOthers += miscAmountOthers;
                 };
             
@@ -3138,12 +3110,8 @@ $(document).ready(function() {
             const PercentNetMargin = (NetMargin/Total_quotee) * 100;
             const GrossMargin = Total_quotee - supplierQuote;
             const PercentGrossMargin = (GrossMargin / supplierQuote) * 100;
-<<<<<<< HEAD
-        
-=======
             
             console.log('Subtotal: '+subTotalCost);
->>>>>>> master
             //console.log('percent Net Margin: '+PercentNetMargin);
             return PercentNetMargin.toFixed(2);
         }
@@ -3181,11 +3149,7 @@ $(document).ready(function() {
                 for( var o = 0; o < miscOthers.length; o++ )
                 {
                     var oo = o+1;
-<<<<<<< HEAD
-                    const miscAmountOthers = parseFloat($("#misc_amount_others_" + ll).val()) || 0; // Correct the selector
-=======
                     const miscAmountOthers = parseFloat($("#misc_amount_others_" + oo).val()) || 0; // Correct the selector
->>>>>>> master
                     totalMiscOthers += miscAmountOthers;
                 };
             
@@ -3205,11 +3169,7 @@ $(document).ready(function() {
             const GrossMargin = Total_quotee - supplierQuote;
             const PercentGrossMargin = (GrossMargin / supplierQuote) * 100;
         
-<<<<<<< HEAD
-            //console.log('percent Net Margin: '+PercentNetMargin);
-=======
             console.log('Subtotal: '+subTotalCost);
->>>>>>> master
             return NetMargin.toFixed(2);
         }
                                             

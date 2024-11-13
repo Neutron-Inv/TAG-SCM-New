@@ -117,9 +117,9 @@
                                                                     <span class="input-group-text" id="basic-addon6"><i class="icon-home" style="color:#28a745"></i></span>
                                                                 </div>
                                                                 <select class="form-control selectpicker" data-live-search="true" required name="uom" required>
-                                                                    <option value="">Select UOM</option>
+                                                                    <option value="{{$line_items->uom ?? ''}}">{{$line_items->uom ?? 'Select UOM'}}</option>
                                                                     @foreach ($unit as $measures)
-                                                                        <option data-tokens="{{ $measures->unit_name }}" value="{{ $measures->unit_id }}" @if($line_items->uom == $measures->unit_id)  selected="selected" @endif>
+                                                                        <option data-tokens="{{ $measures->unit_name }}" value="{{ $measures->unit_name }}" @if($line_items->uom == $measures->unit_id OR $line_items->uom == $measures->unit_name)  selected="selected" @endif>
                                                                             {{ $measures->unit_name }}
                                                                         </option>
                                                                     @endforeach

@@ -11,6 +11,8 @@ class UserLoginController extends Controller
 
     public function userlogin(Request $request)
     {
+        
+        //dd($request->all());
         $validatedData = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -20,7 +22,6 @@ class UserLoginController extends Controller
             "email" => $validatedData["email"],
             "password" => $validatedData["password"],
         ];
-    
         if (Auth::attempt($data)) {
             // Authentication successful, check if user is active
             $user = Auth::user();

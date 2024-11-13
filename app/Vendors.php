@@ -14,7 +14,7 @@ class Vendors extends Model
     protected $guard_name = 'web';
     protected $fillable = [
         'company_id', 'vendor_name', 'industry_id',  'contact_name', 'country_code', 'contact_phone', 'contact_email', 'address',
-        'description', 'tamap', 'agency', 'vendor_code'
+        'description', 'tamap', 'agency', 'vendor_code', 'products'
     ];
 
     public function getTamapAttribute($value)

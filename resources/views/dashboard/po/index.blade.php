@@ -130,14 +130,6 @@
                                                                                 <a href="{{ route('po.details',$rfqs->po_id) }}" title="View PO Details" style="color: green">
                                                                                     {{ $rfqs->po_number }}
                                                                                 </a>
-<<<<<<< HEAD
-                                                                            </td>
-                        <td>
-                            <span class="icon-dollar-sign"></span> 
-                            {{ is_numeric($rfqs->po_value_foreign) ? number_format($rfqs->po_value_foreign, 2) : '0.00' }}
-                        </td>
-                                                                            <td>&#8358;{{ number_format($rfqs->po_value_naira,2) ?? '0.00'}}</td>
-=======
                                         </td>
                                         
                         @php
@@ -157,7 +149,6 @@
 
                         @endphp
                                                                             <td>&#8358;{{ $formatted_value_naira ?? '0.00'}}</td>
->>>>>>> master
 
 
                                                                             <td>

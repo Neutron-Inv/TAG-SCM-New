@@ -160,6 +160,7 @@ class VendorController extends Controller
                 'agency' => ['required', 'string', 'max:199'],
                 'description' => ['required', 'string', 'max:300'],
                 'address' => ['required', 'string', 'max:199'],
+                'product' => ['nullable', 'array'],
             ]);
 
             if(User::where('email', $request->input('contact_email'))->exists()){
@@ -181,12 +182,13 @@ class VendorController extends Controller
                     "contact_name" => $request->input("contact_name"),
                     "contact_phone" => $phone,
                     "contact_email" => $request->input("contact_email"),
-                    "country_code" => strtoupper($request->input("country_code")),
+                    "country_code" => $request->input("country_code"),
                     "tamap" => $request->input("tamap"),
                     "agency" => $request->input("agency"),
                     "description" => $request->input("description"),
                     "address" => $request->input("address"),
                     "vendor_code" => strtoupper($request->input("vendor_code")),
+                    "products" => json_encode(array_values($request->input("product")))
 
                 ]);
 
@@ -268,10 +270,12 @@ class VendorController extends Controller
                 return view('dashboard.supplier.edit')->with([
                     'company' => $company, "vendor" => $vendor, 'industry' => $industry, "ven" => $ven
                 ]);
-            }elseif(Auth::user()->hasRole('Admin')){
-
-                $company = Companies::where('email', Auth::user()->email)->first();
-                $vendor = Vendors::where('company_id', $company->company_id)->orderBy('vendor_name', 'asc')->get();
+            }elseif(Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Employer') || Auth::user()->hasRole('HOD')){
+                $user_id = Auth::user()->email;
+        
+                $company_id = Employers::where('email', $user_id)->value('company_id');
+                $company = Companies::where('company_id', $company_id)->first();
+                $vendor = Vendors::where('company_id', $company_id)->orderBy('vendor_name', 'asc')->get();
                 return view('dashboard.supplier.edit')->with([
                     'company' => $company, "vendor" => $vendor, 'industry' => $industry, "ven" => $ven
                 ]);
@@ -303,7 +307,8 @@ class VendorController extends Controller
      */
     public function update(Request $request, $vendor_id)
     {
-        if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('Supplier'))){
+        
+        if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')) OR (Auth::user()->hasRole('Supplier') OR Auth::user()->hasRole('Employer') || Auth::user()->hasRole('HOD'))){
             $ven = Vendors::where('vendor_id', $vendor_id)->first();
             $this->validate($request, [
                 'company_id' => ['required', 'string', 'max:199'],
@@ -317,6 +322,7 @@ class VendorController extends Controller
                 'agency' => ['required', 'string', 'max:199'],
                 'description' => ['required', 'string', 'max:300'],
                 'address' => ['required', 'string', 'max:199'],
+                'product' => ['nullable', 'array'],
             ]);
 
             if(empty($request->input('contact_phone'))){
@@ -333,14 +339,16 @@ class VendorController extends Controller
                 "contact_name" => $request->input("contact_name"),
                 "contact_phone" => $phone,
                 "contact_email" => $request->input("contact_email"),
-                "country_code" => strtoupper($request->input("country_code")),
+                "country_code" => $request->input("country_code"),
                 "tamap" => $request->input("tamap"),
                 "agency" => $request->input("agency"),
                 "description" => $request->input("description"),
                 "address" => $request->input("address"),
-                "vendor_code" => strtoupper($request->input("vendor_code"))
+                "vendor_code" => strtoupper($request->input("vendor_code")),
+                "products" => json_encode(array_values($request->input("product")))
 
             ]);
+            
 
             $role = 'Supplier';
 
@@ -367,7 +375,7 @@ class VendorController extends Controller
                 ]);
 
                 if ($this->model->update($data, $vendor_id) and ($log->save()) AND (!empty($datu))) {
-                    return redirect()->route("vendor.index")->with("success", "You Have Updated "
+                    return redirect()->back()->with("success", "You Have Updated "
                         . $request->input("vendor_name"));
                 } else {
                     return redirect()->back()->with("error", "Operation failed, Please Try again later");
@@ -396,7 +404,7 @@ class VendorController extends Controller
 
             if ($data->save() and ($log->save()) AND ($datum->save())) {
                 $datum->assignRole($role);
-                return redirect()->route("vendor.index")->with("success", "You Have Added " . $request->input("vendor_name") . " Successfully");
+                return redirect()->back()->with("success", "You Have Added " . $request->input("vendor_name") . " Successfully");
             } else {
                 return redirect()->back()->with("error", "Network Failure");
             }
@@ -411,6 +419,34 @@ class VendorController extends Controller
             return view('errors.403');
         }
     }
+    
+    
+    
+    /**
+     * Get recommended list of suppliers for a chosen product based off on 
+     * their speciality and later on their evaluations
+     * 
+     */
+    public function getRecommendedSuppliers($product)
+    {
+        // Replace with your logic to get recommended suppliers based on the product
+        $recommendedSuppliers = json_decode(getRecommendedSuppliers($product));
+        $user_role = Auth::user()->role;
+        $user_id = Auth::user()->email;
+        
+        if($user_role == 'SuperAdmin' OR $user_role == 'Admin'){
+        $otherSuppliers = Vendors::get();
+        }else{
+        $company_id = Employers::where('email', $user_id)->value('company_id');
+        $otherSuppliers = getCompanyVendor($company_id);
+        }
+    
+        return response()->json([
+            'recommended' => $recommendedSuppliers,
+            'others' => $otherSuppliers
+        ]);
+    }
+
 
     /**
      * Remove the specified resource from storage.

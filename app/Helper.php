@@ -136,8 +136,6 @@
         ->sum('total_quote');
     }
     
-<<<<<<< HEAD
-=======
     function TotalrfqQuoteGBP()
     {
     return \DB::table('client_rfqs')
@@ -154,7 +152,6 @@
         ->sum('total_quote');
     }
     
->>>>>>> master
     function TotalrfqQuoteNGN()
     {
     return \DB::table('client_rfqs')
@@ -172,8 +169,6 @@
         ->sum('total_quote');
     }
     
-<<<<<<< HEAD
-=======
     function TotalrfqQuoteGBPEMP($company_id)
     {
     return \DB::table('client_rfqs')
@@ -192,7 +187,6 @@
         ->sum('total_quote');
     }
     
->>>>>>> master
     function TotalrfqQuoteNGNEMP($company_id)
     {
     return \DB::table('client_rfqs')
@@ -1420,8 +1414,12 @@ function getTotalPoc($client_id, $start_date = null, $end_date = null)
         return \DB::table('products')->orderBy('product_name')
         ->get();
     }
-<<<<<<< HEAD
-=======
+    
+    function getcompanyproducts($company_id)
+    {
+        return \DB::table('products')->orderBy('product_name')->where('company_id', $company_id)
+        ->get();
+    }
     
     function freight_pricing($location, $weight){
         $charge = "";
@@ -1477,5 +1475,40 @@ function getTotalPoc($client_id, $start_date = null, $end_date = null)
         
         return $charge;
     }
->>>>>>> master
+    
+    function getRecommendedSuppliers($product){
+        return \DB::table('vendors')->orderBy('vendor_name')->whereJsonContains('products', $product)->get(['vendor_id', 'vendor_name']);
+    }
+    
+    function getOtherSuppliers(){
+        return \DB::table('vendors')->orderBy('vendor_name')->get(['vendor_id', 'vendor_name']);
+    }
+    
+    function getCompanyVendor($company_id){
+        return \DB::table('vendors')->orderBy('vendor_name')->where('company_id', $company_id)->get(['vendor_id', 'vendor_name']);
+    }
+    
+    function getCountries(){
+        return \DB::table('countries')->orderBy('name')->get(['id','name']);
+    }
+    
+    function getCountryName($id){
+        return \DB::table('countries')->where('id', $id)->value('name');
+    }
+    
+    function getStateName($id){
+        return \DB::table('states')->where('id', $id)->value('name');
+    }
+    
+    function getStatesByCountry($id){
+        return \DB::table('states')->where('country_id', $id)->orderBy('name')->get(['id','name']);
+    }
+    
+    function getCitiesByState($id){
+        return \DB::table('cities')->where('state_id', $id)->orderBy('name')->get(['id','name']);
+    }
+    
+    function getVendorContacts($id){
+        return \DB::table('vendor_contacts')->where('vendor_id', $id)->orderBy('first_name')->get(['contact_id','first_name', 'last_name']);
+    }
 ?>

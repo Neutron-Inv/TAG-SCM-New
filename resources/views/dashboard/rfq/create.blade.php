@@ -115,6 +115,7 @@
                                         $products = getproducts();
                                         @endphp
                                         <select class="form-control selectpicker" data-live-search="true" required name="product">
+                                             <option value="">-- Select Product --</option>
                                         @foreach($products as $product)
                                         <option value="{{$product->product_name}}">{{$product->product_name}} </option>
                                         @endforeach
@@ -175,31 +176,28 @@
 
                                                         </div>
                                                     </div>
+                                                    
+                                                    
                                                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                                                        <div class="for5m-group">
+                                                        <div class="form-group">
                                                             <label for="company_name">Supplier Name</label>
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
-                                                                    <span class="input-group-text" id="basic-addon6"><i class="icon-home" style="color:#28a745"></i></span>
+                                                                    <span class="input-group-text" id="basic-addon6">
+                                                                        <i class="icon-home" style="color:#28a745"></i>
+                                                                    </span>
                                                                 </div>
-                                                                <select class="form-control selectpicker" data-live-search="true" required name="vendor_id" required>
-
+                                                                <select class="form-control selectpicker" data-live-search="true" required name="vendor_id">
                                                                     <option value="">-- Select Supplier --</option>
-                                                                    @foreach ($vendor as $vendors)
-                                                                        <option data-tokens="{{ $vendors->vendor_name }}" value="{{ $vendors->vendor_id }}">
-                                                                                {{ $vendors->vendor_name }}
-                                                                        </option>
-
-                                                                    @endforeach
-
                                                                 </select>
                                                             </div>
-
                                                             @if ($errors->has('vendor_id'))
-                                                                <div class="" style="color:red">{{ $errors->first('vendor_id') }}</div>
+                                                                <div style="color:red">{{ $errors->first('vendor_id') }}</div>
                                                             @endif
                                                         </div>
                                                     </div>
+                                                    
+                                                    
                                                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 
                                                         <div class="form-group">
@@ -420,5 +418,42 @@
             </div>
         </div>
     </div>
+<script>
+$(document).ready(function() {
+    $('select[name="product"]').on('change', function() {
+        var product = $(this).val();
+        if (product) {
+            $.ajax({
+                url: `/get-recommended-suppliers/${product}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    let vendorDropdown = $('select[name="vendor_id"]');
+                    vendorDropdown.empty();
+                    vendorDropdown.append('<option value="">-- Select Supplier --</option>');
+
+                    if (data.recommended.length > 0) {
+                        let recommendedOptGroup = $('<optgroup label="Recommended Suppliers"></optgroup>');
+                        $.each(data.recommended, function(index, vendor) {
+                            recommendedOptGroup.append(`<option value="${vendor.vendor_id}">${vendor.vendor_name}</option>`);
+                        });
+                        vendorDropdown.append(recommendedOptGroup);
+                    }
+
+                    if (data.others.length > 0) {
+                        let otherOptGroup = $('<optgroup label="Other Suppliers"></optgroup>');
+                        $.each(data.others, function(index, vendor) {
+                            otherOptGroup.append(`<option value="${vendor.vendor_id}">${vendor.vendor_name}</option>`);
+                        });
+                        vendorDropdown.append(otherOptGroup);
+                    }
+                    
+                    vendorDropdown.selectpicker('refresh'); // Refresh the selectpicker UI
+                }
+            });
+        }
+    });
+});
+</script>
 
 @endsection

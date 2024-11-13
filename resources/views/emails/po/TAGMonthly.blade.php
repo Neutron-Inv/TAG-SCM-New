@@ -159,106 +159,6 @@
                                         <td>{{ count(getTotalRfq($topclients[4])) ?? 0 }}</td>
                                         <td>{{ count(getTotalPo($topclients[4])) ?? 0 }}</td>
                                         </tr>
-<<<<<<< HEAD
-                                        <tr style="color:black;">
-                                        <td style="font-weight:bold;text-align:left;padding: 3px 7px;">BOLTS & NUTS</td>
-                                        <td>{{ count(getBoltAndNutRfq('114')) ?? 0 }}</td>
-                                        <td>{{ count(getBoltAndNutPo('114')) ?? 0 }}</td>
-                                        <td>{{ count(getBoltAndNutRfq('148')) ?? 0 }}</td>
-                                        <td>{{ count(getBoltAndNutPo('148')) ?? 0 }}</td>
-                                        <td>{{ count(getBoltAndNutRfq('2')) ?? 0 }}</td>
-                                        <td>{{ count(getBoltAndNutPo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getBoltAndNutRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getBoltAndNutPo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getBoltAndNutRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getBoltAndNutPo('167')) ?? 0 }}</td>
-                                        </tr>
-                                        <tr style="color:black;">
-                                        <td style="font-weight:bold;text-align:left; padding: 3px 7px;">FLANGES</td>
-                                        <td>{{ count(getFlangesRfq('114')) ?? 0 }}</td>
-                                        <td>{{ count(getFlangesPo('114')) ?? 0 }}</td>
-                                        <td>{{ count(getFlangesRfq('148')) ?? 0 }}</td>
-                                        <td>{{ count(getFlangesPo('148')) ?? 0 }}</td>
-                                        <td>{{ count(getFlangesRfq('2')) ?? 0 }}</td>
-                                        <td>{{ count(getFlangesPo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getFlangesRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getFlangesPo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getFlangesRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getFlangesPo('167')) ?? 0 }}</td>
-                                        </tr>
-                                        <tr style="color:black;">
-                                        <td style="font-weight:bold;text-align:left;padding: 3px 7px;">PIPES & FITTINGS</td>
-                                        <td>{{ count(getPipeRfq('114')) ?? 0 }}</td>
-                                        <td>{{ count(getPipePo('114')) ?? 0 }}</td>
-                                        <td>{{ count(getPipeRfq('148')) ?? 0 }}</td>
-                                        <td>{{ count(getPipePo('148')) ?? 0 }}</td>
-                                        <td>{{ count(getPipeRfq('2')) ?? 0 }}</td>
-                                        <td>{{ count(getPipePo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getPipeRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getPipePo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getPipeRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getPipePo('167')) ?? 0 }}</td>
-                                        </tr>
-                                        <tr style="color:black;">
-                                        <td style="font-weight:bold;text-align:left;padding: 3px 7px;">ROTORK ACTUATOR & GEARBOX</td>
-                                        <td>{{ count(getRotorkRfq('114')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('114')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('148')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('148')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('2')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getRotorkPo('167')) ?? 0 }}</td>
-                                        </tr>
-                                        <tr style="color:black;">
-                                        <td style="font-weight:bold;text-align:left;padding: 3px 7px;">OTHERS (REGULATOR, TUBE, SLABS, ETC)</td>
-                                        <td>{{ count(getOtherRfq('114')) ?? 0 }}</td>
-                                        <td>{{ count(getOtherPo('114')) ?? 0 }}</td>
-                                        <td>{{ count(getOtherRfq('148')) ?? 0 }}</td>
-                                        <td>{{ count(getOtherPo('148')) ?? 0 }}</td>
-                                        <td>{{ count(getOtherRfq('2')) ?? 0 }}</td>
-                                        <td>{{ count(getOtherPo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getOtherRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getOtherPo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getOtherRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getOtherPo('167')) ?? 0 }}</td>
-                                        </tr>
-                                        <tr style="color:black;">
-                                        <td style="font-weight:bold;text-align:left;padding: 3px 7px;">FLANGE MANAGEMENT SERVICES</td>
-                                        <td>{{ count(getFMSRfq('114')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSPo('114')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSRfq('148')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSPo('148')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSRfq('2')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSPo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSPo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getFMSPo('167')) ?? 0 }}</td>
-                                        </tr>
-                                        <tr style="color:black;">
-                                        <td style="font-weight:bold;text-align:left;padding: 3px 7px;">TOTAL</td>
-                                        <td>{{ count(getTotalRfq('114')) ?? 0 }}</td>
-                                        <td>{{ count(getTotalPo('114')) ?? 0 }}</td>
-                                        <td>{{ count(getTotalRfq('148')) ?? 0 }}</td>
-                                        <td>{{ count(getTotalPo('148')) ?? 0 }}</td>
-                                        <td>{{ count(getTotalRfq('2')) ?? 0 }}</td>
-                                        <td>{{ count(getTotalPo('2')) ?? 0 }}</td>
-                                        <td>{{ count(getTotalRfq('266')) ?? 0 }}</td>
-                                        <td>{{ count(getTotalPo('266')) ?? 0 }}</td>
-                                        <td>{{ count(getTotalRfq('167')) ?? 0 }}</td>
-                                        <td>{{ count(getTotalPo('167')) ?? 0 }}</td>
-                                        </tr>
-                                        <tr style="color:black;">
-                                        <td style="font-weight:bold;text-align:left;padding: 3px 7px;">PO Conversion Rate</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('114')) > 0) ? (count(getTotalPo('114')) / count(getTotalRfq('114')) * 100) : 0 }}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('148')) > 0) ? (count(getTotalPo('148')) / count(getTotalRfq('148')) * 100) : 0 }}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('2')) > 0) ? (count(getTotalPo('2')) / count(getTotalRfq('2')) * 100) : 0 }}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('266')) > 0) ? (count(getTotalPo('266')) / count(getTotalRfq('266')) * 100) : 0 }}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq('167')) > 0) ? (count(getTotalPo('167')) / count(getTotalRfq('167')) * 100) : 0 }}%</td>
-=======
                                         <tr>
                                         <td style="font-weight:bold;text-align:left;">PO Conversion Rate</td>
                                         <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[0])) > 0) ? number_format((count(getTotalPo($topclients[0])) / count(getTotalRfq($topclients[0])) * 100), 2) : 0.00 }}%</td>
@@ -266,7 +166,6 @@
                                         <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[2])) > 0) ? number_format((count(getTotalPo($topclients[2])) / count(getTotalRfq($topclients[2])) * 100), 2) : 0.00}}%</td>
                                         <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[3])) > 0) ? number_format((count(getTotalPo($topclients[3])) / count(getTotalRfq($topclients[3])) * 100), 2) : 0.00 }}%</td>
                                         <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[4])) > 0) ? number_format((count(getTotalPo($topclients[4])) / count(getTotalRfq($topclients[4])) * 100), 2) : 0.00 }}%</td>
->>>>>>> master
                                         </tr>
                                         </tbody>
                                     </table>

@@ -221,12 +221,8 @@
                                                             Yes
                                                         @endif
                                                     @endif
-<<<<<<< HEAD
-                                                </td>
-=======
                                                     </td>
                                                     <td>{{ $rfqs->shipper_timely_delivery ?? 'Null' }} </td>
->>>>>>> master
                                                     <td> {{ $rfqs->rfq->vendor->vendor_name ?? 'Null' }}</td>
                                                     <td>{{ $rfqs->rfq->shipper->shipper_name ?? 'Null' }}</td>
                                                     

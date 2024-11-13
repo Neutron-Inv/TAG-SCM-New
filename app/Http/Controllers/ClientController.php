@@ -57,7 +57,7 @@ class ClientController extends Controller
             $company = Companies::where('company_id', $employer->company_id)->first();
             $client = Clients::where('company_id', $company->company_id)->orderBy('client_name', 'asc')->get();
             $ng_states = NgState::orderby('name', 'asc')->get();
-            $countries = Country::orderby('nicename', 'asc')->get();
+            $countries = Country::orderby('name', 'asc')->get();
             return view('dashboard.clients.index')->with([
                 "client" => $client, 'company' => $company, 'ng_states' => $ng_states, 'countries' => $countries
             ]);

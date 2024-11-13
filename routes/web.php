@@ -28,12 +28,15 @@ Route::get('quotation-email', function () {
 });
 Route::get('/', function () {
     return view('auth.login');
-});
+})->name('admin.login');
 Route::post("/user_login", "UserLoginController@userlogin")->name("user.login");
 
 Route::get('/logout', "UserLoginController@logout")->name('admin.logout');
 
 Route::get('/email/resend', "Auth\VerificationController@resend");
+
+Route::get('get-company-product/{company}', "ProductController@getCompanyProducts")->name('company.products');
+Route::get('get-recommended-suppliers/{product}', "VendorController@getRecommendedSuppliers")->name('recommended.suppliers');
 
 Auth::routes(['verify' => true]);
 Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], function () {
@@ -90,6 +93,17 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             Route::post("/update/{contact_id}", "ClientContactController@update")->name("contact.update");
 
         });
+        
+        Route::group(["prefix" => "vendor-contacts"], function () {
+            Route::get("/populate-data", "VendorContactController@loading")->name("vcontact.loading");
+            Route::get("/", "VendorContactController@list")->name("vcontact.list");
+            Route::get("/{id}", "VendorContactController@index")->name("vcontact.index");
+            Route::post("/save", "VendorContactController@store")->name("vcontact.save");
+            Route::get("/edit/{contact_id}", "VendorContactController@edit")->name("vcontact.edit");
+            Route::get("/delete/{contact_id}", "VendorContactController@destroy")->name("vcontact.delete");
+            Route::post("/update/{contact_id}", "VendorContactController@update")->name("vcontact.update");
+        });
+
 
         Route::group(["prefix" => "shippers"], function () {
             Route::get("/", "ShipperController@index")->name("shipper.index");
@@ -114,7 +128,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             // Route::get("/recyclebin", "ShipperController@bin")->name("client.restore");
             // Route::get("/restore/{client_id}", "ShipperController@restore")->name("client.undelete");
         });
-
+        
         Route::group(["prefix" => "rfq-documents"], function () {
             Route::post("/save-file", "LineItemController@saveFiles")->name("saveFiles");
             Route::get("/delete-file/{id}/{vendor_id}", "LineItemController@removeFile")->name("removeFile");
@@ -255,6 +269,9 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
 
             Route::post("/generate-report", "ClientRFQController@generateReport")->name("rfq.gen.report");
             Route::get("/download-pdf/{rfq_id}", "ClientRFQController@downloadQuote")->name("rfq.downloadQuote");
+            Route::post("/send-rfq-to-vendor", "ClientRFQController@submitRfqToVendor")->name("rfq.toVendor");
+            
+            
         });
 
         Route::group(["prefix" => "purchase-order"], function () {
@@ -282,11 +299,8 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
         Route::group(["prefix" => "purchase-order-reports"], function () {
             Route::get("/yearly", "ReportController@createReport")->name("po.report.index");
             Route::get("/weekly", "ReportController@weekly")->name("po.report.weekly");
-<<<<<<< HEAD
-=======
             Route::get("/outstanding", "ReportController@outstanding")->name("po.report.outstanding");
             Route::post("/sendOutstandingReport", "ReportController@sendOutstandingReport")->name("po.report.sendOutstandingReport");
->>>>>>> master
             Route::any("/weekly/fetch", "ReportController@weeklyedit")->name("po.report.weekly.fetch");
             Route::get("/clientPoReport", "ReportController@clientPo")->name("po.report.clientPo");
             Route::get("/monthly", "ReportController@monthly")->name("po.report.monthly");
@@ -365,6 +379,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             Route::post("/update/{id}", "LineItemController@update")->name("line.update");
             Route::get("/duplicate/{line_id}", "LineItemController@duplicate")->name("line.duplicate");
             Route::get("/preview/{rfq_id}", "LineItemController@preview")->name("line.preview");
+            Route::post("/upload-rfq/", "LineItemController@uploadLineitems")->name("line.upload");
             
         });
 

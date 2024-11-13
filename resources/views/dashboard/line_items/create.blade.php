@@ -103,7 +103,7 @@
 
                                                                     <option value="">-- Select UOM --</option>
                                                                     @foreach ($unit as $measures)
-                                                                        <option data-tokens="{{ $measures->unit_name }}" value="{{ $measures->unit_id }}">
+                                                                        <option data-tokens="{{ $measures->unit_name }}" value="{{ $measures->unit_name }}">
                                                                             {{ $measures->unit_name }}
                                                                         </option>
 

@@ -1,3 +1,7 @@
+@if (!Auth::check())
+    {{-- Redirect to login if user is not authenticated --}}
+    <script>window.location.href = "{{ route('admin.login') }}";</script>
+@endif
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" 
 data-template="horizontal-menu-template">
@@ -44,7 +48,6 @@ data-template="horizontal-menu-template">
     <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css')}}" />
     <link rel="stylesheet" href="{{asset('admin/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.3.1/css/buttons.dataTables.min.css">
-
         <!-- Page CSS -->
         <link rel="stylesheet" href="{{asset('admin/assets/vendor/css/pages/cards-advance.css')}}" />
     <!-- Helpers -->
@@ -54,6 +57,9 @@ data-template="horizontal-menu-template">
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{asset('admin/assets/js/config.js')}}"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.5/bootstrap-tagsinput.min.css" integrity="sha512-QI3K41ZAT8rx+cti2oV948f32rX0qYP1jhR1/3N3jqW5UFBA3Hz5VEmEuPYl66I9tb6A9+HprKUHBxpzPkiaZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
     {{-- @if($title == 'Price Quotation') --}}
     <!-- <script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
     <script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>
@@ -76,11 +82,31 @@ data-template="horizontal-menu-template">
             }
         };
     </script> -->
+    <style>
+        .bootstrap-tagsinput {
+            width: 100%;
+            min-height: 38px;
+            padding: 6px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .bootstrap-tagsinput .label-info {
+            margin-right: 2px;
+            color: #fff;
+            background-color: #28c76f !important;
+            padding: 3px;
+            border-radius: 10px;
+        }
+    </style>
     @if (strpos($title, 'TAG Energy Quotation') !== false)
          <style type="">
             .table tbody tr:nth-of-type(even) {
             background-color: #F0F3F4; }
             .table td,.table th{ vertical-align:top;}
+
         </style>
     @else
         <style type="">
@@ -146,7 +172,7 @@ data-template="horizontal-menu-template">
             <div class="navbar-brand app-brand demo d-none d-xl-flex py-0 me-4">
               <a href="index.html" class="app-brand-link gap-2">
                 <span class="app-brand-logo">
-                  <img src="{{asset('admin/assets/img/tag-energy-1.svg')}}" class="mb-2 ml-2 mt-1" width="60">
+                  <img src="{{asset('admin/assets/img/tag-flow.png')}}" class="mb-2 ml-2 mt-1" width="60">
                 </span>
                 <!-- <span class="app-brand-text demo menu-text fw-bold"></span> -->
               </a>
@@ -240,8 +266,9 @@ data-template="horizontal-menu-template">
     <script src="{{asset('admin/vendor/datepicker/js/picker.js')}}"></script>
     <script src="{{asset('admin/vendor/datepicker/js/picker.date.js')}}"></script>
     <script src="{{asset('admin/vendor/datepicker/js/custom-picker.js')}}"></script>
- 
-            <!-- Core JS -->
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.5/bootstrap-tagsinput.min.js" integrity="sha512-JyFe+PZxgYZZz47TE0URAJ2mE25f4+fqs5DDkuMROc7bCF5uv7paD3irZxYv3VZKndILZX2qXWDOAzHo0N3Kkg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
     <!-- build:js assets/vendor/js/core.js -->
     <script src="{{asset('admin/assets/vendor/libs/popper/popper.js')}}"></script>
     <!-- <script src="{{asset('admin/assets/vendor/js/bootstrap.js')}}"></script> -->

@@ -3,7 +3,7 @@
 
 @section('content')
 
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="main-container" style="width:95vw;">
 <div class="row">
 
 <!-- View sales -->
@@ -13,7 +13,7 @@
         <div class="col-7">
         <div class="card-body text-nowrap">
         @if('1' == '2')
-        <h5 class="card-title mb-0">Congratulations John! ðŸŽ‰</h5>
+        <h5 class="card-title mb-0">Congratulations John!</h5>
         <p class="mb-2">Best seller of the month</p>
         <h4 class="text-primary mb-1">$48.9k</h4>
         @else
@@ -238,15 +238,9 @@
                       @endphp 
                          
                       @if(Auth::user()->hasRole('SuperAdmin'))
-<<<<<<< HEAD
-                      <h3 class="card-title mb-1">${{ formatNumber(TotalrfqQuoteUSD()) }} | ₦{{ formatNumber(TotalrfqQuoteNGN()) }}</h3>
-                      @else
-                      <h3 class="card-title mb-1">${{ formatNumber(TotalrfqQuoteUSDEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }} | ₦{{ formatNumber(TotalrfqQuoteNGNEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }}</h3>
-=======
                       <h5 class="card-title mb-1">${{ formatNumber(TotalrfqQuoteUSD()) }} | £{{ formatNumber(TotalrfqQuoteGBP()) }} <br/> €{{ formatNumber(TotalrfqQuoteEUR()) }} | ₦{{ formatNumber(TotalrfqQuoteNGN()) }}</h5>
                       @else
                       <h5 class="card-title mb-1">${{ formatNumber(TotalrfqQuoteUSDEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }} | £{{ formatNumber(TotalrfqQuoteGBPEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }} <br/>  €{{ formatNumber(TotalrfqQuoteEUREMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }} |  ₦{{ formatNumber(TotalrfqQuoteNGNEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }}</h5>
->>>>>>> master
                       @endif
                       </div>
                     </div>
@@ -1001,17 +995,12 @@
                                                     <td style="width: 50px">
        @if($rfqs->currency == 'NGN' || (float) $rfqs->total_quote < 2)
             {{ 'TBD' ?? '0.00'}}
-<<<<<<< HEAD
-        @else
-            ${{ number_format((float) $rfqs->total_quote, 2) ?? '0.00' }}
-=======
         @elseif($rfqs->currency == 'USD')
             ${{ number_format((float) $rfqs->total_quote, 2) ?? '0.00' }}
         @elseif($rfqs->currency == 'GBP')
             £{{ number_format((float) $rfqs->total_quote, 2) ?? '0.00' }}
         @elseif($rfqs->currency == 'EUR')
             €{{ number_format((float) $rfqs->total_quote, 2) ?? '0.00' }}
->>>>>>> master
         @endif
                                                     </td>
                                                     <td>
@@ -1353,13 +1342,7 @@
 
     </div>
 </div>
-<script>
-    $(document).ready(function() {
-        $('.open-note-modal').on('click', function(e) {
-            e.preventDefault();
 
-<<<<<<< HEAD
-=======
 <div class="modal fade" id="EnquiryModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
     <div class="modal-dialog" style="width:60%;">
         <div class="modal-content">
@@ -1445,7 +1428,6 @@
         $('.open-note-modal').on('click', function(e) {
             e.preventDefault();
 
->>>>>>> master
             var rfqId = $(this).data('rfqid');
             var modal = $('#commonModal');
             var getNoteUrl = 'https://scm.tagenergygroup.net/getnote.php';

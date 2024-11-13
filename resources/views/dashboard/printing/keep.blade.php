@@ -35,7 +35,7 @@ set_time_limit(900);
                                 </p><br style="border-box;">
                             @endforeach
 
-                            @foreach (buyers($rfq->contact_id); as $buy)
+                            @foreach (buyers($rfq->contact_id) as $buy)
                                 <h6 style="font-size: 8.9pt;border-box;margin-top: 0;margin-bottom: .2rem;font-weight: 700;orphans: 3;widows: 3;line-height: 180%;font-weight: 400;">
                                     <b>Attn: {{ $buy->first_name . ' '. $buy->last_name ?? ' '}} </b>
                                 </h6>

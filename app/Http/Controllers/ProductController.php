@@ -138,6 +138,12 @@ class ProductController extends Controller
                 ]);
         }
     }
+    
+    public function getCompanyProducts($companyId)
+    {
+        $products = Product::where('company_id', $companyId)->get(['product_id', 'product_name']);
+        return response()->json($products);
+    }
 
     /**
      * Update the specified resource in storage.

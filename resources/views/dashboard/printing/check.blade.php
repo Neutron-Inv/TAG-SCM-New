@@ -22,53 +22,10 @@ $result = json_decode($cli_title, true);
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="position: relative;width: 100%;margin-left:23px;padding-right: 15px;padding-left: 15px;
                         -ms-flex: 0 0 33.333333%;flex: 0 0 33.333333%;max-width: 33.333333%;">
                         <div class="invoice-logo" style="font-size: 1.2rem;color: #074b9c;font-weight: 700; margin-left: 10px;">
-
-                            @if(Auth::user()->hasRole('SuperAdmin'))
                                 @foreach (getLogo($rfq->company_id) as $item)
                                     @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                     <img src="{{$log}}" style="width: 101px;" alt="{{$log}}">
                                 @endforeach
-                            @elseif(Auth::user()->hasRole('Admin'))
-                                @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
-                                    <img src="{{$log}}" style="width: 101px;" alt="">
-                                @endforeach
-
-                            @elseif(Auth::user()->hasRole('Employer'))
-                                @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
-                                    <img src="{{ $log }}" style="width: 101px;" alt="">
-                                @endforeach
-                                
-                            @elseif(Auth::user()->hasRole('HOD'))
-                                @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
-                                    <img src="{{ $log }}" style="width: 101px;" alt="">
-                                @endforeach
-
-                            @elseif(Auth::user()->hasRole('Contact'))
-                                @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
-                                    <img src="{{ $log }}" style="width: 101px;" alt="">
-                                @endforeach
-
-                            @elseif(Auth::user()->hasRole('Client'))
-                                @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.tagenergygroup.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
-                                    <img src="{{ $log }}" style="width: 101px;" alt="">
-                                @endforeach
-
-                            @elseif(Auth::user()->hasRole('Supplier'))
-                                @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.tagenergygroup.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
-                                    <img src="{{ $log }}" style="width: 101px;" alt="">
-                                @endforeach
-                            @else
-                                @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.tagenergygroup.com/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
-                                    <img src="{{ $log }}" style="width: 101px;" alt="">
-                                @endforeach
-                            @endif
                         </div>
                         <br>
                         <div class="col-lg-12 col-md-12 col-sm-12" style="font-family: Calibri,sans-serif;margin-top: 5px;position: relative;width: 100%;padding-right: 15px;padding-left: 15px;-ms-flex: 0 0 100%;flex: 0 0 100%;max-width: 100%;">
@@ -194,20 +151,18 @@ $result = json_decode($cli_title, true);
                                                 <p style="font-size: 9.0pt; font-family: Calibri, sans-serif;"> <b>{{ $items->item_serialno }} </b></p>
                                             </td>
                                             <td style="padding-top: 2px;">
-                                        @if($items->mesc_code != '' && $items->mesc_code != 'N/A' && $items->mesc_code != 0)
-                                                <p style="font-size: 9.0pt; font-family: Calibri, sans-serif;"> <b>PRODUCT NO: {{ $items->mesc_code }} </b></p><br/>
-<<<<<<< HEAD
-=======
+                                                
+                                        @if($items->mesc_code != '' OR $items->mesc_code != 'N/A' OR $items->mesc_code != '0')
+                                        
+                                            <p style="font-size: 9.0pt; font-family: Calibri, sans-serif;"> <b>PRODUCT NO: {{ $items->mesc_code }} </b></p><br/>
+                                            
                                         @endif
->>>>>>> master
                                                 <p style="font-size: 9.0pt; font-weight: 400; text-align: justify;">
                                                     {!! $items->item_description ?? 'N/A' !!}
                                                 </p>
                                             </td>
 
-                                            @foreach (getUOM($items->uom) as $item)
-                                                <td style="font-weight: 400; padding-top: 2px; text-align: center; font-size: 9.0pt; font-family: Calibri, sans-serif; vertical-align:top;"><b> {{$item->unit_name ?? ''}} </b></td>
-                                            @endforeach
+                                                <td style="font-weight: 400; padding-top: 2px; text-align: center; font-size: 9.0pt; font-family: Calibri, sans-serif; vertical-align:top;"><b> {{$items->uom ?? ''}} </b></td>
                                             
                                             @php
                                                 $unit_cost = $items->unit_cost;
@@ -258,17 +213,6 @@ $result = json_decode($cli_title, true);
                             
                             <p style="font-size: 5pt!important; font-family: Calibri, sans-serif; margin-left:0px; margin-top:0px;"><b style="color:red">
                                 @foreach (explode(';', $rfq->estimated_package_weight ?? '') as $est_weight)
-<<<<<<< HEAD
-                                <b>ESTIMATED PACKAGED WEIGHT: {{ trim($est_weight) }}</b><br/>
-                                @endforeach
-                                @foreach (explode(';', $rfq->estimated_package_dimension ?? '') as $est_dim)
-                                <b>ESTIMATED PACKAGED DIMENSION: {{ trim($est_dim) }}</b><br/>
-                                @endforeach
-                                @foreach (explode(';', $rfq->hs_codes ?? '') as $hs_code)
-                                <b>HS CODE: {{ trim($hs_code) }}</b><br/>
-                                @endforeach
-                                @if($rfq->certificates_offered != NULL)
-=======
                                 @if(preg_replace('/\D/','',$est_weight) != "")
                                 <b>ESTIMATED PACKAGED WEIGHT: {{ trim($est_weight) }}</b><br/>
                                 @endif
@@ -284,7 +228,6 @@ $result = json_decode($cli_title, true);
                                 @endif
                                 @endforeach
                                 @if($rfq->certificates_offered != NULL || $rfq->certificates_offered =="")
->>>>>>> master
                                     <b>CERTIFICATE OFFERED: {{strtoupper($rfq->certificates_offered)}}</b>
                                 @endif
                             </p>
@@ -313,19 +256,11 @@ $result = json_decode($cli_title, true);
                             @php $sn += 1 @endphp
                             
                         @if($rfq->transport_mode == 'Undecided' OR $rfq->incoterm == 'Ex Works')
-<<<<<<< HEAD
-                            
-=======
                              
->>>>>>> master
                         @else
                             {{ $sn }}. Mode of transportation: {{ $rfq->transport_mode ?? ''}}
                             <br/>
                         @php $sn += 1 @endphp
-<<<<<<< HEAD
-                            {{ $sn }}
-=======
->>>>>>> master
                             @endif
                             {{ $sn }}. Delivery Location: {{ $rfq->delivery_location ?? ''}} 
                             <br/>

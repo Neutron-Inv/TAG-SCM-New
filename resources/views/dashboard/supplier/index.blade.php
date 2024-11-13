@@ -38,7 +38,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text" id="basic-addon6"><i class="icon-list" style="color:#28a745"></i></span>
                                                     </div>
-                                                    <select class="form-control selectpicker" data-live-search="true" required name="company_id">
+                                                    <select class="form-control selectpicker" data-live-search="true" required name="company_id" onchange="fetchProducts(this.value)">
                                                         @if (Gate::allows('SuperAdmin', auth()->user()))
                                                             <option value="">Select Company</option>
                                                             @foreach ($company as $companies)
@@ -171,25 +171,25 @@
 
                                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                                             <div class="form-group">
-                                                <label for="nameOnCard">Country </label>
+                                                <label for="country">Country</label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text" id="basic-addon1"><i class="icon-document-landscape" style="color:#28a745"></i></span>
                                                     </div>
-                                                    <select class="form-control selectpicker" data-live-search="true" required name="country_code">
-                                                        <option value="">Select Country</option>
-                                                        @foreach ($countries as $item)
-                                                            <option data-tokens="{{ $item->name }}" value="{{ $item->name }}">{{ $item->nicename }}</option>
+                                                    @php
+                                                    $countries = getCountries();
+                                                    @endphp
+                                                    <select class="form-control selectpicker" data-live-search="true" name="country_code">
+                                                        <option value="{{ $conc->country_code ?? old('country_code') }}">{{ $conc->country_code ?? old('country_code') }}</option>
+                                                        @foreach($countries as $country)
+                                                        <option value="{{$country->name}}" data-name="{{$country->id}}">{{$country->name}}</option>
                                                         @endforeach
-
                                                     </select>
-
+                                                    
                                                 </div>
-
                                                 @if ($errors->has('country_code'))
-                                                    <div class="" style="color:red">{{ $errors->first('country_code') }}</div>
-                                                @endif
-
+                                                            <div class="" style="color:red">{{ $errors->first('tamap') }}</div>
+                                                        @endif
                                             </div>
                                         </div>
                                         <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
@@ -262,6 +262,24 @@
 
                                             </div>
                                         </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="company_name">Products</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon6">
+                                                        <i class="icon-home" style="color:#28a745"></i>
+                                                    </span>
+                                                </div>
+                                                <select class="form-control selectpicker" data-live-search="true" 
+                                                                                        data-actions-box="true" 
+                                                                                        data-deselect-all-text="Deselect All" 
+                                                                                        data-live-search-placeholder="Search products..."  multiple required name="product[]">
+                                                    <option value="">-- Select Products --</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
                                         <div class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-12" align="right">
                                             <div class="form-group">
                                                 <button class="btn btn-primary" type="submit" title="Click the button to add Supplier details">Add Supplier Details</button>
@@ -293,13 +311,21 @@
                                     @else
                                         <h5 class="table-title">My Details</h5>
                                     @endif
-
+                                    
+                                    
+                                    @php
+                                    if (auth()->user()->hasRole('SuperAdmin') OR auth()->user()->hasRole('Admin')){
+                                    $hidden = "";
+                                    }else{
+                                    $hidden = 'hidden';
+                                    }
+                                    @endphp
                                     <div class="table-responsive">
                                         <table id="fixedHeader" class="table">
                                             <thead class="bg-warning text-white">
                                                 <tr>
                                                     <th>S/N</th>
-                                                    <th>Company Name</th>
+                                                    <th {{ $hidden }}>Company Name</th>
                                                     <th>Supplier Name</th>
                                                     <th>Supplier Code</th>
                                                     <th>Industry</th>
@@ -320,7 +346,10 @@
                                                     <tr>
 
                                                         <td>{{ $num }}
-
+                                                            
+                                                            <a href="{{ route('vcontact.index',$shippers->vendor_id) }}" title="View or Create Supplier Contact" class="" title="Supplier Contact" onclick="return(());">
+                                                                <i class="icon-user" style="color:green"></i>
+                                                            </a>
                                                             <a href="{{ route('vendor.edit',$shippers->vendor_id) }}" title="Edit Vendor Details" class="" onclick="return(confirmToEdit());">
                                                                 <i class="icon-edit" style="color:blue"></i>
                                                             </a>
@@ -330,7 +359,7 @@
                                                                 </a> --}}
                                                             @endif
                                                         </td>
-                                                        <td>{{ $shippers->company->company_name ?? '' }}</td>
+                                                        <td {{ $hidden }}>{{ $shippers->company->company_name ?? '' }}</td>
                                                         <td>{{ $shippers->vendor_name ?? '' }} </td>
                                                         <td>{{ $shippers->vendor_code ?? '' }} </td>
                                                         <td>{{ $shippers->industry->industry_name ?? '' }} </td>
@@ -343,7 +372,9 @@
                                                                 {{ substr($shippers->description, 0, 30) ?? 'N/A' }}
                                                             </a>
 
-                                                            <div class="modal fade bd-example-modal-lx-{{ $num }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel-{{ $num }}" aria-hidden="true">
+                                                        
+                                                        </td>
+                                                        <div class="modal fade bd-example-modal-lx-{{ $num }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel-{{ $num }}" aria-hidden="true">
                                                                 <div class="modal-dialog modal-lx-{{ $num }}">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
@@ -361,15 +392,13 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-
-                                                        </td>
                                                         <td>{{ $shippers->tamap ?? '' }} </td>
                                                         <td>{{ $shippers->agency ?? '' }} </td>
                                                         <td>
                                                             <a href="" data-toggle="modal" data-target=".bd-example-modals-lx-{{ $num }}">
                                                                 {{ substr($shippers->address, 0, 30) ?? 'N/A' }}
                                                             </a>
-
+                                                        </td>
                                                             <div class="modal fade bd-example-modals-lx-{{ $num }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel-{{ $num }}" aria-hidden="true">
                                                                 <div class="modal-dialog modal-lx-{{ $num }}">
                                                                     <div class="modal-content">
@@ -388,9 +417,6 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-
-                                                        </td>
-
                                                     </tr><?php $num++; ?>
                                                 @endforeach
 
@@ -407,4 +433,45 @@
             </div>
         </div>
     </div>
+    
+    <script>
+
+    // Function to fetch products based on the selected company
+    function fetchProducts(companyId) {
+        if (companyId) {
+            $.ajax({
+                url: `/get-company-product/${companyId}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    let productDropdown = $('select[name="product[]"]');
+                    productDropdown.empty();
+                    //productDropdown.append('<option value="">-- Select Products --</option>');
+                    
+                    $.each(data, function(index, product) {
+                        productDropdown.append(`<option value="${product.product_name}">${product.product_name}</option>`);
+                    });
+                    
+                    productDropdown.selectpicker('refresh'); // Refresh the selectpicker UI
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching products:', error);
+                }
+            });
+        } else {
+            $('select[name="product[]"]').empty().append('<option value="">-- Select Products --</option>').selectpicker('refresh');
+        }
+    }
+
+    // Fetch products on initial page load based on the selected company
+    let initialCompanyId = $('select[name="company_id"]').val();
+    fetchProducts(initialCompanyId);
+
+    // Fetch products dynamically when the company selection changes
+    $('select[name="company_id"]').on('change', function() {
+        let companyId = $(this).val();
+        fetchProducts(companyId);
+    });
+
+</script>
 @endsection

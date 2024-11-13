@@ -60,11 +60,7 @@ class Submission extends Mailable
             $sender = $name->email;
             $reply = $name->email;
         }
-<<<<<<< HEAD
-        $mail = $this->replyTo($reply, $company->company_name)->subject("Request for Approval to Submit Quotation - " .$rfqcode." for ".$client_name." ".$rfq->product." - ".$assigned)->markdown('emails.rfq.approval')
-=======
         $mail = $this->replyTo($reply, $company->company_name)->subject("Request for Approval to Submit Quotation - " .$rfqcode." for ".$client_name." ".$rfq->description." - ".$assigned)->markdown('emails.rfq.approval')
->>>>>>> master
         ->with(compact('rfq', 'sender', 'reply', 'tq', 'shiname', 'extra_note'));
         // $mail = $this->subject("QUOTATION BREAKDOWN APPROVAL FOR RFX " .$rfq->rfq_number.': '. $rfq->refrence_no . ', '. strtoupper($rfq->product))->markdown('emails.rfq.approval')->with(compact('rfq', 'sender'));
         if($rfq->send_image == 'YES'){

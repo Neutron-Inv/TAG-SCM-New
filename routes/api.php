@@ -20,3 +20,26 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::prefix('rfq')->group(function () {
     Route::post('/note', "ClientRFQController@getnote")->name('getnote');
 }); 
+
+ Route::get('/get-states/{id}', function($id) {
+
+    $states = getStatesByCountry($id);  
+
+    return response()->json($states);
+});
+
+ Route::get('/get-cities/{id}', function($id) {
+    // Call the helper function
+    $cities = getCitiesByState($id);  // the helper function
+
+    // Return a response 
+    return response()->json($cities);
+});
+
+ Route::get('/get-vendor-contact/{id}', function($id) {
+    // Call the helper function
+    $contact = getVendorContacts($id);  // the helper function
+
+    // Return a response 
+    return response()->json($contact);
+});

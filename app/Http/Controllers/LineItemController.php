@@ -8,21 +8,30 @@ use App\{Companies, User, Clients, SupplierDocument, Log, Employers,ClientRfq, S
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
-
+use Smalot\PdfParser\Parser;
+use SetaPDF\Extractor\Text;
+use SetaPDF\Merger\Document;
+use PhpOffice\PhpWord\IOFactory;
 use App\Repositories\LineItemRepository;
 use Illuminate\Support\Facades\Gate;
 use Storage;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\UploadedFile;
 use PDF; use DB;
 class LineItemController extends Controller
 {
+    
+    protected $parser;
+
     protected $model;
+    
     public function __construct(LineItem $line_item)
     {
         // set the model
         $this->model = new LineItemRepository($line_item);
         $this->middleware('auth');
         $this->middleware(['role:SuperAdmin|Admin|Employer|HOD|Shipper|Supplier']);
+        $this->parser = new Parser();
     }
     /**
      * Display a listing of the resource.
@@ -671,4 +680,145 @@ class LineItemController extends Controller
         }
  
      }
+     
+     
+     
+    
+     
+     
+/**
+     * Upload and process the Excel or CSV document to extract and save line items.
+     */
+    public function uploadLineitems(Request $request)
+    {
+        
+        // Validate the uploaded document
+        $request->validate([
+            'document' => 'required|file|mimes:xlsx,xls,csv,txt',
+            'rfq_id' => 'required'
+        ]);
+        
+        // Get the file path
+        $file = $request->file('document')->getPathname();
+        $rfq_id = $request->input('rfq_id');
+        // Check file type
+        $extension = $request->file('document')->extension();
+        //dd( $extension);
+        if ($extension == 'csv' OR $extension == 'txt') {
+            $lineItems = $this->parseCsvToJson($file);
+        } else {
+            $lineItems = $this->parseExcelToJson($file);
+        }
+
+        // Save extracted line items directly to the database
+        $this->saveLineItems($lineItems, $rfq_id);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'line_items' => $lineItems,
+        // ]);
+        
+        return redirect()->back()->with(['success' => "Line Items Uploaded Successfully "]);
+    }
+
+    /**
+     * Parse the Excel document and extract line items.
+     */
+    protected function parseExcelToJson($filePath)
+    {
+        // Read the Excel file using Maatwebsite\Excel
+        $data = Excel::toArray([], $filePath, null, \Maatwebsite\Excel\Excel::XLSX);
+
+        $lineItems = [];
+        foreach ($data[0] as $row) {
+            // Assuming Excel columns map as follows:
+            // 0 - Item Serial No, 1 - MESC Code, 2 - Description, 3 - Date, 4 - Quantity
+            $lineItems[] = [
+                'item_serialno' => $row[0],
+                'item_name' => $row[1],
+                'mesc_code' => $row[2],
+                'description' => trim($row[3]),
+                'quantity' => (int)$row[4],
+                'uom' => $row[5],
+            ];
+        }
+        //dd($lineItems);
+        return $lineItems;
+    }
+
+    /**
+     * Parse the CSV document and extract line items.
+     */
+    protected function parseCsvToJson($filePath)
+    {
+        // Open the CSV file
+        $file = fopen($filePath, 'r');
+
+        // Initialize an empty array to hold the line items
+        $lineItems = [];
+
+        // Read the file line by line
+        while (($row = fgetcsv($file)) !== false) {
+            // Assuming CSV columns map as follows:
+            // 0 - Item Serial No, 1 - MESC Code, 2 - Description, 3 - Date, 4 - Quantity
+            $lineItems[] = [
+                'item_serialno' => $row[0],
+                'item_name' => $row[1],
+                'mesc_code' => $row[2],
+                'description' => trim($row[3]),
+                'quantity' => (int)$row[4],
+                'uom' => $row[5],
+            ];
+        }
+        
+        //dd($lineItems);
+        // Close the file after processing
+        fclose($file);
+
+        return $lineItems;
+    }
+
+    /**
+     * Save extracted line items to the database.
+     */
+    protected function saveLineItems(array $lineItems, $rfq_id)
+    {
+        $rfq = ClientRfq::where('rfq_id', $rfq_id)->first();
+        
+        foreach ($lineItems as $item) {
+            if($item['uom'] != "uom" AND $item['description'] !="Description" AND $item['quantity'] !=0){
+                
+            $duplicate_serial_check = LineItem::where('rfq_id', $rfq_id)->where('item_serialno', $item['item_serialno'])->get();
+            
+            if(count($duplicate_serial_check) > 0){
+                $lineItem = LineItem::where('rfq_id', $rfq_id)
+                     ->orderBy('item_serialno', 'desc')
+                     ->first();
+                $item['item_serialno'] = $lineItem->item_serialno + 1;
+            }
+            
+            $uom_retrieval = RfqMeasurement::where('unit_name', 'LIKE', '%' . $item['uom'] . '%')->first();
+            
+            if(isset($uom_retrieval)){
+                $uom = $uom_retrieval->unit_id;
+            }else{
+                $uom = $item['uom'];
+            }
+            // Assuming you have a LineItem model with a 'fillable' property for these fields
+            LineItem::create([
+                'client_id' => $rfq->client_id,
+                'rfq_id' => $rfq_id,
+                'item_serialno' => $item['item_serialno'],
+                'item_number' => $item['item_serialno'],
+                'item_name' => $item['item_name'],
+                'mesc_code' => (string)$item['mesc_code'],
+                'item_description' => $item['description'],
+                'quantity' => $item['quantity'],
+                'uom' => $uom,
+            ]);
+            }
+        }
+    }
+    
+     
 }
