@@ -249,6 +249,23 @@
 
                                         </div>
                                     </div>
+                                    
+                                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="lastName">Issued to Supplier Date</label><div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon2"><i class="icon-calendar" style="color:#28a745"></i></span>
+                                                </div>
+
+                                                <input type="date" class="form-control dateJpicker-date-format2" name="supplier_issued_date"
+                                                value="{{$details->supplier_issued_date}}" placeholder="supplier_issued_date">
+                                            </div>
+                                            @if ($errors->has('supplier_issued_date'))
+                                                <div class="" style="color:red">{{ $errors->first('supplier_issued_date') }}</div>
+                                            @endif
+
+                                        </div>
+                                    </div>
 
                                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">

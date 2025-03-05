@@ -346,6 +346,9 @@
 
                                                         <td>{{ $num }}
 
+                                                            <a href="{{ route('vcontact.index',$shippers->vendor_id) }}" title="View or Create Supplier Contact" class="" title="Supplier Contact" onclick="return(());">
+                                                                <i class="icon-user" style="color:green"></i>
+                                                            </a>
                                                             <a href="{{ route('vendor.edit',$shippers->vendor_id) }}" title="Edit Vendor Details" class="" onclick="return(confirmToEdit());">
                                                                 <i class="icon-edit" style="color:blue"></i>
                                                             </a>

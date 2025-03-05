@@ -60,7 +60,7 @@ class QuoteRequest extends Mailable
             $sender = $name->email;
             $reply = $name->email;
         }
-        $mail = $this->replyTo($reply, $company->company_name)->subject("Request for Pricing Information: - " .$rfqcode." ".$rfq->description)->markdown('emails.rfq.SupplierRequest')
+        $mail = $this->replyTo($reply, $company->company_name)->subject("Request for Pricing Information: - " .$rfqcode." ".$rfq->description.", mail-id: ".$mail_id)->markdown('emails.rfq.SupplierRequest')
         ->with(compact('rfq', 'sender', 'reply', 'extra_note', 'vendor_contact'));
         
         if($tempFilePath != ""){

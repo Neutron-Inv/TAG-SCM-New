@@ -124,11 +124,11 @@ class VendorContactController extends Controller
                 'email' => ['nullable', 'email', 'max:199', 'unique:vendor_contacts'],
                 // 'email_other' => ['email', 'max:199', ],
                 'address' => ['required', 'string', 'max:199'],
-                'state' => ['required', 'string', 'max:199'],
-                'city' => ['required', 'string', 'max:200'],
+                'state' => ['nullable', 'string', 'max:199'],
+                'city' => ['nullable', 'string', 'max:200'],
             ]);
 
-            if(User::where('email', $request->input('email'))->exists()){
+            if(VendorContact::where('email', $request->input('email'))->exists()){
                 return redirect()->back()->with([
                     'error' => $request->input('email') ." is in use by another user on the system",
                 ]);
@@ -137,7 +137,7 @@ class VendorContactController extends Controller
                 if(empty($request->input("email_other"))){
                     $other = $request->input("email");
                 }else{
-                    $other = $request->input("email_other");
+                    $other = "";
                 }
 
                 if(empty($request->input("mobile_tel"))){
@@ -181,7 +181,7 @@ class VendorContactController extends Controller
 
                 // if ($data->save() and ($log->save()) AND ($datum->save())) {
                 if ($data->save() and ($log->save())) {
-                    $datum->assignRole($role);
+                    //$datum->assignRole($role);
                     return redirect()->back()->with([
                         // "email" => $client->email,
                         "success" => "You Have Added " . $request->input("first_name") . " as a Vendor Contact Successfully"
@@ -281,8 +281,8 @@ class VendorContactController extends Controller
                 'email' => ['required', 'email', 'max:199',],
                 // 'email_other' => ['email', 'max:199', ],
                 'address' => ['required', 'string', 'max:199'],
-                'state' => ['required', 'string', 'max:199'],
-                'city' => ['required', 'string', 'max:200'],
+                'state' => ['nullable', 'string', 'max:199'],
+                'city' => ['nullable', 'string', 'max:200'],
             ]);
 
             if(empty($request->input("email_other"))){
@@ -306,7 +306,7 @@ class VendorContactController extends Controller
                 "office_tel" => $request->input("office_tel"),
                 "mobile_tel" => $phone,
                 "email" => $request->input("email"),
-                "email_other" => $other,
+                "email_other" => $request->input("email_other"),
                 "country_code" => $request->input("country"),
                 "state" => $request->input("state"),
                 "city" => $request->input("city"),
@@ -346,7 +346,7 @@ class VendorContactController extends Controller
 
                     }else{
 
-                        return redirect()->route("vcontact.index")->with([
+                        return redirect()->back()->with([
                             "success" => "You Have Updated " . $request->input("first_name") . " Details Successfully",
 
                         ]);
@@ -376,14 +376,14 @@ class VendorContactController extends Controller
 
                     if (Gate::allows('SuperAdmin', auth()->user())) {
                         
-                        return redirect()->route("vcontact.index", $request->input("vendor_id"))->with([
+                        return redirect()->back()->with([
                             "success", "You Have Updated " . $request->input("first_name") . " Details Successfully",
 
                         ]);
 
                     }else{
 
-                        return redirect()->route("vcontact.index", $request->input("vendor_id"))->with([
+                        return redirect()->back()->with([
                             "success", "You Have Updated " . $request->input("first_name") . " Details Successfully"
                         ]);
 

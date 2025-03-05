@@ -121,7 +121,7 @@ class ClientContactController extends Controller
                 'job_title' => ['required', 'string', 'max:199'],
                 'office_tel' => ['required', 'string', 'max:199'],
                 // 'mobile_tel' => ['string', 'max:199'],
-                'email' => ['required', 'email', 'max:199', 'unique:client_contacts'],
+                'email' => ['required', 'email', 'max:199'],
                 // 'email_other' => ['email', 'max:199', ],
                 'address' => ['required', 'string', 'max:199'],
                 'state' => ['required', 'string', 'max:199'],
@@ -169,18 +169,18 @@ class ClientContactController extends Controller
                     "activities" => 'Added ' . $request->input('email') . ' details as a Client Contact for '. $client->client_name,
                 ]);
 
-                $datum = new User([
+                // $datum = new User([
 
-                    "email" => $request->input("email"),
-                    "last_name" => $request->input('last_name'),
-                    "password" => Hash::make($request->input("email")),
-                    "first_name" => $request->input('first_name'),
-                    "phone_number" => $request->input("office_tel"),
-                    "user_activation_code" => 1, "role" => $role
-                ]);
+                //     "email" => $request->input("email"),
+                //     "last_name" => $request->input('last_name'),
+                //     "password" => Hash::make($request->input("email")),
+                //     "first_name" => $request->input('first_name'),
+                //     "phone_number" => $request->input("office_tel"),
+                //     "user_activation_code" => 1, "role" => $role
+                // ]);
 
-                if ($data->save() and ($log->save()) AND ($datum->save())) {
-                    $datum->assignRole($role);
+                if ($data->save() and ($log->save())) {
+                    //$datum->assignRole($role);
                     return redirect()->back()->with([
                         // "email" => $client->email,
                         "success" => "You Have Added " . $request->input("first_name") . " as a Client Contact Successfully"

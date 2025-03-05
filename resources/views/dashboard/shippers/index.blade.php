@@ -114,7 +114,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                                            <label for="nameOnCard">Login Email</label>
+                                            <label for="nameOnCard">Email</label>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
@@ -132,15 +132,19 @@
                                         </div>
                                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                                             <div class="form-group">
-                                                <label for="nameOnCard">Country </label>
+                                                <label for="nameOnCard">Country</label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text" id="basic-addon1"><i class="icon-document-landscape" style="color:#28a745"></i></span>
                                                     </div>
-                                                    <select class="form-control selectpicker" data-live-search="true" required name="country_code">
-                                                        <option value="">Select Country</option>
-                                                        @foreach ($countries as $item)
-                                                            <option data-tokens="{{ $item->name }}" value="{{ $item->name }}">{{ $item->nicename }}</option>
+                                                    
+                                                    @php
+                                                    $countries = getCountries();
+                                                    @endphp
+                                                    <select id="country" class="form-control selectpicker" data-live-search="true" name="country_code">
+                                                        <option value="">Select a country</option>
+                                                        @foreach($countries as $country)
+                                                        <option value="{{$country->name}}" data-name="{{$country->id}}">{{$country->name}}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -199,7 +203,7 @@
                                             <thead class="bg-danger text-white">
                                                 <tr>
                                                     <th>S/N</th>
-                                                    <th>Company Name</th>
+                                                     @if (Gate::allows('SuperAdmin', auth()->user()))<th>Company Name</th>@endif
                                                     <th>Shipper Name</th>
                                                     <th>Contact Name</th>
                                                     <th>Contact Phone</th>
@@ -227,7 +231,7 @@
                                                                 </a> --}}
                                                             @endif
                                                         </td>
-                                                        <td>{{ $shippers->company->company_name ?? '' }}</td>
+                                                         @if (Gate::allows('SuperAdmin', auth()->user()))<td>{{ $shippers->company->company_name ?? '' }}</td>@endif
                                                         <td>{{ $shippers->shipper_name ?? '' }} </td>
                                                         <td>{{ $shippers->contact_name ?? '' }} </td>
                                                         <td>{{ $shippers->contact_phone ?? '' }} </td>

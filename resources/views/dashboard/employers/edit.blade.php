@@ -1,6 +1,12 @@
 <?php $title = 'Edit an Employee' ?>
 @extends('layouts.app')
-
+@php
+if (auth()->user()->hasRole('SuperAdmin')){
+$hidden = "";
+}else{
+$hidden = 'hidden';
+}
+@endphp
 @section('content')
     <div class="main-container">
         <!-- Page header start -->
@@ -9,7 +15,7 @@
                 <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard </a></li>
                 <li class="breadcrumb-item active"><a href="{{ route('employer.edit', $emp->employee_id) }}">Edit an Employee</a></li>
                 <li class="breadcrumb-item active"><a href="{{ route('employer.create') }}">
-                    @if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')))
+                    @if (Gate::allows('SuperAdmin', auth()->user()))
                         Add Employee
                     @else
                          Details
@@ -102,7 +108,7 @@
 
                                             </div>
                                         </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12" {{$hidden}}>
                                             <div class="form-group">
                                                 <label for="company_name">User Role</label><div class="input-group">
                                                     <div class="input-group-prepend">

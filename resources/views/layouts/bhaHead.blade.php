@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Enabled Solutions">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title> SCM | {{$title}} </title>
+    <title> TAG Flow | {{$title}} </title>
     <meta name="description" content="SCM">
     <meta name="author" content="Enabled Solutions">
     <link rel="shortcut icon" href="{{asset('images/favicon.ico')}}" />
@@ -22,24 +22,9 @@
     <style>
         body {
             font-family: "Calibri", sans-serif;
-            font-size: 7px !important;
+            font-size: 5pt !important;
             margin-bottom: 40px !important; /* Adjust the value as needed */
         }
-        h4,p,h6,b,td {
-            font-family: "Calibri", sans-serif;
-            font-size: 10.5pt;
-        }
-        /*tr{*/
-        /*    font-family: "Calibri", sans-serif;*/
-        /*    font-size: 9.5pt;*/
-        /*    color: black;*/
-        /*}*/
-
-        /*th{*/
-            /*border-bottom: 1px solid; */
-        /*    color: white;*/
-        /*    text-decoration-color: black;*/
-        /*}*/
 
         @import url('https://fonts.cdnfonts.com/css/tw-cen-mt');
 
@@ -57,6 +42,13 @@
             orphans: 3;
             widows: 3;
             page-break-after: avoid;
+        }
+        
+        table, p, span {
+            font-family: "Calibri", sans-serif;
+            font-size: 5pt !important;
+            line-height:7.5px !important;
+            text-align:left;
         }
 
         /*table {*/

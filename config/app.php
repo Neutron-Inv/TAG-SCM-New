@@ -15,7 +15,7 @@ return [
 
     'name' => env('APP_NAME', 'Supply Chain Solution'),
     'help' => env('APP_HELP', 'helpdesk@enabledgroup.net'),
-
+    
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -168,7 +168,6 @@ return [
          */
         Spatie\Permission\PermissionServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
-
         /*
          * Application Service Providers...
          */
@@ -211,6 +210,7 @@ return [
         'File' => Illuminate\Support\Facades\File::class,
         'Gate' => Illuminate\Support\Facades\Gate::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
+        'IMAP' => Webklex\IMAP\Facades\Client::class,
         'Lang' => Illuminate\Support\Facades\Lang::class,
         'Log' => Illuminate\Support\Facades\Log::class,
         'Mail' => Illuminate\Support\Facades\Mail::class,

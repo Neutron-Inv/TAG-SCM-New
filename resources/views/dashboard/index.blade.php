@@ -5,7 +5,15 @@
 
 <div class="main-container" style="width:95vw;">
 <div class="row">
-
+@php
+if(Auth::user()->hasRole('SuperAdmin')){
+$company_idtp = '2';
+}elseif(Auth::user()->hasRole('Admin')){
+$company_idtp = json_decode(companyByMail(Auth::user()->email));
+}else{
+$company_idtp = json_decode(empDet(Auth::user()->email))[0]->company_id;
+}
+@endphp
 <!-- View sales -->
 <div class="col-xl-4 mb-4 col-lg-5 col-12">
     <div class="card h-100">
@@ -19,12 +27,13 @@
         @else
         <h5 class="card-title mb-0">Welcome {{ Auth::user()->first_name }},</h5>
         
-            @if(Auth::user()->hasRole('SuperAdmin'))
+            @if(Auth::user()->hasRole('SuperAdmin') || Auth::user()->hasRole('Admin'))
             <p> What would you like to do today?</p>
             <br/>
             <p></p>
             @else
-            <p class="mb-2">You currently have <strong> {{ totalEmpRfqs(json_decode(empDet(Auth::user()->email))[0]->employee_id)}} </strong> Active RFQs 
+            <p class="mb-2">You currently have <strong> {{ isset(empDet(Auth::user()->email)[0]->employee_id) ? totalEmpRfqs(empDet(Auth::user()->email)[0]->employee_id) : 0 }}
+            </strong> Active RFQs 
             <br/>
             You have Converted <strong> {{ totalEmpPoMnth(json_decode(empDet(Auth::user()->email))[0]->employee_id)}} </strong> POs This Month</p>
             @endif
@@ -128,17 +137,17 @@
                           <div class="row">
                             <div class="col-lg-7 col-md-9 col-12 order-2 order-md-1">
                             <h5 class="text-white mb-0 mt-2">SCM Analytics</h5>
-                            <small>Total {{ Totalrfqs() != 0 ? number_format(((Totalrfqs() - Totalpos()) / Totalrfqs()) * 100, 2) : 0 }}% Conversion Rate</small>
+                            <small>Total {{ Totalrfqs($company_idtp) != 0 ? number_format(((Totalrfqs($company_idtp) - Totalpos($company_idtp)) / Totalrfqs($company_idtp)) * 100, 2) : 0 }}% Conversion Rate</small>
                               <h6 class="text-white mt-0 mt-md-3 mb-3">RFQs</h6>
                               <div class="row">
                                 <div class="col-6">
                                   <ul class="list-unstyled mb-0">
                                     <li class="d-flex mb-4 align-items-center">
-                                      <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{totalActiveRfqs()}}</p>
+                                      <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{totalActiveRfqs($company_idtp)}}</p>
                                       <p class="mb-0">Active</p>
                                     </li>
                                     <li class="d-flex align-items-center mb-2">
-                                      <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalrfqsAwaitingApproval()}}</p>
+                                      <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalrfqsAwaitingApproval($company_idtp)}}</p>
                                       <p class="mb-0">Awaiting Approval</p>
                                     </li>
                                   </ul>
@@ -146,11 +155,11 @@
                                 <div class="col-6">
                                   <ul class="list-unstyled mb-0">
                                     <li class="d-flex mb-4 align-items-center">
-                                      <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalrfqsBidClosed()}}</p>
+                                      <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalrfqsBidClosed($company_idtp)}}</p>
                                       <p class="mb-0">Bid Closed</p>
                                     </li>
                                     <li class="d-flex align-items-center mb-2">
-                                      <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalrfqsApproved()}}</p>
+                                      <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalrfqsApproved($company_idtp)}}</p>
                                       <p class="mb-0">Approved</p>
                                     </li>
                                   </ul>
@@ -171,17 +180,17 @@
                         <div class="row">
                           <div class="col-lg-7 col-md-9 col-12 order-2 order-md-1" >
                           <h5 class="text-white mb-0 mt-2">SCM Analytics</h5>
-                            <small>Total {{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}% Conversion Rate</small>
+                            <small>Total {{ Totalrfqs($company_idtp) != 0 ? number_format((Totalpos($company_idtp) / Totalrfqs($company_idtp)) * 100, 2) : 0 }}% Conversion Rate</small>
                             <h6 class="text-white mt-0 mt-md-3 mb-3">Purchase Orders</h6>
                             <div class="row">
                               <div class="col-6">
                                 <ul class="list-unstyled mb-0">
                                   <li class="d-flex mb-4 align-items-center">
-                                    <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalActivePos()}}</p>
+                                    <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalActivePos($company_idtp)}}</p>
                                     <p class="mb-0">Active</p>
                                   </li>
                                   <li class="d-flex align-items-center mb-2">
-                                    <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalposInTransit()}}</p>
+                                    <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalposInTransit($company_idtp)}}</p>
                                     <p class="mb-0">In-Transit</p>
                                   </li>
                                 </ul>
@@ -189,11 +198,11 @@
                               <div class="col-6">
                                 <ul class="list-unstyled mb-0">
                                   <li class="d-flex mb-4 align-items-center">
-                                    <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalposDelivered()}}</p>
+                                    <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalposDelivered($company_idtp)}}</p>
                                     <p class="mb-0">Delivered</p>
                                   </li>
                                   <li class="d-flex align-items-center mb-2">
-                                    <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalposGRN()}}</p>
+                                    <p class="mb-0 fw-semibold me-2 website-analytics-text-bg" style="background-color:#1ea55a !important;">{{TotalposGRN($company_idtp)}}</p>
                                     <p class="mb-0">Awaiting GRN</p>
                                   </li>
                                 </ul>
@@ -224,23 +233,22 @@
                         <p class="card-text text-success">{{date('Y')}}</p>
                       </div>
                       <div style="white-space: nowrap !important;">
-                      @php
-                      function formatNumber($value) {
-                          if ($value < 1000) {
-                              return number_format($value, 1);
-                          } elseif ($value < 1000000) {
-                              return number_format($value / 1000, 1) . 'k';
-                          } else {
-                              return number_format($value / 1000000, 1) . 'm';
-                          }
-                      }
-                      
-                      @endphp 
                          
                       @if(Auth::user()->hasRole('SuperAdmin'))
-                      <h5 class="card-title mb-1">${{ formatNumber(TotalrfqQuoteUSD()) }} | £{{ formatNumber(TotalrfqQuoteGBP()) }} <br/> €{{ formatNumber(TotalrfqQuoteEUR()) }} | ₦{{ formatNumber(TotalrfqQuoteNGN()) }}</h5>
+                      <h5 class="card-title mb-1 relative">
+                        <span class="badge bg-label-primary p-2">${{ formatNumber(TotalrfqQuoteUSD()) }}</span>
+                        <span class="badge bg-label-success p-2">£{{ formatNumber(TotalrfqQuoteGBP()) }}</span>
+                        <span class="badge bg-label-info p-2">€{{ formatNumber(TotalrfqQuoteEUR()) }}</span>
+                        <span class="badge bg-label-warning p-2">₦{{ formatNumber(TotalrfqQuoteNGN()) }}</span>
+                      </h5>
+                      <!--<h5 class="card-title mb-1">${{ formatNumber(TotalrfqQuoteUSD()) }} | £{{ formatNumber(TotalrfqQuoteGBP()) }} | €{{ formatNumber(TotalrfqQuoteEUR()) }} | ₦{{ formatNumber(TotalrfqQuoteNGN()) }}</h5>-->
                       @else
-                      <h5 class="card-title mb-1">${{ formatNumber(TotalrfqQuoteUSDEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }} | £{{ formatNumber(TotalrfqQuoteGBPEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }} <br/>  €{{ formatNumber(TotalrfqQuoteEUREMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }} |  ₦{{ formatNumber(TotalrfqQuoteNGNEMP(json_decode(empDet(Auth::user()->email))[0]->company_id)) }}</h5>
+                      <h5 class="card-title mb-1 relative">
+                          <span class="badge bg-label-primary p-2">${{ formatNumber(TotalrfqQuoteUSDEMP($company_idtp)) }} </span>
+                          <span class="badge bg-label-success p-2">£{{ formatNumber(TotalrfqQuoteGBPEMP($company_idtp)) }} </span>
+                          <span class="badge bg-label-info p-2"> €{{ formatNumber(TotalrfqQuoteEUREMP($company_idtp)) }} </span>
+                          <span class="badge bg-label-warning p-2">₦{{ formatNumber(TotalrfqQuoteNGNEMP($company_idtp)) }}</span>
+                      </h5>
                       @endif
                       </div>
                     </div>
@@ -248,13 +256,13 @@
                       <div class="row">
                         <div class="col-4">
                           <div class="d-flex gap-2 align-items-center mb-2">
-                            <span class="badge bg-label-info p-1 rounded"
-                              ><i class="ti ti-clipboard ti-xs"></i
-                            ></span>
+                            <span class="badge bg-label-info p-1 rounded">
+                            <i class="ti ti-clipboard ti-xs"></i>
+                            </span>
                             <p class="mb-0">RFQs</p>
                           </div>
-                          <h5 class="mb-0 pt-1 text-nowrap">{{ Totalrfqs() != 0 ? number_format(((Totalrfqs() - Totalpos()) / Totalrfqs()) * 100, 2) : 0}}%</h5>
-                          <small class="text-muted">{{ Totalrfqs() }}</small>
+                          <h5 class="mb-0 pt-1 text-nowrap">{{ Totalrfqs($company_idtp) != 0 ? number_format(((Totalrfqs($company_idtp) - Totalpos($company_idtp)) / Totalrfqs($company_idtp)) * 100, 2) : 0}}%</h5>
+                          <small class="text-muted">{{ Totalrfqs($company_idtp) }}</small>
                         </div>
                         <div class="col-4">
                           <div class="divider divider-vertical">
@@ -268,25 +276,25 @@
                             <p class="mb-0">POs</p>
                             <span class="badge bg-label-primary p-1 rounded"><i class="ti ti-link ti-xs"></i></span>
                           </div>
-                          <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}%</h5>
-                          <small class="text-muted">{{ Totalpos() }}</small>
+                          <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">{{ Totalrfqs($company_idtp) != 0 ? number_format((Totalpos($company_idtp) / Totalrfqs($company_idtp)) * 100, 2) : 0 }}%</h5>
+                          <small class="text-muted">{{ Totalpos($company_idtp) }}</small>
                         </div>
                       </div>
                       <div class="d-flex align-items-center mt-4">
                         <div class="progress w-100" style="height: 8px">
                           <div
                             class="progress-bar bg-info"
-                            style="width: {{ Totalrfqs() != 0 ? number_format(((Totalrfqs() - Totalpos()) / Totalrfqs()) * 100, 2) : 0}}%"
+                            style="width: {{ Totalrfqs($company_idtp) != 0 ? number_format(((Totalrfqs($company_idtp) - Totalpos(-$company_idtp)) / Totalrfqs($company_idtp)) * 100, 2) : 0}}%"
                             role="progressbar"
-                            aria-valuenow="{{ Totalrfqs() != 0 ? number_format(((Totalrfqs() - Totalpos()) / Totalrfqs()) * 100, 2) : 0 }}"
+                            aria-valuenow="{{ Totalrfqs($company_idtp) != 0 ? number_format(((Totalrfqs($company_idtp) - Totalpos($company_idtp)) / Totalrfqs($company_idtp)) * 100, 2) : 0 }}"
                             aria-valuemin="0"
                             aria-valuemax="100"
                           ></div>
                           <div
                             class="progress-bar bg-primary"
                             role="progressbar"
-                            style="width: {{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}%"
-                            aria-valuenow="{{ Totalrfqs() != 0 ? number_format((Totalpos() / Totalrfqs()) * 100, 2) : 0 }}"
+                            style="width: {{ Totalrfqs($company_idtp) != 0 ? number_format((Totalpos($company_idtp) / Totalrfqs($company_idtp)) * 100, 2) : 0 }}%"
+                            aria-valuenow="{{ Totalrfqs($company_idtp) != 0 ? number_format((Totalpos($company_idtp) / Totalrfqs($company_idtp)) * 100, 2) : 0 }}"
                             aria-valuemin="0"
                             aria-valuemax="100"
                           ></div>
@@ -306,18 +314,12 @@
                           <i class="ti ti-credit-card ti-sm"></i>
                         </span>
                       </div>
-                      <h4 class="card-title mb-0 mt-2">{{ formatValue(TotalpoQuoteForeign())}}
-                      @php
-                      function formatValue($value) {
-                          if ($value < 1000) {
-                              return number_format($value, 1);
-                          } elseif ($value < 1000000) {
-                              return number_format($value / 1000, 1) . 'k';
-                          } else {
-                              return number_format($value / 1000000, 1) . 'm';
-                          }
-                      }
-                      @endphp
+                      @if(Auth::user()->hasRole('SuperAdmin'))
+                      <h4 class="card-title mb-0 mt-2">{{ formatNumber(TotalpoQuoteForeign())}}
+                      @else
+                      <h4 class="card-title mb-0 mt-2">{{ formatNumber(TotalpoQuoteForeignCompany($company_idtp))}}
+                      @endif
+
                       </h4>
                       <small>Revenue Generated</small>
                     </div>
@@ -325,6 +327,7 @@
                   </div>
                 </div>
 <!--/ Revenue Generated -->
+
 
  <!-- Earning Reports -->
  <div class="col-xl-4 col-lg-5 col-md-6 mb-4">
@@ -346,11 +349,22 @@
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div class="me-2">
                               <h6 class="mb-0">Net Profit</h6>
-                              <small class="text-muted">37 POs</small>
+                              <small class="text-muted">{{TotalPoCount($company_idtp)}} POs</small>
                             </div>
                             <div class="user-progress">
-                              <small>$143,619</small><i class="ti ti-chevron-up text-success ms-3"></i>
-                              <small class="text-muted">18.6%</small>
+                              <small>
+                                    @php 
+                                            $net_profits =CompanyNetProfit($company_idtp); // Call the function to get expenses
+                                            foreach ($net_profits as $net_profit): 
+                                                $symbol = getCurrencySymbol($net_profit['currency']); // Get the currency symbol
+                                    @endphp
+                                    @if($net_profit['net_profit'] > 0)
+                                            <?= $symbol . number_format($net_profit['net_profit'], 2); ?> <br>
+                                    @endif
+                                    @php endforeach; @endphp
+                                </small>     
+                         <!-- <i class="ti ti-chevron-up text-success ms-3"></i>-->
+                              <!--<small class="text-muted">%</small>-->
                             </div>
                           </div>
                         </li>
@@ -361,15 +375,26 @@
                             ></span>
                           </div>
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <h6 class="mb-0">Total Expenses</h6>
-                              <small class="text-muted">Supplier Costs</small>
-                            </div>
-                            <div class="user-progress">
-                              <small>$391,571</small><i class="ti ti-chevron-up text-success ms-3"></i>
-                              <small class="text-muted">39.6%</small>
-                            </div>
-                          </div>
+                        <div class="me-2">
+                            <h6 class="mb-0">Total Expenses</h6>
+                            <small class="text-muted">Supplier Costs</small>
+                        </div>
+                        <div class="user-progress">
+                                <small>
+                            @php 
+                                $expenses =TotalPoExpenses($company_idtp); // Call the function to get expenses
+                                foreach ($expenses as $expense): 
+                                    $symbol = getCurrencySymbol($expense['currency']); // Get the currency symbol
+                            @endphp
+                            @if($expense['expense'] > 0)
+                                    <?= $symbol . number_format($expense['expense'], 2); ?>
+                            @endif
+                            @php endforeach; @endphp
+                            </small>
+                            <!--<i class="ti ti-chevron-up text-success ms-3"></i>-->
+                            <!--<small class="text-muted">%</small>-->
+                        </div>
+                    </div>
                         </li>
                         <li class="d-flex mb-3">
                           <div class="avatar flex-shrink-0 me-3">
@@ -380,13 +405,6 @@
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div class="me-2">
                               <h6 class="mb-0">Top Performer</h6>
-                              @php
-                              if(Auth::user()->hasRole('SuperAdmin')){
-                              $company_idtp = '2';
-                              }else{
-                              $company_idtp = json_decode(empDet(Auth::user()->email))[0]->company_id;
-                              }
-                              @endphp
                               <small class="text-muted">{{ TopPerformer($company_idtp) }}</small>
                             </div>
                             <div class="user-progress">
@@ -432,25 +450,30 @@
                       <ul class="p-0 m-0">
                       @php
                             $specifiedWords = ['Valve', 'Gasket', 'Bolt and Nut', 'Flange', 'Pipes', 'Acoustic Slab', 'Rotork'];
-                            $wordCounts = getWordCounts($specifiedWords);
+                            $wordCounts = getWordCounts($company_idtp);
                         @endphp
-
-                        @foreach ($wordCounts as $word => $totalCount)                        
+                        @if(count($wordCounts) < 1)
+                        <li class="text-center">
+                            No Products Yet
+                        </li>
+                        @else
+                        @foreach ($wordCounts as $totalCount)                        
                         <li class="d-flex mb-4 pb-1">
                           <div class="me-3">
                           <i class="ti ti-settings ti-sm"></i>
                           </div>
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div class="me-2">
-                              <h6 class="mb-0">{{ $word }}</h6>
+                              <h6 class="mb-0">{{ $totalCount->product_name }}</h6>
                               <small class="text-muted d-block">Item</small>
                             </div>
                             <div class="user-progress d-flex align-items-center gap-1">
-                              <p class="mb-0 fw-semibold">{{ $totalCount }}</p>
+                              <p class="mb-0 fw-semibold">{{ $totalCount->rfq_count }}</p>
                             </div>
                           </div>
                         </li>
                         @endforeach
+                        @endif
                       </ul>
                     </div>
                   </div>
@@ -482,10 +505,17 @@
                         <div class="tab-content pb-0">
                           <div class="tab-pane fade show active" id="navs-justified-new" role="tabpanel">
                             @php
-                             $newrfqs = getNewRfqs();
-                             $awaitings = getAwaitingRfqs();
-                             $issueds = getPOIssuedRfqs();
+                             $newrfqs = getNewRfqs($company_idtp);
+                             $awaitings = getAwaitingRfqs($company_idtp);
+                             $issueds = getPOIssuedRfqs($company_idtp);
                             @endphp
+                            @if(count($newrfqs) < 1)
+                            <ul class="timeline timeline-advance timeline-advance mb-2 pb-1">
+                                <li class="text-center">
+                                    No New RFQ available 
+                                </li>
+                            </ul>
+                            @else
                             @foreach($newrfqs as $index => $newrfq)
                             <ul class="timeline timeline-advance timeline-advance mb-2 pb-1">
                               <li class="timeline-item ps-4 border-left-dashed">
@@ -517,9 +547,17 @@
                                 <div class="border-bottom border-bottom-dashed mt-0 mb-4"></div>
                             @endif
                             @endforeach
+                            @endif
                           </div>
 
                           <div class="tab-pane fade" id="navs-justified-link-preparing" role="tabpanel">
+                            @if(count($awaitings) < 1)
+                            <ul class="timeline timeline-advance timeline-advance mb-2 pb-1">
+                                <li class="text-center">
+                                    No Pending RFQ available 
+                                </li>
+                            </ul>
+                            @else
                           @foreach($awaitings as $index => $awaiting)
                             <ul class="timeline timeline-advance timeline-advance mb-2 pb-1">
                               <li class="timeline-item ps-4 border-left-dashed">
@@ -551,8 +589,17 @@
                                 <div class="border-bottom border-bottom-dashed mt-0 mb-4"></div>
                             @endif
                             @endforeach
+                            @endif
                           </div>
+                          
                           <div class="tab-pane fade" id="navs-justified-link-shipping" role="tabpanel">
+                          @if(count($issueds) < 1)
+                            <ul class="timeline timeline-advance timeline-advance mb-2 pb-1">
+                                <li class="text-center">
+                                    No Issued PO available 
+                                </li>
+                            </ul>
+                            @else
                           @foreach($issueds as $index => $issued)
                             <ul class="timeline timeline-advance timeline-advance mb-2 pb-1">
                               <li class="timeline-item ps-4 border-left-dashed">
@@ -584,6 +631,7 @@
                                 <div class="border-bottom border-bottom-dashed mt-0 mb-4"></div>
                             @endif
                             @endforeach
+                            @endif
                           </div>
                           </div>
                         </div>

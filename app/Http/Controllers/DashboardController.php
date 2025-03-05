@@ -44,7 +44,7 @@ class DashboardController extends Controller
             $shipper = Shippers::where('company_id', $company->company_id)->get();
             $vendor = Vendors::where('company_id', $company->company_id)->orderBy('vendor_name', 'asc')->get();
             // $client = Clients::where('company_id', $company->company_id)->get();
-            $client = DB::table('client_rfqs')->where('company_id', $company->company_id)->select('client_id')->distinct('client_id')->orderBy('client_id', 'asc')->get();
+            $client = Clients::where('company_id', $company->company_id)->select('client_id')->distinct('client_id')->orderBy('client_id', 'asc')->get();
             $employee = Employers::where('company_id', $company->company_id)->get();
             $rfq = ClientRfq::where('company_id', $company->company_id)->orderBy('rfq_id', 'desc')->limit(400)->get();
             $rfqcount = ClientRfq::where('company_id', $company->company_id)->orderBy('rfq_id', 'desc')->get();
@@ -70,7 +70,7 @@ class DashboardController extends Controller
             $rfq = ClientRfq::where('company_id', $employee->company_id)->orderBy('created_at','desc')->limit(400)->get();
             $rfqcount = ClientRfq::where('company_id', $employee->company_id)->orderBy('created_at','desc')->get();
             // $client = Clients::where('company_id', $company->company_id)->orderBy('client_name', 'asc')->get();
-            $client = DB::table('client_rfqs')->where('company_id', $company->company_id)->select('client_id')->distinct('client_id')->orderBy('client_id', 'asc')->get();
+            $client = Clients::where('company_id', $company->company_id)->select('client_id')->distinct('client_id')->orderBy('client_id', 'asc')->get();
             $po = ClientPo::where('company_id', $company->company_id)->orderBy('po_id', 'desc')->get();
             // $comp =  Clients::where('company_id', $company->company_id)->orderBy('client_name', 'asc')->get();
             $vendor = Vendors::where('company_id', $company->company_id)->orderBy('vendor_name', 'asc')->get();

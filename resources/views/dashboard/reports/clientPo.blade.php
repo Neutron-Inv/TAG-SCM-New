@@ -35,8 +35,12 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text" id="basic-addon1"><i class="icon-calendar" style="color:#28a745"></i></span>
                                                 </div>
+                                                @php
+                                                $client
+                                                @endphp
                                                 <select class="form-control selectpicker" data-live-search="true" required name="client">
-                                                    <option value="{{ $client }}"> {{ json_decode(clis($client))[0]->client_name   ?? '-- Select Client --' }} </option>
+                                                        <option value="{{ isset($client[0]) ? $client[0]->client_id ?? '' : '' }}"> {{ isset($client[0]) && $client[0]->client_id ? optional(json_decode(clis($client[0]->client_id))[0])->client_name ?? '-- Select Client --'
+        : '-- Select Client --' }} </option>
                                                 @foreach($clients as $cli)
                                                     <option value="{{ $cli->client_id }}"> {{ $cli->client_name }} </option>
                                                 @endforeach
@@ -97,6 +101,7 @@
                                             <tr>
                                                 <th>S/N</th>
                                                 <th> PO No </th>
+                                                <th>PO Issued to <br/> Supplier Date</th>
                                                 <th> Delivery Date </th>
                                                 <th>Status </th>
                                             </tr>
@@ -107,6 +112,7 @@
                                                 <tr> 
                                                     <td>{{ $num++ }} </td>
                                                     <td>{{ $client_detail->po_number }} </td>
+                                                    <td> {{ $client_detail->supplier_issued_date}}</td>
                                                     <td> {{ $client_detail->delivery_due_date}}</td>
                                                     <td> {{ $client_detail->status}} <br/> 
                                                     @php
@@ -168,7 +174,7 @@
                         <div class="col-md-8 col-sm-8 col-8">
                             <label for="recipient-name" class="col-form-label">CC Email:</label>
                             <!-- <input type="text" class="form-control" id="recipient-email" name="quotation_recipient" value="contact@tagenergygroup.net; sales@tagenergygroup.net" readonly> -->
-                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="emmanuel@enabledgroup.net; jackomega.idnoble@gmail.com">
+                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="sales@tagenergygroup.net; mary.erengwa@tagenergygroup.net">
                             @if ($errors->has('report_recipient'))
                                 <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
                             @endif

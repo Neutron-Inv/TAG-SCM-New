@@ -1,6 +1,0 @@
-{
-    "require": {
-        "mpdf/mpdf": "^8.0",
-        "carlos-meneses/laravel-mpdf": "^2.1"
-    }
-}

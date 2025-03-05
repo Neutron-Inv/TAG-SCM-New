@@ -10,6 +10,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});
+Route::get('/test-email-check/{rfq_id}/{vendor_id}/{contact_id}', "ClientRFQController@checkNewEmails");
 Route::get('/approval', function () {
     $rfq = App\ClientRfq::find(1138);
     $reply = 'tolajide74@gmail.com';
@@ -39,9 +43,9 @@ Route::get('get-company-product/{company}', "ProductController@getCompanyProduct
 Route::get('get-recommended-suppliers/{product}', "VendorController@getRecommendedSuppliers")->name('recommended.suppliers');
 
 Auth::routes(['verify' => true]);
-Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], function () {
+Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified"]], function () {
 
-    Route::group(['middleware' => ['web','role:SuperAdmin|Admin|Employer|HOD|Contact|Shipper|Client|Supplier|Warehouse User']], function () {
+    Route::group(['middleware' => ['web','auth','role:SuperAdmin|Admin|Employer|HOD|Contact|Shipper|Client|Supplier|Warehouse User']], function () {
 
         Route::get("/", "DashboardController@index")->name("dashboard.index");
 
@@ -128,6 +132,19 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             // Route::get("/recyclebin", "ShipperController@bin")->name("client.restore");
             // Route::get("/restore/{client_id}", "ShipperController@restore")->name("client.undelete");
         });
+
+        Route::group(["prefix" => "Pricing-history"], function () {
+            Route::get("/{id}", "PricingHistoryController@index")->name("pricing.index");
+            Route::get("/create", "PricingHistoryController@create")->name("pricing.create");
+            Route::post("/save", "PricingHistoryController@store")->name("pricing.save");
+            Route::get("/edit/{pricing_id}", "PricingHistoryController@edit")->name("pricing.edit");
+            Route::get("/delete-mail/{mail_id}", "PricingHistoryController@destroy_mail")->name("mail.delete");
+            Route::post("/update/{vendor_id}", "PricingHistoryController@update")->name("pricing.update");
+            Route::get("/correspondence/{id}", "PricingHistoryController@correspondence")->name("pricing.correspondence");
+            Route::post("/update/{pricing_id}", "PricingHistoryController@update")->name("pricing.update");
+            // Route::get("/recyclebin", "ShipperController@bin")->name("client.restore");
+            // Route::get("/restore/{client_id}", "ShipperController@restore")->name("client.undelete");
+        });
         
         Route::group(["prefix" => "rfq-documents"], function () {
             Route::post("/save-file", "LineItemController@saveFiles")->name("saveFiles");
@@ -136,7 +153,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
 
     });
 
-    Route::group(['middleware' => ['role:SuperAdmin|Admin|Warehouse User']], function () {
+    Route::group(['middleware' => ['auth','role:SuperAdmin|Admin|Warehouse User']], function () {
         Route::group(["prefix" => "users"], function () {
             Route::get("/", "UsersController@index")->name("users.index");
             Route::post("/save", "UsersController@store")->name("users.save");
@@ -170,7 +187,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             Route::get("/details/{inventory_id}", "InventoryController@show")->name("inventory.details");
         });
     });
-    Route::group(['middleware' => ['role:SuperAdmin|Admin']], function () {
+    Route::group(['middleware' => ['auth','role:SuperAdmin|Admin']], function () {
 
         Route::group(["prefix" => "industries"], function () {
             Route::get("/", "IndustryController@index")->name("industry.index");
@@ -233,7 +250,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
 
     });
 
-    Route::group(['middleware' => ['role:SuperAdmin|Admin|Employer|Contact|Shipper|Client|HOD|Supplier']], function () {
+    Route::group(['middleware' => ['auth','role:SuperAdmin|Admin|Employer|Contact|Shipper|Client|HOD|Supplier']], function () {
 
         Route::group(["prefix" => "request-for-quotation"], function () {
 
@@ -270,6 +287,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             Route::post("/generate-report", "ClientRFQController@generateReport")->name("rfq.gen.report");
             Route::get("/download-pdf/{rfq_id}", "ClientRFQController@downloadQuote")->name("rfq.downloadQuote");
             Route::post("/send-rfq-to-vendor", "ClientRFQController@submitRfqToVendor")->name("rfq.toVendor");
+            Route::post("/send-po-to-vendor", "ClientRFQController@submitPoToVendor")->name("po.toVendor");
             
             
         });
@@ -366,7 +384,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
 
     });
 
-    Route::group(['middleware' => ['role:SuperAdmin|Admin|HOD|Employer']], function () {
+    Route::group(['middleware' => ['auth','role:SuperAdmin|Admin|HOD|Employer']], function () {
 
         Route::group(["prefix" => "line-items"], function () {
 
@@ -380,6 +398,8 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
             Route::get("/duplicate/{line_id}", "LineItemController@duplicate")->name("line.duplicate");
             Route::get("/preview/{rfq_id}", "LineItemController@preview")->name("line.preview");
             Route::post("/upload-rfq/", "LineItemController@uploadLineitems")->name("line.upload");
+            Route::post("/update-lineitems-cost/", "LineItemController@updateLineitemsCost")->name("line.cost_upload");
+            Route::get("/export-lineitems-template/{rfq_id}", "LineItemController@exportLineItemsTemplate")->name("line.excel_export");
             
         });
 
@@ -393,7 +413,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", "verified"]], fun
         });
     });
 
-    Route::group(['middleware' => ['role:Supplier']], function () {
+    Route::group(['middleware' => ['auth','role:Supplier']], function () {
 
         Route::group(["prefix" => "line-items"], function () {
 

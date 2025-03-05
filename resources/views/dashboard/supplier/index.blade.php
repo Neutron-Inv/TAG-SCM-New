@@ -152,7 +152,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                                            <label for="nameOnCard">Login Email</label>
+                                            <label for="nameOnCard">Email</label>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
@@ -165,7 +165,6 @@
                                                 @if ($errors->has('contact_email'))
                                                     <div class="" style="color:red">{{ $errors->first('contact_email') }}</div>
                                                 @endif
-
                                             </div>
                                         </div>
 
@@ -314,7 +313,7 @@
                                     
                                     
                                     @php
-                                    if (auth()->user()->hasRole('SuperAdmin') OR auth()->user()->hasRole('Admin')){
+                                    if (auth()->user()->hasRole('SuperAdmin')){
                                     $hidden = "";
                                     }else{
                                     $hidden = 'hidden';

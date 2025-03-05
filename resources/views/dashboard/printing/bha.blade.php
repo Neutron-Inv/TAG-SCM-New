@@ -19,10 +19,10 @@ $count = 1;
 <div style="page-break-inside: avoid !important;">
     @php
     $comp = comp($rfq->company_id);
-    $uom = getUOM($line_item->uom);
+    $uom = $line_item->uom;
     $total_cost = $line_item->quantity * $line_item->unit_cost;
-    $freight_charge = freight_pricing($line_item->location, $line_item->weight);
-    $freight = (int)$freight_charge * (int)$line_item->weight;
+    $freight_charge = get_freight_pricing($line_item->location, $line_item->weight);
+    $freight = (float)$freight_charge * (float)$line_item->weight;
     $subtotal_cif = $freight + $total_cost;
     $duty = 0.20 * $subtotal_cif;
     $surcharge = 0.07 * $duty;
@@ -34,21 +34,21 @@ $count = 1;
     $mark_up = 0.09 * $subtotal_b;
     $total_selling = $subtotal_b + $mark_up;
     @endphp
-        <div class="col-12" style="flex: 0 0 100%; position: relative; text-align: center; font-size: 7px !important;margin-bottom:10px; display: block !important;"><b>{{strtoupper($comp[0]->company_name)}} COMMERCIAL SUBMISSION</b></div>
-        <div class="col-12" style="position: relative; background-color:#f2f2f2; text-align: center; font-size: 7px !important; display: block !important; margin-top:-11px;"><b>BUYING HOUSE AGREEMENT BHA 2021/002</b></div>
-        <div class="col-12" style="position: relative; background-color:#d9d9d9; border: 1px solid #000; text-align: center; font-size: 7px !important; display: block !important;"><b>INCOTERMS: {{ strtoupper($rfq->incoterm) }} </b></div><br/>
+        <div class="col-12" style="flex: 0 0 100%; position: relative; text-align: center; margin-bottom:10px; display: block !important;"><b>{{strtoupper($comp[0]->company_name)}} COMMERCIAL SUBMISSION</b></div>
+        <div class="col-12" style="position: relative; background-color:#f2f2f2; text-align: center; display: block !important; margin-top:-11px;"><b>BUYING HOUSE AGREEMENT BHA 2021/002</b></div>
+        <div class="col-12" style="position: relative; background-color:#d9d9d9; border: 1px solid #000; text-align: center; display: block !important;"><b>INCOTERMS: {{ strtoupper($rfq->incoterm) }} </b></div><br/>
         
-        <div class="col-4" style="position: relative; background-color:#002060; border: 1px solid #000; text-align: center; font-size: 7px !important; display: block !important;color:#fff;"><b>NLNG: </b></div>
-        <div class="col-12" style="position: relative; background-color:#f2f2f2; text-align: center; font-size: 7px !important; display: block !important; ">&nbsp;</div>
-        <div class="col-4" style="position: relative; text-align: center; font-size: 7px !important; display: block !important; "><b> LINE ITEM {{$count}} </b></div>
-        <div style="display:flex;">
-        <div class="col-9">
-            <table style="font-size:7px !important; left:0px !important; margin-left:-17px; border:1px solid #fff !important; border-collapse: collapse; width:95%; vertical-align:bottom !important;">
+        <div class="col-4" style="position: relative; background-color:#002060; border: 1px solid #000; text-align: center; display: block !important;color:#fff;"><b>NLNG: </b></div>
+        <div class="col-12" style="position: relative; background-color:#f2f2f2; text-align: center;display: block !important; ">&nbsp;</div>
+        <div class="col-4" style="position: relative; text-align: center; display: block !important; "><b> LINE ITEM {{$count}} </b></div>
+        <div class="col-12 row" style="position: relative; display:flex;">
+        <div class="col-9" style="position: relative;">
+            <table style="left:0px !important; margin-left:-17px; border:1px solid #fff !important; border-collapse: collapse; width:95%; vertical-align:bottom !important;">
                 <thead style="background-color: #f2f2f2; font-weight: bold; vertical-align:bottom;">
                     <tr>
                     <th style="width:2%;">S/N</th>
                     <th style="width:43%;">Items </th>
-                    <th style="width:13%;">Unit of Measure ({{$uom[0]->unit_name}})</th>
+                    <th style="width:13%;">Unit of Measure ({{$uom}})</th>
                     <th style="width:10%;">Rate ({{$rfq->currency}})</th>
                     <th style="width:10%;">Total Price ({{$rfq->currency}})</th>
                     <th style="width:22%;">Guidance</th>
@@ -57,13 +57,15 @@ $count = 1;
                 <tbody>
                     <tr style="vertical-align:bottom !important;">
                         <td>&nbsp;</td>
-                        <td style="font-weight: bold !important; line-height: 7.5px !important; vertical-align:bottom !important;">
+                        <td style="font-weight: bold !important; vertical-align: bottom !important;" class="description_bha">
                             @if($line_item->mesc_code != '' && $line_item->mesc_code != 'N/A' && $line_item->mesc_code != 0)
-                                                <p style="font-size: 9.0pt; font-family: Calibri, sans-serif;"> <b>MESC CODE: {{ $line_item->mesc_code }} </b></p><br/>
-                                        @endif
-                                                <p style="font-size: 9.0pt; font-weight: 400; text-align: justify;">
-                                                    {!! $line_item->item_description ?? 'N/A' !!}
-                                                </p>
+                                <p style="font-family: Calibri, sans-serif;">
+                                    <b>MESC CODE: {{ $line_item->mesc_code }}</b>
+                                </p>
+                            @endif
+                            <p style="font-weight: 400; text-align: justify;">
+                                {!! $line_item->item_description ?? 'N/A' !!}
+                            </p>
                         </td>
                         <td>{{$line_item->quantity ?? 0}}</td>
                         <td>{{number_format($line_item->unit_cost, 2) ?? 0}}</td>
@@ -174,8 +176,9 @@ $count = 1;
             </table>
         </div>
         
-        <div class="col-3" style="position: absolute; float:right; margin-right:-42px;">
-            <table style="font-size:7px !important; border:1px solid #fff !important; border-collapse: collapse; width:85%;">
+        <div class="col-3" style="position: absolute; top:0; right:0 !important; margin-right:-50px;">
+            <div>
+            <table style=" border:1px solid #fff !important; border-collapse: collapse; width:85%;">
                 <thead>
                     <tr>
                         <th style="width:50%;">Weight of Item</th>
@@ -197,11 +200,12 @@ $count = 1;
                     </tr>
                 </tbody>
             </table>
+            </div>
         </div> 
         </div>
         
         <div class="col-9" style="display:flex; color: #0000ff;">
-        <table style="font-size:7px !important; left:0px !important; margin-left:-17px; border:1px solid white !important; border-collapse: collapse; width:95%; vertical-align:bottom !important;">
+        <table style="left:0px !important; margin-left:-17px; border:1px solid white !important; border-collapse: collapse; width:95%; vertical-align:bottom !important;">
                 <thead style="background-color: #fff; font-weight: bold; vertical-align:bottom; border:1px solid white !important;">
                     <tr>
                     <th style="width:3%; border:1px solid white !important;">&nbsp;&nbsp;</th>
@@ -219,59 +223,66 @@ $count = 1;
                 <p style="line-height: 7px;"><b>Table 2.0</b><br/>
                 Guidance: Input actual rates per kg in USD</p>
         </div>
+        @php
+            $pricingData = get_all_pricing();
+            $weightRanges = [
+                ['min' => 0, 'max' => 50],
+                ['min' => 50, 'max' => 100],
+                ['min' => 100, 'max' => 150],
+                ['min' => 150, 'max' => 'Above']
+            ];
+            $locations = ['Europe', 'UK', 'US', 'China', 'Middle East'];
+        @endphp
         
          <div class="col-11" style="">
-            <table style="margin-left:-17px; font-size:7px !important; border:1px solid #fff !important; border-collapse: collapse; width:95%;">
-                <thead>
+        <table style="margin-left:-17px; border:1px solid #fff !important; border-collapse: collapse; width:95%;">
+            <thead>
+                <tr>
+                    <th colspan="7">AIR FREIGHT PRICING</th>
+                </tr>
+                <tr style="background-color:#f2f2f2">
+                    <th style="width:5%;">#</th>
+                    <th style="width:40%;">Weight range in KG</th>
+                    @foreach ($locations as $location)
+                        <th style="width:13%;">Unit price in $/kg - {{ $location }}</th>
+                    @endforeach
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($weightRanges as $index => $range)
                     <tr>
-                        <th colspan="7">AIR FREIGHT PRICING</th>
+                        <td>{{ $index + 1 }}</td>
+                        <td>
+                            {{ $range['min'] + 1 }} - 
+                            {{ $range['max'] === 'Above' ? 'Above' : $range['max'] }}
+                        </td>
+                        @foreach ($locations as $location)
+                            @php
+                                $charge = 'N/A';
+                                if (isset($pricingData[$location])) {
+                                    foreach ($pricingData[$location] as $data) {
+                                        if (
+                                            ($range['max'] === 'Above' && $data['weight_min'] > 150) ||
+                                            ($data['weight_min'] <= $range['max'] && $data['weight_max'] > $range['min'])
+                                        ) {
+                                            $charge = $data['charge'];
+                                            break;
+                                        }
+                                    }
+                                }
+                            @endphp
+                            <td style="background-color:#fff000; text-align: right;">{{ $charge }}</td>
+                        @endforeach
                     </tr>
-                    <tr style="background-color:#f2f2f2">
-                        <th style="width:5%;">&nbsp;</th>
-                        <th style="width:40%;">Weight range in KG</th>
-                        <th style="width:13%;">Unit price in $/kg - Europe</th>
-                        <th style="width:13%;">Unit price in $/kg - UK</th>
-                        <th style="width:13%;">Unit price in $/kg - USA</th>
-                        <th style="width:13%;">Unit price in $/kg - China / Asia</th>
-                        <th style="width:13%;">Unit price in $/kg - Middle East</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td> 1 </td>
-                        <td> 1 - 50 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 7.5 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 7 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 8.5 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 12 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 11 </td>
-                    </tr>
-                    <tr>
-                        <td> 2 </td>
-                        <td> 51 - 100 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 7.5 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 7 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 8.5 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 11 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 10 </td>
-                    </tr>
-                    <tr>
-                        <td> 3 </td>
-                        <td> 100 - 150 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 7 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 6.5 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 8 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 10 </td>
-                        <td style="background-color:#fff000; text-align: right;"> 9 </td>
-                    </tr>
-                </tbody>
-            </table>
+                @endforeach
+            </tbody>
+        </table>
         </div> 
         <div class="col-9" style="margin-left:-17px; padding-top:10px;">
                             @if($rfq->technical_note != NULL)
                            
-                                <p style="color:red; font-weight: bold; margin-left: 0px; font-size: 5pt !important; font-family: Calibri, sans-serif;"><b>Technical Notes: </b>
-                                <span style="font-size: 5pt !important; font-family: Calibri, sans-serif; page-break-inside: avoid;">
+                                <p style="color:red; font-weight: bold; margin-left: 0px; font-family: Calibri, sans-serif;"><b>Technical Notes: </b>
+                                <span style="font-family: Calibri, sans-serif; page-break-inside: avoid;">
                                 {!! htmlspecialchars_decode($rfq->technical_note)!!}</span>
                                 </p>
                                
@@ -288,7 +299,7 @@ $count = 1;
                         $sn = 1;
                         @endphp
                         <div style="page-break-inside: avoid;">
-                            <p style="font-size: 5pt !important; font-family: Calibri, sans-serif !important; margin-left:0px; font-weight:400;"><b style="color:red;">Notes to Pricing: </b><br/>
+                            <p style="font-size: 5pt !important; font-family: Calibri, sans-serif !important; margin-left:0px; font-weight:400; line-height:6px !important; white-space:nowrap;"><b style="color:red;">Notes to Pricing: </b><br/>
                             {{ $sn }}. Delivery: {{ $rfq->estimated_delivery_time ?? '17-19 weeks' }}.<br/>
                             @php $sn += 1 @endphp
                             
@@ -313,6 +324,14 @@ $count = 1;
                             {{ $sn }}. FORCE MAJEURE: On notification of any event with impact on delivery schedule, We will extend delivery schedule.<br/>
                             @php $sn += 1 @endphp
                             
+                            @if($rfq->incoterm != 'DDP')
+                                {{ $sn }}. Storage Charges: Storage fees at 1% of the total invoice value will apply (weekly) for all orders left at OEM's facility for more than 2 weeks.
+                                <br/>
+                                The storage charges shall in no case exceed 10% (ten percent) of the TOTAL INVOICE AMOUNT.
+                                <br/>
+                            @php $sn += 1 @endphp
+                            @endif
+                            
                             {{ $sn }}. Pricing: Prices quoted are in {{ $rfq->currency ?? 'USD' }} <br/>
                             @php $sn += 1 @endphp
                             
@@ -332,11 +351,18 @@ $count = 1;
                             {{ $sn }}. Payment Term: {{ $rfq->payment_term ?? '' }} <br/>
                             @php $sn += 1 @endphp
                             
+                            @if($rfq->incoterm != 'DDP')
+                               <span style="font-weight:bold;"> {{ $sn }}. Client is to provide evidence of VAT remittance to the Tax authority before order is processed.</span>
+                                <br/>
+                            @php $sn += 1 @endphp
+                            @endif
+                            
                             @if($rfq->vendor_id == '167')
                             {{ $sn }}. Goods will be cleared in South Africa by Bosch Authorised Export Agent. <br/><br/>
                             @else
                             <br/>
                             @endif
+                            
                             <b>Best Regards </b> <br/>
                             </p> 
                                 @foreach (getLogo($rfq->company_id) as $item)
@@ -348,15 +374,15 @@ $count = 1;
                             <div style="margin-top:-25px;">
                             <p style="margin-top:0px; margin-left:0px; color:black; font-size:5pt !important;">
                                 @foreach (emps($rfq->employee_id) as $emp)
-                                    @php 
+                                    @php
                                         $email = $emp->email;
                                         $userDe = userEmail($email);
                                     @endphp
                                     <b>{{ $userDe->first_name . ' '.  strtoupper($userDe->last_name) ?? ' ' }} </b>
                                 @endforeach
                             </p>
-                            <p style="margin-top: -5px; font-size:5pt !important;"></p>
-                                <p style="margin-top: -8px; font-size:5pt !important;"><b>
+                            <p style="margin-top: 1px; font-size:5pt !important;"></p>
+                                <p style=""><b>
                                  @foreach (comp($rfq->company_id) as $comps) {{ 'For: '. $comps->company_name ?? ' Company Name' }} @endforeach </b>
                             </p>
                             </div>

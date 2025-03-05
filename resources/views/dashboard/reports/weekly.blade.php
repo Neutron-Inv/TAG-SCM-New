@@ -81,6 +81,87 @@
                     </div>
                 </div>
 
+
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="card">
+                        <div class="card-body" style="max-height:500px; min-height:500px; overflow-y: auto;">
+                            
+                            <div class="table-container">
+                            <h6 style="text-align:center; padding:1%;"><b> RFQs from 1st Jan, <?php echo now()->year; ?> - <?php echo date('jS F, Y'); ?> </b></h6>
+                                <div class="table-responsive">
+									<table class="table m-0">
+                                        <thead class="text-white">
+                                            <tr>
+                                                <th>S/N</th>
+                                                <th>COMPANY</th>
+                                                <th>NUMBER OF RFQ RECEIVED </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php $num =1; ?>
+                                            @foreach ($rfqy as $rfq_detaily)
+                                            <tr>
+                                            <td> {{ $num++ }} </td>
+                                            <td class="text-align"> {{ $rfq_detaily->client->client_name }} </td>
+                                            <td class="text-align">{{ $rfq_detaily->count }} </td>
+                                            </tr>
+                                            @endforeach
+                                            <tr>
+                                                <td></td>
+                                                <td> Total RFQs </td>
+                                                <td>{{ $rfqtotaly }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="card">
+                        <div class="card-body" style="max-height:500px; min-height:500px; overflow-y: auto;">
+                            
+                            <div class="table-container">
+                            <h6 style="text-align:center; padding:1%;"><b> POs for 1st Jan, <?php echo now()->year; ?> - <?php echo date('jS F, Y'); ?> </b></h6>
+                                <div class="table-responsive">
+									<table class="table m-0">
+                                        <thead class="text-white">
+                                            <tr>
+                                                <th>S/N</th>
+                                                <th>COMPANY</th>
+                                                <th>NUMBER OF PO RECEIVED </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php $num =1; ?>
+                                            @foreach ($poy as $po_detaily)
+                                            <tr>
+                                            <td> {{ $num++ }} </td>
+                                            <td class="text-align"> {{ $po_detaily->client->client_name }} </td>
+                                            <td class="text-align">{{ $po_detaily->count }} </td>
+                                            </tr>
+                                            @endforeach
+                                            <tr>
+                                                <td></td>
+                                                <td> Total PO(s) </td>
+                                                <td>{{ $pototaly }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div class="card">
                         <div class="card-body">
@@ -158,42 +239,42 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
-                    <div class="card">
-                        <div class="card-body">
+                <!--<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">-->
+                <!--    <div class="card">-->
+                <!--        <div class="card-body">-->
                             
-                            <div class="table-container">
+                <!--            <div class="table-container">-->
                                 
-                                <div class="table-responsive">
-                                <h6 class="table-title" style="text-align:center; vertical-align:center; padding:1%;"><b> NLNG PO Status update for <?php echo date('Y'); ?> </b></h6>
-                                    <table id="fixedHeader" class="table">
-                                        <thead class="bg-success text-white">
-                                            <tr>
-                                                <th>S/N</th>
-                                                <th> PO No </th>
-                                                <th> Delivery Date </th>
-                                                <th>Status </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php $num =1; ?>
-                                            @foreach ($nlng as $nlng_detail)
-                                                <tr> 
-                                                    <td>{{ $num++ }} </td>
-                                                    <td>{{ $nlng_detail->po_number }} </td>
-                                                    <td> {{ $nlng_detail->delivery_due_date}}</td>
-                                                    <td> {{ $nlng_detail->status}}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                <!--                <div class="table-responsive">-->
+                <!--                <h6 class="table-title" style="text-align:center; vertical-align:center; padding:1%;"><b> NLNG PO Status update for <?php echo date('Y'); ?> </b></h6>-->
+                <!--                    <table id="fixedHeader" class="table">-->
+                <!--                        <thead class="bg-success text-white">-->
+                <!--                            <tr>-->
+                <!--                                <th>S/N</th>-->
+                <!--                                <th> PO No </th>-->
+                <!--                                <th> Delivery Date </th>-->
+                <!--                                <th>Status </th>-->
+                <!--                            </tr>-->
+                <!--                        </thead>-->
+                <!--                        <tbody>-->
+                <!--                            <?php $num =1; ?>-->
+                <!--                            @foreach ($nlng as $nlng_detail)-->
+                <!--                                <tr> -->
+                <!--                                    <td>{{ $num++ }} </td>-->
+                <!--                                    <td>{{ $nlng_detail->po_number }} </td>-->
+                <!--                                    <td> {{ $nlng_detail->delivery_due_date}}</td>-->
+                <!--                                    <td> {{ $nlng_detail->status}}</td>-->
+                <!--                                </tr>-->
+                <!--                            @endforeach-->
+                <!--                        </tbody>-->
+                <!--                    </table>-->
+                <!--                </div>-->
 
-                            </div>
+                <!--            </div>-->
 
-                        </div>
-                    </div>
-                </div>
+                <!--        </div>-->
+                <!--    </div>-->
+                <!--</div>-->
 
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div class="card">

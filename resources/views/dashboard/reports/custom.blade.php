@@ -311,7 +311,7 @@
                         <div class="card-body">
                             
                             <div class="table-container">
-                                <h6 class="table-title" style="text-align:center; vertical-align:center; padding:1%;"><b>TAG List of {{ json_decode(clis($client))[0]->client_name ?? 'Client' }} RFQs</b></h6>
+                                <h6 class="table-title" style="text-align:center; vertical-align:center; padding:1%;"><b>List of {{ json_decode(clis($client))[0]->client_name ?? 'Client' }} RFQs</b></h6>
                                 <div class="table-responsive">
 									<table class="table m-0 fixed-height-table">
                                         <thead class=" text-white">
@@ -369,7 +369,7 @@
                         <div class="card-body">
                             <div class="table-container">
                                 <div class="table-responsive">
-                                <h6 class="table-title" style="text-align:center; vertical-align:center; padding:1%;"><b>TAG List of {{ json_decode(clis($client))[0]->client_name ?? 'Client' }} POs</b></h6>
+                                <h6 class="table-title" style="text-align:center; vertical-align:center; padding:1%;"><b>List of {{ json_decode(clis($client))[0]->client_name ?? 'Client' }} POs</b></h6>
                                 <table class="table fixed-height-table">
                                     <thead class="bg-success text-white">
                                             <tr>

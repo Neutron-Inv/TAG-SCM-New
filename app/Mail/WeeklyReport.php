@@ -35,6 +35,10 @@ class WeeklyReport extends Mailable
         $monday = $this->data['monday'];
         $friday = $this->data['friday'];
         $grn = $this->data['grn'];
-        $mail = $this->subject("TAG Energy RFQ and POs Weekly Report as at - ".date('d-m-Y'))->markdown('emails.po.WeeklyReport')->with(compact('rfq','rfqtotal','po','pototal','monday','friday','grn'));
+        $rfqy = $this->data['rfqy'];
+        $rfqtotaly = $this->data['rfqtotaly'];
+        $poy = $this->data['poy'];
+        $pototaly = $this->data['pototaly'];
+        $mail = $this->subject("TAG Energy RFQ and POs Weekly Report as at - ".date('d-m-Y'))->markdown('emails.po.WeeklyReport')->with(compact('rfq','rfqtotal','po','pototal','monday','friday','grn', 'rfqy', 'rfqtotaly', 'poy', 'pototaly'));
     }
 }

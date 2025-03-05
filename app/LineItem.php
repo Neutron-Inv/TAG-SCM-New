@@ -14,7 +14,7 @@ class LineItem extends Model
     protected $fillable = [
         'client_id', 'rfq_id', 'item_serialno', 'item_name', 'item_number', 'vendor_id', 'uom', 'quantity', 'unit_price', 'total_price', 'unit_quote',
         'total_quote', 'unit_margin', 'total_margin', 'unit_frieght', 'total_frieght', 'unit_cost', 'total_cost', 'unit_cost_naira',
-        'total_cost_naira', 'item_description', 'weight' , 'location' , 'active' , 'mesc_code'
+        'total_cost_naira', 'item_description', 'alternate_offer', 'weight' , 'location' , 'active' , 'mesc_code'
     ];
 
 

@@ -243,7 +243,7 @@
                     </span>
 
                 </p>
-                <img src="https://scm.enabledjobs.com/admin/img/signature.jpg" alt="SCM" style="width: 100%;">
+                <img src="{{asset('admin/img/signature.jpg')}}" alt="SCM" style="width: 100%;">
             </div>
         </div>
     </div>

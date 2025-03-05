@@ -124,7 +124,7 @@
                                                     </span>
 
                                                 </p>
-                                                <img src="https://scm.enabledjobs.com/admin/img/signature.jpg" alt="SCM" style="width: 100%;">
+                                                <img src="{{asset('admin/img/signature.jpg')}}" alt="SCM" style="width: 100%;">
                                                 <div style="text-align: center; font-size: 9px; color: #ffffff; background-color: white;" >
                                                     <p style="color: black; font-size: 9px;">
                                                         &copy; Enabled Business Solution - All rights reserved.

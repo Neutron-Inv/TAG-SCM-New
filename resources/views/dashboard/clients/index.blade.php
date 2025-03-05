@@ -1,5 +1,12 @@
 <?php $title = 'Clients'; ?>
 @extends('layouts.app')
+<?php
+if(Auth::user()->hasRole('SuperAdmin')){
+    $hidden = "";
+}else{
+    $hidden = "hidden";
+}
+?>
 
 @section('content')
     <div class="main-container">
@@ -35,9 +42,9 @@
                                 </div>
                                 <form action="{{ route('client.save') }}" class="" method="POST"  enctype="multipart/form-data">
                                     {{ csrf_field() }}
-
+                            
                                     <div class="row gutters">
-                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12" {{ $hidden }}>
                                             <div class="form-group">
                                                 <label for="nameOnCard">Company Name</label>
                                                 <div class="input-group">
@@ -67,7 +74,7 @@
 
                                             </div>
                                         </div>
-                                        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
                                             <div class="form-group">
                                                 <label for="nameOnCard">Company Vendor Code</label>
                                                 <div class="input-group">
@@ -104,7 +111,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <label for="nameOnCard">Short Code</label>
                                                 <div class="input-group">
@@ -123,45 +130,6 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <label for="nameOnCard">Client State</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text" id="basic-addon1"><i class="icon-creative-commons" style="color:#28a745"></i></span>
-                                                    </div>
-                                                    <select class="form-control selectpicker" data-live-search="true" required name="state">
-                                                        <option value="">Select State</option>
-                                                        <option value="Outside Nigeria">Outside Nigeria</option>
-                                                        @foreach ($ng_states as $item)
-                                                            <option value="{{$item->name}}">{{$item->name}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-
-                                                @if ($errors->has('state'))
-                                                    <div class="" style="color:red">{{ $errors->first('state') }}</div>
-                                                @endif
-
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <label for="nameOnCard">Client City</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text" id="basic-addon1"><i class="icon-location" style="color:#28a745"></i></span>
-                                                    </div>
-                                                    <input class="form-control" name="city" required placeholder="Enter City" type="text" value="{{old('city')}}"
-                                                    aria-describedby="basic-addon1">
-                                                </div>
-
-                                                @if ($errors->has('city'))
-                                                    <div class="" style="color:red">{{ $errors->first('city') }}</div>
-                                                @endif
-
-                                            </div>
-                                        </div>
                                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <label for="nameOnCard">Phone Number</label>
@@ -180,7 +148,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                                            <label for="nameOnCard">Login Email</label>
+                                            <label for="nameOnCard">Email</label>
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
@@ -203,11 +171,14 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text" id="basic-addon1"><i class="icon-document-landscape" style="color:#28a745"></i></span>
                                                     </div>
-
-                                                    <select class="form-control selectpicker" data-live-search="true" required name="country_code">
-                                                        <option value="">Select Country</option>
-                                                        @foreach ($countries as $item)
-                                                            <option data-tokens="{{ $item->name }}" value="{{ $item->name }}">{{ $item->nicename }}</option>
+                                                    
+                                                    @php
+                                                    $countries = getCountries();
+                                                    @endphp
+                                                    <select id="country" class="form-control selectpicker" data-live-search="true" name="country_code" onchange="fetchStates(this)">
+                                                        <option value="">Select a country</option>
+                                                        @foreach($countries as $country)
+                                                        <option value="{{$country->name}}" data-name="{{$country->id}}">{{$country->name}}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -218,14 +189,50 @@
 
                                             </div>
                                         </div>
+                                        
+                                        
+                                        <!-- State Dropdown -->
                                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                                             <div class="form-group">
-                                                <label for="nameOnCard">Login URL</label>
+                                                <label for="state">State</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon1"><i class="icon-creative-commons" style="color:#28a745"></i></span>
+                                                    </div>
+                                                    <select id="state" class="form-control selectpicker" data-live-search="true" name="state" onchange="fetchCities(this)">
+                                                        <option value="">Select a state</option>
+                                                        <!-- State options will be populated here -->
+                                                    </select>
+                                                </div>
+                                                <div id="state-error" style="color:red"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- City Dropdown -->
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label for="city">City</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon1"><i class="icon-location" style="color:#28a745"></i></span>
+                                                    </div>
+                                                    <select id="city" class="form-control selectpicker" name="city">
+                                                        <option value="">Select a city</option>
+                                                        <!-- City options will be populated here -->
+                                                    </select>
+                                                </div>
+                                                <div id="city-error" style="color:red"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label for="nameOnCard">URL</label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text" id="basic-addon1"><i class="icon-add-to-list" style="color:#28a745"></i></span>
                                                     </div>
-                                                    <input class="form-control" name="login_url" placeholder="Enter Login URL" type="url"
+                                                    <input class="form-control" name="login_url" placeholder="Enter URL" type="url"
                                                     value="{{old('login_url')}}"
                                                     aria-describedby="basic-addon1">
                                                 </div>
@@ -236,7 +243,7 @@
 
                                             </div>
                                         </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12" {{$hidden}}>
                                             <div class="form-group">
                                                 <label for="nameOnCard">Vendor Username</label>
                                                 <div class="input-group">
@@ -254,7 +261,7 @@
 
                                             </div>
                                         </div>
-                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12" {{$hidden}}>
                                             <div class="form-group">
                                                 <label for="nameOnCard">Vendor Password</label>
                                                 <div class="input-group">
@@ -427,4 +434,95 @@
             </div>
         </div>
     </div>
+    
+                                        <script>
+                                        // Function to populate the Country dropdown (called when page loads)
+                                        function populateCountries() {
+                                            $.ajax({
+                                                url: '/api/countries', // Replace with your actual endpoint for countries
+                                                method: 'GET',
+                                                success: function(data) {
+                                                    const countryDropdown = $('#country');
+                                                    countryDropdown.empty(); // Clear existing options
+                                                    countryDropdown.append('<option value="">Select a country</option>');
+                                                    
+                                                    // Loop through the countries and append them to the dropdown
+                                                    data.forEach(country => {
+                                                        countryDropdown.append(`<option value="${country.id}" data-name="${country.name}">${country.name}</option>`);
+                                                    });
+                                    
+                                                    // Re-initialize the selectpicker for new options
+                                                    countryDropdown.selectpicker('refresh');
+                                                },
+                                                error: function(error) {
+                                                    console.error('Error fetching countries:', error);
+                                                }
+                                            });
+                                        }
+                                    
+                                        // Function to fetch states based on selected country
+                                        function fetchStates(countryElement) {
+                                            const countryName = countryElement.value;
+                                            const countryId = countryElement.options[countryElement.selectedIndex].getAttribute('data-name');
+                                            
+                                            const stateDropdown = $('#state');
+                                            const cityDropdown = $('#city');
+                                            stateDropdown.empty(); // Clear previous states
+                                            cityDropdown.empty(); // Clear previous cities
+                                            stateDropdown.append('<option value="">Select a state</option>');
+                                            cityDropdown.append('<option value="">Select a city</option>');
+                                    
+                                            if (!countryId) return; // If no country is selected, return
+                                    
+                                            // Log country data (ID and Name)
+                                            console.log("Selected Country ID: ", countryId);
+                                            console.log("Selected Country Name: ", countryName);
+                                    
+                                            $.ajax({
+                                                url: `/api/get-states/${countryId}`, // Replace with your actual endpoint for states
+                                                method: 'GET',
+                                                success: function(data) {
+                                                    data.forEach(state => {
+                                                        stateDropdown.append(`<option value="${state.name}" data-id="${state.id}">${state.name}</option>`);
+                                                    });
+                                    
+                                                    // Re-initialize the selectpicker for new options
+                                                    stateDropdown.selectpicker('refresh');
+                                                    stateDropdown.prop('disabled', false); // Enable the state dropdown
+                                                },
+                                                error: function(error) {
+                                                    console.error('Error fetching states:', error);
+                                                }
+                                            });
+                                        }
+                                    
+                                        // Function to fetch cities based on selected state
+                                        function fetchCities(stateElement) {
+                                            const stateName = stateElement.value;
+                                            const stateId = stateElement.options[stateElement.selectedIndex].getAttribute('data-id');
+                                            const cityDropdown = $('#city');
+                                            cityDropdown.empty(); // Clear previous cities
+                                            cityDropdown.append('<option value="">Select a city</option>');
+                                    
+                                            if (!stateId) return; // If no state is selected, return
+                                    
+                                            $.ajax({
+                                                url: `/api/get-cities/${stateId}`, // Replace with your actual endpoint for cities
+                                                method: 'GET',
+                                                success: function(data) {
+                                                    data.forEach(city => {
+                                                        cityDropdown.append(`<option value="${city.name}">${city.name}</option>`);
+                                                    });
+                                    
+                                                    // Re-initialize the selectpicker for new options
+                                                    cityDropdown.selectpicker('refresh');
+                                                    cityDropdown.prop('disabled', false); // Enable the city dropdown
+                                                },
+                                                error: function(error) {
+                                                    console.error('Error fetching cities:', error);
+                                                }
+                                            });
+                                        }
+                                    
+                                    </script>
 @endsection

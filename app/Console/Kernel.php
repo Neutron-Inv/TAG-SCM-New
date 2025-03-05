@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('command:GRNReminder')->dailyAt('10:30');
         //$schedule->command('command:AutoWeeklyReport')->dailyAt('12:55');
         //$schedule->command('command:AutoBHAReport')->dailyAt('11:00');
+        $schedule->command('emails:check')->everyMinute();
     }
 
     /**

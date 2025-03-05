@@ -71,9 +71,10 @@ hr {
                             <thead class="">
                                 <tr>
                                 <th style="width: 3%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;text-align: center;">S/N</th>
-                                <th style="width: 15%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;"> PO No </th>
+                                <th style="width: 10%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;"> PO No </th>
+                                <th style="width: 15%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;"> PO Issued to <br/>Supplier Date </th>
                                 <th style="width: 15%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;"> Delivery Date </th>
-                                <th style="width: 60%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;">Status </th>
+                                <th style="width: 55%; text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;">Status </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -93,8 +94,9 @@ hr {
                                 @endphp
                                     <tr style="background-color: <?php echo $color; ?>;"> 
                                     <td style="text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif; color: black,">{{ $num++ }} </td>
-                                    <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif; color: black;">{{ $client_detail->po_number }} </td>
-                                    <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif; color:red;"> {{ $client_detail->delivery_due_date}}</td>
+                                    <td style="text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif; color: black;">{{ $client_detail->po_number }} </td>
+                                    <td style="text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif; color:red;"> {{ $client_detail->supplier_issued_date}}</td>
+                                    <td style="text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif; color:red;"> {{ $client_detail->delivery_due_date}}</td>
                                     <td style="text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif; color: black;"> {{ $client_detail->status}} <br/> 
                                         @php
                                             $notesArray = explode('.', $client_detail->note);
@@ -134,7 +136,7 @@ hr {
                                         Email</span></b><span style="font-size:7.5pt; font-family:&quot;Arial&quot;,sans-serif; color:#1F3864; mso-fareast-language:ZH-CN">
     : <a href="mailto:sales@tagenergygroup.net">sales@tagenergygroup.net</a></span>
                                                 </p>
-                                                <img src="https://scm.tagenergygroup.net/admin/img/signature.jpg" alt="SCM" style="width: 100%;">
+                                                <img src="{{asset('admin/img/signature.jpg')}}" alt="SCM" style="width: 100%;">
                                                 <div style="text-align: center; font-size: 9px; color: #ffffff; background-color: white;" >
                                                     <p style="color: black; font-size: 9px;">
                                                         &copy; Enabled Business Solution - All rights reserved.

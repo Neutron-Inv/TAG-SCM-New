@@ -14,53 +14,49 @@ $result = json_decode($cli_title, true);
         <h3><p style="color:red" align="center"> No Line Item was found for the RFQ </p></h3>
     @else
 
-        <div class="invoice-container" id="printableArea" style="background-color: white !important;font-family: Calibri, sans-serif; width:600px; ">
+        <div class="invoice-container" id="printableArea" style="background-color: white !important;width:600px; ">
             <p style="page-break-after:avoid; font-size: 4.1pt;font-family: Calibri,sans-serif;float: right;margin-top: -12px;margin-bottom: 2px; margin-right: -25px;font-weight: 400;">SCM 208 v1.0 </p><br>
-            <div class="invoice-header" style="font-family: Calibri, sans-serif;padding: .5rem 1.5rem;">
+            <div class="invoice-header" style="padding: .5rem 1.5rem;">
 
-                <div class="row gutters" style="display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;">
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="position: relative;width: 100%;margin-left:23px;padding-right: 15px;padding-left: 15px;
-                        -ms-flex: 0 0 33.333333%;flex: 0 0 33.333333%;max-width: 33.333333%;">
-                        <div class="invoice-logo" style="font-size: 1.2rem;color: #074b9c;font-weight: 700; margin-left: 10px;">
+                <div class="row gutters" style="position: relative;">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="position: relative;margin-left:23px;padding-right: 15px;padding-left: 15px;">
+                        <div class="invoice-logo" style="font-size: 1.2rem;color: #074b9c;font-weight: 700; margin-left: 10px; margin-bottom:15px;">
                                 @foreach (getLogo($rfq->company_id) as $item)
                                     @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                     <img src="{{$log}}" style="width: 101px;" alt="{{$log}}">
                                 @endforeach
                         </div>
-                        <br>
-                        <div class="col-lg-12 col-md-12 col-sm-12" style="font-family: Calibri,sans-serif;margin-top: 5px;position: relative;width: 100%;padding-right: 15px;padding-left: 15px;-ms-flex: 0 0 100%;flex: 0 0 100%;max-width: 100%;">
+                        <div class="col-lg-12 col-md-12 col-sm-12" style="position: relative; width: 100%; padding-right: 15px; padding-left: 15px;-ms-flex: 0 0 100%;flex: 0 0 100%;max-width: 100%;">
                             @foreach (clis($rfq->client_id) as $cli)
-                                <p style="font-size: 5pt !important;font-family: Calibri,sans-serif;color:black;;margin-top: 0;margin-bottom: 3px;line-height: 180%;font-weight: 400;">
-                                    <strong style="font-weight: bolder; font-weight: 400;"> <b>{{ $cli->client_name ?? ' ' }} </b> </strong>
-                                </p><br>
-                                <p style="font-size: 5pt;margin-top: -29px;color:black;margin-bottom: 2px;widows: 1;font-weight: 400;line-height: 1.3;">
+                                <p style="color:black; line-height:7px; margin-bottom:18px;">
+                                 <span style="font-weight:bold; font-size:6pt;">{{ $cli->client_name ?? ' ' }} </span><br>
                                     {{ $cli->address ?? ' ' }}
                                 </p><br>
                             @endforeach
 
                             @foreach (buyers($rfq->contact_id) as $buy)
-                            <div style="margin-top:-30px; color:black;">
-                                <h6 style="font-size: 5pt !important;margin-top: 0px;margin-bottom: .2rem;font-weight: 700;line-height: 180%;font-weight: 400;">
-                                    <b>Attn: {{ $buy->first_name . ' '. $buy->last_name ?? ' '}} </b>
+                            <div style="margin-top:-45px; color:black;">
+                                <p>
+                                    <b style="font-size:5pt;font-family: Calibri, sans-serif;">Attn: {{ $buy->first_name . ' '. $buy->last_name ?? ' '}} </b>
+                                </p>
+                                <h6 style="margin-top: -15px;">
+                                    <u style="color: blue; font-size:5pt;">{{ $buy->email ?? ' ' }}</u>
                                 </h6>
-                                <h6 style="font-size: 5pt !important;margin-top: -5px;margin-bottom: .2rem;font-weight: 700;line-height: 180%;font-weight: 400;">
-                                    <u style="color: blue;">{{ $buy->email ?? ' ' }}</u>
-                                </h6>
-                                <h6 style="font-size: 5pt !important;margin-top: -5px;margin-bottom: .2rem;font-weight: 700;line-height: 180%;font-weight: 400;">
+                                <h6 style="font-size:5pt; margin-top: -13px;margin-bottom: .2rem;font-weight: 700;line-height: 180%;font-weight: 400;">
                                     Tel: {{ $buy->office_tel ?? ' ' }} 
                                 </h6><br>
                             </div>
                              @endforeach
-                            <h6 style=" color:black; width:500px;font-family: 'Tw Cen MT Condensed', Arial, Helvetica, sans-serif;font-size: 5pt !important;margin-top: -20px;margin-bottom: .2rem;font-weight: 700;line-height: 180%;font-weight: 400;">
-                               <strong> <b>@foreach (clis($rfq->client_id) as $cli)
-
-                                        {{ $cli->short_code. ' Rfx: '. $rfq->rfq_number}}
-                                        </b></strong>
-                                        </h6>
-                                        <br/>
-                                        <h6 class="producttag" style=" color:black; width:500px;font-size: 5pt !important;margin-top: -20px;margin-bottom: .2rem;font-weight: 700;line-height: 180%;font-weight: 400;">
-                                        @foreach (comp($rfq->company_id) as $comp)
+                             
+                            @foreach (clis($rfq->client_id) as $cli)
+                                    <p style=" color:black; width:500px; font-family: Calibri, sans-serif; font-size:7pt; margin-top: -35px; margin-bottom: .2rem; font-weight: 700; line-height: 180%; font-weight: 400;">
+                                        <b> {{ $cli->short_code. ' Rfx: '. $rfq->rfq_number}} </b>
+                                    </p>
                                         
+                                    <br/>
+                                        
+                                @foreach (comp($rfq->company_id) as $comp)
+                                    <p class="producttag" style="color: black; margin-top: -25px; line-height: 180%; white-space:nowrap;">
                                         <?php 
                                         if($comp->company_name == "TAG Energy Nigeria Limited"){
                                             $company_name = "TAG Energy";
@@ -68,74 +64,63 @@ $result = json_decode($cli_title, true);
                                             $company_name = $comp->company_name; 
                                         }
                                         ?>
-                                        {{ $company_name. ' Quotation for the PURCHASE OF '. strtoupper($rfq->description)  ?? ' Rfx: '. $rfq->rfq_number}}
-                                        
-                                        @endforeach
-                                    @endforeach 
-                				<br/>
-                            </h6><br>
+                                        <span style="font-weight:bold;">{{ $company_name. ' Quotation for the PURCHASE OF '. strtoupper($rfq->description)  ?? ' Rfx: '. $rfq->rfq_number}}</span>
+                        				<br/>
+                                    </p>
+                                @endforeach
+                            @endforeach
                         </div>
                     </div>
-                    <div class="col-lg-8 col-md-8 col-sm-8 offset-lg-4 offset-md-4 offset-sm-4" style="text-align: right !important;">
-
-                        <p style="font-size: 5pt;font-family: Calibri,sans-serif;margin-bottom: -5px;widows: 1;line-height: 10%;font-weight: 400;">{{ $rfq->client->client_name ?? ' ' }} </p>
-                        <p style="font-size: 5pt;font-family: Calibri,sans-serif;margin-top: 0;widows: 1;line-height: 180%;font-weight: 400;"><strong style="font-weight: bolder;">Ref No: TE-{{ $cli->short_code }}-RFQ{{ preg_replace('/[^0-9]/', '', $rfq->refrence_no ?? '') }} </strong></p><br/>
+                    <div class="col-lg-8 col-md-8 col-sm-8 offset-lg-4 offset-md-4 offset-sm-4" style="position: absolute; top: 0; right: 0; text-align: right;">
+                        <p style="font-size:5pt;font-family: Calibri,sans-serif;margin-bottom: -5px;widows: 1;line-height: 10%;font-weight: 400;">{{ $rfq->client->client_name ?? ' ' }} </p>
+                        <p style="font-size:5pt;font-family: Calibri,sans-serif;margin-top: 0;widows: 1;line-height: 180%;font-weight: 400;"><strong style="font-weight: bolder;">Ref No: TE-{{ $cli->short_code }}-RFQ{{ preg_replace('/[^0-9]/', '', $rfq->refrence_no ?? '') }} </strong></p><br/>
                         <div class="line" style="width: 170px;height: 0.7px;background-color: #000;float:right;margin-top:-27px;margin-right:-10px;"></div>
-                        <img src="https://scm.tagenergygroup.net/img/price.png" width="125" style="margin-top:-8.5px;vertical-align: middle;border-style: none;page-break-inside: avoid;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;margin-right:-2px;" alt="Certification">
+                        <img src="https://scm.tagenergygroup.net/img/price.png" width="125" style="margin-top:-15px;vertical-align: middle;border-style: none;page-break-inside: avoid;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;margin-right:-2px;" alt="Certification">
                         <br>
-                        <p style="font-size: 4.8pt;margin-top: -8px;color:black !important;">{{ date("l, d F Y") }} </p>
+                        <p style="font-size:5pt;margin-top: -8px;color:black !important;">{{ date("l, d F Y") }} </p>
                     </div>
+                </div>
 
-                </div><br/>
-                <div class="row gutters" >
+                <div class="row gutters" style="margin-top:-15px;">
 
-                    <div class="col-lg-12 col-md-12 col-sm-12" style="font-size: 4.5pt; margin-top:-100px;margin-left:30px;padding-right: 15px;">
-                        <div class="table-responsive" style="font-size: 5pt;font-family: Calibri, sans-serif; display: block;overflow-x: auto;-webkit-overflow-scrolling: touch; margin-bottom:4px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12" style="margin-left:30px; padding-right: 15px;">
+                        <div class="table-responsive" style="display: block;overflow-x: auto; margin-bottom:4px;">
 
-                            <table class="tablex" style="font-size: 5pt !important; width:300px !important;font-family: Calibri, sans-serif;margin-bottom:opx;color: #000000;background: #ffffff;
+                            <table class="tablex" style="font-size: 1.5pt; font-family: Calibri, sans-serif; margin-bottom:opx;color: #000000;background: #ffffff;
                                 border: 0;-webkit-print-color-adjust: exact;margin-left:15px;">
-                                <thead class="text-white" style="font-size: 5pt;font-family: Calibri, sans-serif;color: #000000 !important;">
-                                    <tr style="font-size: 5pt;font-family: Calibri, sans-serif;page-break-inside: auto;">
-                                        <th class="" style="padding-top: 3px;width: 25px;background-color: #C4D79B !important;font-family: Calibri, sans-serif;
-                                            font-size: 5pt;
-                                            vertical-align: top;font-weight: 600;border: 0; text-align:center;">
-                                            <strong style="font-weight: bolder; color: #000000;" >Item </strong>
+                                <thead class="text-white" style=" color: #000;">
+                                    <tr style="page-break-inside: auto;">
+                                        <th style="width: 5%; background-color: #C4D79B; vertical-align: top; font-weight: 600; 
+                                            border: 0; text-align: center; padding-top: 3px;">
+                                            <p style="color: #000; font-family: Calibri, sans-serif; font-weight:bold; vertical-align:top;">Item</p>
                                         </th>
-                                        <th class="" style="padding-top: 3px;width: 265px; max-width: 265px !important; color: black;background-color: #F0F3F4 !important;text-align: left;
-                                            font-family: Calibri, sans-serif;font-size: 5pt;
-                                            padding: .15rem 0rem .10rem 0rem;vertical-align: top;font-weight: 600;
-                                            border: 0;">
-                                            <b style="font-weight: bolder; color: black;"> Description  </b>
+                                        <th style="width: 63%; max-width: 265px; background-color: #F0F3F4; text-align: left; 
+                                            padding: .15rem 0 .10rem 0; vertical-align: top; font-weight: 600; border: 0; padding-top: 3px;">
+                                          <p style="color: #000; font-family: Calibri, sans-serif; font-weight:bold; vertical-align:top;">Description</p>
                                         </th>
-
-                                        <th class="" style="padding-top: 3px;text-align: center;color: black;background-color: #F0F3F4 !important;font-family: Calibri, sans-serif;font-size: 5pt;
-                                            padding: .15rem 0rem .10rem 0px; width: 60px;
-                                            vertical-align: top;font-weight: 600;border: 0;">
-                                            <b style="font-weight: bolder; color: black;">UOM </b>
+                                        <th style="width: 8%; background-color: #F0F3F4; text-align: center; padding: .15rem 0 .10rem 0; 
+                                            vertical-align: top; font-weight: 600; border: 0; padding-top: 3px;">
+                                            <p style="color: #000; font-family: Calibri, sans-serif; font-weight:bold; vertical-align:top;">UOM</p>
                                         </th>
-
-                                        <th class="" style="padding-top: 3px;text-align: center;color: black;background-color: #F0F3F4 !important;font-family: Calibri, sans-serif;font-size: 5pt;
-                                            padding: .15rem 0rem .10rem 0rem;
-                                            vertical-align: top;font-weight: 600;border: 0;width: 38px;">
-                                            <b style="font-weight: bolder; color: black;"> Qty </b>
+                                        <th style="width: 6%; background-color: #F0F3F4; text-align: center; padding: .15rem 0 .10rem 0; 
+                                            vertical-align: top; font-weight: 600; border: 0; padding-top: 3px;">
+                                            <p style="color: #000; font-family: Calibri, sans-serif; font-weight:bold; vertical-align:top;">Qty</p>
                                         </th>
-
-                                        <th style="padding-top: 3px;text-align: center;color: black;background-color: #F0F3F4 !important;font-family: Calibri, sans-serif;font-size: 5pt;width: 58px;
-                                            padding: .15rem 0rem .10rem 0rem;
-                                            vertical-align: top;font-weight: 600;border: 0;"><b style="font-weight: bolder;"> Unit Price
-                                            <br><span style="text-align: center; color: black;"> ({{ $rfq->currency ?? 'USD' }})  </span>
+                                        <th style="width: 8%; background-color: #F0F3F4; text-align: center;padding: .15rem 0 .10rem 0; 
+                                            vertical-align: top; font-weight: 600; border: 0; padding-top: 3px;">
+                                            <p style="color: #000; font-family: Calibri, sans-serif; font-weight:bold; vertical-align:top; line-height:1.3;">Unit Price
+                                            <br>({{ $rfq->currency ?? 'USD' }})</p>
                                         </th>
-
-                                        <th style="padding-top: 3px;text-align: center;color: black;background-color: #F0F3F4 !important;font-family: Calibri, sans-serif;font-size: 5pt;width: 58px;
-                                            padding: .15rem 0rem .10rem 0rem;
-                                            vertical-align: top;font-weight: 600;border: 0;">
-                                            <b style="font-weight: bolder; color: black;"> Total Amount
-                                            <br><span style="text-align: center; color: black;">  ({{ $rfq->currency ?? 'USD' }})</span></b>
+                                        <th style="width: 10%; background-color: #F0F3F4; text-align: center; padding: .15rem 0 .10rem 0; 
+                                            vertical-align: top; font-weight: 600; border: 0; padding-top: 3px;">
+                                            <p style="color: #000; font-family: Calibri, sans-serif; font-weight:bold; vertical-align:top; line-height:1.3;">Total Amount
+                                            <br> ({{ $rfq->currency ?? 'USD' }})</p>
                                         </th>
                                     </tr>
-
                                 </thead>
-                                <tbody style="font-size: 5pt;font-family: Calibri, sans-serif;">
+
+
+                                <tbody style="font-family: Calibri, sans-serif;">
 
                                     <?php $num =1; $wej = array(); ?>
                                     @foreach ($line_items as $items)
@@ -144,25 +129,23 @@ $result = json_decode($cli_title, true);
                                             $percent = $items->unit_frieght;
                                             $unitMargin = (($percent/100) * $items->unit_cost);
                                         @endphp
-                                        <tr style="font-size: 5.0pt; font-family: Calibri, sans-serif; font-weight: 400; border: none !important; margin-bottom:0px;page-break-inside: auto;">
-                                            <td class="list" style="vertical-align: top;padding-top: 2px; background-color: #EBF1DE !important; text-align: center; font-family: Calibri, sans-serif;
-                                                font-size: 5.0pt;">
-                                                {{-- <b>{{ $num }}</b> --}}
-                                                <p style="font-size: 9.0pt; font-family: Calibri, sans-serif;"> <b>{{ $items->item_serialno }} </b></p>
+                                        <tr style="font-family: Calibri, sans-serif; font-weight: 400; border: none !important; margin-bottom:0px;page-break-inside: auto;">
+                                            <td class="list" style="vertical-align: top;padding-top: 2px; background-color: #EBF1DE !important; text-align: center; font-family: Calibri, sans-serif;">
+                                                <p style="font-family: Calibri, sans-serif;"> <b>{{ $items->item_serialno }} </b></p>
                                             </td>
-                                            <td style="padding-top: 2px;">
+                                            <td style="padding-top: 2px; line-height:1.3;">
                                                 
-                                        @if($items->mesc_code != '' OR $items->mesc_code != 'N/A' OR $items->mesc_code != '0')
+                                        @if($items->mesc_code != '' AND $items->mesc_code AND 'N/A' OR $items->mesc_code != "0")
                                         
-                                            <p style="font-size: 9.0pt; font-family: Calibri, sans-serif;"> <b>PRODUCT NO: {{ $items->mesc_code }} </b></p><br/>
+                                            <p style="font-family: Calibri, sans-serif;"> <b>PRODUCT NO: {{ $items->mesc_code }} </b></p><br/>
                                             
                                         @endif
-                                                <p style="font-size: 9.0pt; font-weight: 400; text-align: justify;">
+                                                <p style="font-weight: 400; text-align: justify;">
                                                     {!! $items->item_description ?? 'N/A' !!}
                                                 </p>
                                             </td>
 
-                                                <td style="font-weight: 400; padding-top: 2px; text-align: center; font-size: 9.0pt; font-family: Calibri, sans-serif; vertical-align:top;"><b> {{$items->uom ?? ''}} </b></td>
+                                                <td style="font-weight: 400; padding-top: 2px; text-align: center;font-family: Calibri, sans-serif; vertical-align:top;"><b> {{$items->uom ?? ''}} </b></td>
                                             
                                             @php
                                                 $unit_cost = $items->unit_cost;
@@ -170,17 +153,20 @@ $result = json_decode($cli_title, true);
                                                 $unitMargin = ($percent * $items->unit_cost);
                                             @endphp
 
-                                            <td style="font-weight: 400; padding-top: 2px; text-align: center; font-size: 9.0pt; font-family: Calibri, sans-serif; vertical-align:top;"><b> {{$items->quantity ?? 0}} </b></td>
+                                            <td style="font-weight: 400; padding-top: 2px; text-align: center; font-family: Calibri, sans-serif; vertical-align:top;"><b> {{$items->quantity ?? 0}} </b></td>
 
-                                            <td style="font-weight: 400; padding-top: 2px; font-size: 9.0pt; font-family: Calibri, sans-serif; vertical-align:top;" align="center"><b> {{number_format($items->unit_quote, 2) ?? 0}}</b> </td>
+                                            <td style="font-weight: 400; padding-top: 2px; font-family: Calibri, sans-serif; vertical-align:top;" align="center"><b> {{number_format($items->unit_quote, 2) ?? 0}}</b> </td>
 
-                                            <td style="font-weight: 400; padding-top: 2px; font-size: 9.0pt; font-family: Calibri, sans-serif; vertical-align:top;" align="center"><b> {{ number_format($items->total_quote, 2) }} </b></td>
-                                            @php $tot = $items->quantity * $items->unit_cost;
-                                            array_push($wej, $tot);  @endphp
-                                        </tr><?php $num++; ?>
+                                            <td style="font-weight: 400; padding-top: 2px; font-family: Calibri, sans-serif; vertical-align:top;" align="center"><b> {{ number_format($items->total_quote, 2) }} </b></td>
+                                            @php 
+                                            $tot = $items->quantity * $items->unit_cost;
+                                            array_push($wej, $tot);  
+                                            @endphp
+                                        </tr>
+                                    <?php $num++; ?>
                                     @endforeach
 
-                                    <tr style="font-size: 5pt; font-family: Calibri, sans-serif; margin-bottom:0px;">
+                                    <tr style="font-family: Calibri, sans-serif; margin-bottom:0px;">
 
                                         <td colspan="2" style="background-color:white; padding-top: 6px; border:#000000; font-size: 9.0pt; font-family: Calibri, sans-serif;">
                                         
@@ -189,18 +175,18 @@ $result = json_decode($cli_title, true);
                                         @php $sumTotalQuote = sumTotalQuote($rfq->rfq_id); $ship=0; @endphp
                                         <td style="background-color:white;"> </td> <td style="background-color:white;"> </td>
 
-                                        <td colspan="3" style="background-color:white; font-size: 9.0pt; font-family: Calibri, sans-serif; margin-left: 96px;" align="left">
-                                            <p style="border-bottom: ridge; border-bottom-color: #000000; border-top: ridge;
-                                                border-top-color: #000000; text-align: center; width: 100.5%; font-size: 9.0pt; font-family: Calibri, sans-serif;margin-top:2px;">
-                                                <strong> Sub total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <span style="text-align: right;"> {{ number_format($sumTotalQuote,2 )  }}</strong>
+                                        <td colspan="3" style="background-color:white; font-family: Calibri, sans-serif; margin-left: 96px;" align="left">
+                                            <p style="border-bottom: solid; border-bottom-color: #000000; border-top: solid; border-width:1px !important; white-space:nowrap !important;
+                                                border-top-color: #000000; text-align: center; width: 100.5%; font-family: Calibri, sans-serif;margin-top:2px;">
+                                                <strong> Sub total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <span style="text-align: right;"> {{ number_format($sumTotalQuote,2 )  }} </span></strong>
                                             </p>
                                             
-                                            <p style="text-align: center; width: 105%; font-size: 9.0pt; font-family: Calibri, sans-serif;">
-                                                <b> &nbsp;Total </b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <strong ><span style="text-align: right;">{{ number_format($sumTotalQuote + $ship, 2) ?? 0 }} </strong>
+                                            <p style="text-align: center; width: 105%; font-family: Calibri, sans-serif;">
+                                                <b> &nbsp;Total </b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <strong ><span style="text-align: right;">{{ number_format($sumTotalQuote + $ship, 2) ?? 0 }}</span> </strong>
                                             </p>
-                                            <p style="border-bottom: ridge; border-bottom-color: #000000; border-top: ridge; border-top-color: #000000; width: 100.5%;"></p><br/>
+                                            <p style="border-bottom: double; border-bottom-color: #000000; border-top: single; border-top-color: #000000; width: 100.5%;"></p><br/>
                                             <p style="border-bottom: double; border-bottom-color: #000000; border-top-color: #000000; width: 100.5%; margin-bottom:0px;"></p><br/>
                                         </td>
                                     </tr>
@@ -208,27 +194,27 @@ $result = json_decode($cli_title, true);
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9" style="margin-top:-58px;">
+                        <div class="col-xl-8 col-lg-8col-md-8 col-sm-8" style="margin-top:-45px;">
                         
                             
-                            <p style="font-size: 5pt!important; font-family: Calibri, sans-serif; margin-left:0px; margin-top:0px;"><b style="color:red">
+                            <p style="font-size: 5pt!important; font-family: Calibri, sans-serif; margin-left:0px; margin-top:0px; color:red; font-weight:bold; line-height:11px;">
                                 @foreach (explode(';', $rfq->estimated_package_weight ?? '') as $est_weight)
                                 @if(preg_replace('/\D/','',$est_weight) != "")
-                                <b>ESTIMATED PACKAGED WEIGHT: {{ trim($est_weight) }}</b><br/>
+                                ESTIMATED PACKAGED WEIGHT: {{ trim($est_weight) }}<br/>
                                 @endif
                                 @endforeach
                                 @foreach (explode(';', $rfq->estimated_package_dimension ?? '') as $est_dim)
                                 @if(preg_replace('/\D/','',$est_dim) != "")
-                                <b>ESTIMATED PACKAGED DIMENSION: {{ trim($est_dim) }}</b><br/>
+                                ESTIMATED PACKAGED DIMENSION: {{ trim($est_dim) }}<br/>
                                 @endif
                                 @endforeach
                                 @foreach (explode(';', $rfq->hs_codes ?? '') as $hs_code)
                                 @if($hs_code != 'N/A')
-                                <b>HS CODE: {{ trim($hs_code) }}</b><br/>
+                                HS CODE: {{ trim($hs_code) }}<br/>
                                 @endif
                                 @endforeach
                                 @if($rfq->certificates_offered != NULL || $rfq->certificates_offered =="")
-                                    <b>CERTIFICATE OFFERED: {{strtoupper($rfq->certificates_offered)}}</b>
+                                    CERTIFICATE OFFERED: {{strtoupper($rfq->certificates_offered)}}
                                 @endif
                             </p>
                             @if($rfq->technical_note != NULL)
@@ -251,7 +237,7 @@ $result = json_decode($cli_title, true);
                         $sn = 1;
                         @endphp
                         <div style="page-break-inside: avoid;">
-                            <p style="font-size: 5pt !important; font-family: Calibri, sans-serif !important; margin-left:0px; font-weight:400;"><b style="color:red;">Notes to Pricing: </b><br/>
+                            <p style="font-size: 5pt !important; font-family: Calibri, sans-serif !important; margin-left:0px; font-weight:400; line-height:1.3; white-space:nowrap;"><b style="color:red;">Notes to Pricing: </b><br/>
                             {{ $sn }}. Delivery: {{ $rfq->estimated_delivery_time ?? '17-19 weeks' }}.<br/>
                             @php $sn += 1 @endphp
                             
@@ -276,6 +262,14 @@ $result = json_decode($cli_title, true);
                             {{ $sn }}. FORCE MAJEURE: On notification of any event with impact on delivery schedule, We will extend delivery schedule.<br/>
                             @php $sn += 1 @endphp
                             
+                            @if($rfq->incoterm != 'DDP')
+                                {{ $sn }}. Storage Charges: Storage fees at 1% of the total invoice value will apply (weekly) for all orders left at OEM's facility for more than 2 weeks.
+                                <br/>
+                                The storage charges shall in no case exceed 10% (ten percent) of the TOTAL INVOICE AMOUNT.
+                                <br/>
+                            @php $sn += 1 @endphp
+                            @endif
+                            
                             {{ $sn }}. Pricing: Prices quoted are in {{ $rfq->currency ?? 'USD' }} <br/>
                             @php $sn += 1 @endphp
                             
@@ -291,27 +285,45 @@ $result = json_decode($cli_title, true);
                             {{ $sn }}. Pricing is exclusive of VAT.
                                 <br/>
                             @php $sn += 1 @endphp
-                                
-                            {{ $sn }}. Payment Term: {{ $rfq->payment_term ?? '' }} <br/>
+                            <?php $pay_count = 1; ?>    
+                            {{ $sn }}. Payment Term: @foreach (explode(';', $rfq->payment_term ?? '') as $payment_term)
+                                                    @if(preg_replace('/\D/','',$payment_term) != "")
+                                                    @if($pay_count > 1)
+                                                    <span style="margin-left:53px;">{{ trim($payment_term) }}</span><br/>
+                                                    @else
+                                                    {{ trim($payment_term) }}<br/>
+                                                    @endif
+                                                    <?php $pay_count++ ?>
+                                                    @endif
+                                                    @endforeach
+                            <br/>
+                            <!--{{ $rfq->payment_term ?? '' }} <br/>-->
                             @php $sn += 1 @endphp
+                            
+                            @if($rfq->incoterm != 'DDP')
+                               <span style="font-weight:bold;"> {{ $sn }}. Client is to provide evidence of VAT remittance to the Tax authority before order is processed.</span>
+                                <br/>
+                            @php $sn += 1 @endphp
+                            @endif
                             
                             @if($rfq->vendor_id == '167')
                             {{ $sn }}. Goods will be cleared in South Africa by Bosch Authorised Export Agent. <br/><br/>
                             @else
                             <br/>
                             @endif
+                            
                             <b>Best Regards </b> <br/>
                             </p> 
                                 @foreach (getLogo($rfq->company_id) as $item)
                                     @php $logsign = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->signature; @endphp
-                                    <img src="{{ $logsign }}" width="80" style="margin-left:0px; margin-top:5px;padding-bottom:10px;" alt="SCM Solutions">
+                                    <img src="{{ $logsign }}" width="80" style="margin-left:0px; margin-top:5px;padding-bottom:10px;" alt="{{config('app.name')}}">
                                 @endforeach
                              <br/><br/>
                             <div class="line" style="width: 100px;height: 0.7px;background-color: #000;float:left;margin-top:-27px;margin-right:-10px;"></div>
                             <div style="margin-top:-25px;">
                             <p style="margin-top:0px; margin-left:0px; color:black; font-size:5pt !important;">
                                 @foreach (emps($rfq->employee_id) as $emp)
-                                    @php 
+                                    @php
                                         $email = $emp->email;
                                         $userDe = userEmail($email);
                                     @endphp

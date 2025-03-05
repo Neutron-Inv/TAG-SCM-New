@@ -18,7 +18,12 @@
         </div>
         <!-- Page header end -->
 
-
+<style>
+    .note-toolbar{
+        position:relative;
+        width:100% !important;
+    }
+</style>
         <!-- Content wrapper start -->
         <div class="content-wrapper">
             <div class="row gutters">
@@ -37,7 +42,7 @@
 
                                             <div class="card-body">
                                                 <div class="card-header">
-                                                    <div class="card-title">Please fill the below for to add line items </div>
+                                                    <div class="card-title">Please fill the below form to add line items </div>
                                                 </div>
                                                 <div class="row gutters">
                                                     <input type="hidden" name="rfq_id" value="{{ $rfq->rfq_id }}">
@@ -240,6 +245,7 @@
                                     </div>
                                     <div class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-12" align="right">
                                         <div class="form-group">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#UploadLineItems">Upload LineItems</button>    
                                             <button class="btn btn-primary" type="submit" title="Click the button to Edit the Line Item">Create The Line Item</button>
                                         </div>
                                     </div>
@@ -257,5 +263,47 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Modal for Uploading Document for Line Items-->
+        <div class="modal fade bd-example-modal-lg" id="UploadLineItems" tabindex="-1" role="dialog" aria-labelledby="customModalTwoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customModalTwoLabel">Upload LineItem Document</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{route('line.upload')}}" class="" method="POST" enctype="multipart/form-data">
+                {{ csrf_field() }}
+                <div class="modal-body">
+                    <div class="row gutters">
+                         <div class="col-md-12 col-sm-12 col-12">
+                            <label for="additional-file" class="col-form-label">Line Items File</label>
+                            <input type="file" class="form-control" id="additional-file" name="document" accept=".csv, .xlsx, .xls">
+                            <input type="hidden" name="rfq_id" value="{{$rfq->rfq_id}}">
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-12">
+                            <h5 style="margin-top:10px;">Instructions</h5>
+                            <ol>
+                                <li>Download the <a href="/storage/app/public/templates/Import_Line_Items.xlsx">template</a> file to use for uploading data.</li>
+                                <li>Enter your data in each column under the provided headers. <span style="color:red;">**Do not delete or modify the headers.**</span></li>
+                                <li>Save your completed file on your device.</li>
+                                <li>Upload the saved file here.</li>
+                            </ol>
+                            <p>Acceptable formats are: <strong>CSV, XLSX, XLS</strong> (Excel)</p>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer custom d-flex justify-content-end align-items-center">
+                    <button type="button" class="btn btn-link danger mr-3" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-link success mr-2">Upload RFQ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @endsection

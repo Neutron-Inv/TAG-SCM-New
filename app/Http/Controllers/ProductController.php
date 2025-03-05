@@ -17,7 +17,7 @@ class ProductController extends Controller
         // set the model
         $this->model = new ProductRepository($product);
         $this->middleware('auth');
-        $this->middleware(['role:SuperAdmin|Employer|HOD']);
+        $this->middleware(['role:SuperAdmin|Employer|HOD|Admin']);
     }
     /**
      * Display a listing of the resource.

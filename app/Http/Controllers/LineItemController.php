@@ -16,6 +16,7 @@ use App\Repositories\LineItemRepository;
 use Illuminate\Support\Facades\Gate;
 use Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Http\UploadedFile;
 use PDF; use DB;
 class LineItemController extends Controller
@@ -720,6 +721,39 @@ class LineItemController extends Controller
         
         return redirect()->back()->with(['success' => "Line Items Uploaded Successfully "]);
     }
+    
+        public function updateLineitemsCost(Request $request)
+        {
+            
+            // Validate the uploaded document
+            $request->validate([
+                'document' => 'required|file|mimes:xlsx,xls,csv,txt',
+                'rfq_id' => 'required'
+            ]);
+            
+            // Get the file path
+            $file = $request->file('document')->getPathname();
+            $rfq_id = $request->input('rfq_id');
+            // Check file type
+            $extension = $request->file('document')->extension();
+            //dd( $extension);
+            if ($extension == 'csv' OR $extension == 'txt') {
+                $lineItems = $this->parseCsvToJsonCost($file);
+            } else {
+                $lineItems = $this->parseExcelToJsonCost($file);
+            }
+            
+            //dd($lineItems);
+            // Save extracted line items directly to the database
+            $this->saveLineItemsCost($lineItems, $rfq_id);
+    
+            // return response()->json([
+            //     'success' => true,
+            //     'line_items' => $lineItems,
+            // ]);
+            
+            return redirect()->back()->with(['success' => "Line Items Uploaded Successfully "]);
+        }
 
     /**
      * Parse the Excel document and extract line items.
@@ -738,7 +772,7 @@ class LineItemController extends Controller
                 'item_name' => $row[1],
                 'mesc_code' => $row[2],
                 'description' => trim($row[3]),
-                'quantity' => (int)$row[4],
+                'quantity' => $row[4],
                 'uom' => $row[5],
             ];
         }
@@ -766,7 +800,7 @@ class LineItemController extends Controller
                 'item_name' => $row[1],
                 'mesc_code' => $row[2],
                 'description' => trim($row[3]),
-                'quantity' => (int)$row[4],
+                'quantity' => $row[4],
                 'uom' => $row[5],
             ];
         }
@@ -777,6 +811,65 @@ class LineItemController extends Controller
 
         return $lineItems;
     }
+
+
+    protected function parseExcelToJsonCost($filePath)
+    {
+        // Read the Excel file using Maatwebsite\Excel
+        $data = Excel::toArray([], $filePath, null, \Maatwebsite\Excel\Excel::XLSX);
+
+        $lineItems = [];
+        foreach ($data[0] as $row) {
+            // Assuming Excel columns map as follows:
+            // 0 - Item Serial No, 1 - MESC Code, 2 - Description, 3 - Date, 4 - Quantity
+            $lineItems[] = [
+                'item_serialno' => $row[0],
+                'item_name' => $row[1],
+                'mesc_code' => $row[2],
+                'description' => trim($row[3]),
+                'quantity' => (int)$row[4],
+                'uom' => $row[5],
+                'unit_cost' => $row[6],
+            ];
+        }
+        //dd($lineItems);
+        return $lineItems;
+    }
+
+    /**
+     * Parse the CSV document and extract line items.
+     */
+    protected function parseCsvToJsonCost($filePath)
+    {
+        // Open the CSV file
+        $file = fopen($filePath, 'r');
+
+        // Initialize an empty array to hold the line items
+        $lineItems = [];
+
+        // Read the file line by line
+        while (($row = fgetcsv($file)) !== false) {
+            // Assuming CSV columns map as follows:
+            // 0 - Item Serial No, 1 - MESC Code, 2 - Description, 3 - Date, 4 - Quantity
+            $lineItems[] = [
+                'item_serialno' => $row[0],
+                'item_name' => $row[1],
+                'mesc_code' => $row[2],
+                'description' => trim($row[3]),
+                'quantity' => (int)$row[4],
+                'uom' => $row[5],
+                'unit_cost' => $row[6],
+            ];
+        }
+        
+        //dd($lineItems);
+        // Close the file after processing
+        fclose($file);
+
+        return $lineItems;
+    }
+
+
 
     /**
      * Save extracted line items to the database.
@@ -797,13 +890,9 @@ class LineItemController extends Controller
                 $item['item_serialno'] = $lineItem->item_serialno + 1;
             }
             
-            $uom_retrieval = RfqMeasurement::where('unit_name', 'LIKE', '%' . $item['uom'] . '%')->first();
             
-            if(isset($uom_retrieval)){
-                $uom = $uom_retrieval->unit_id;
-            }else{
                 $uom = $item['uom'];
-            }
+
             // Assuming you have a LineItem model with a 'fillable' property for these fields
             LineItem::create([
                 'client_id' => $rfq->client_id,
@@ -820,5 +909,81 @@ class LineItemController extends Controller
         }
     }
     
+    protected function saveLineItemsCost(array $lineItems, $rfq_id)
+    {
+        
+        foreach ($lineItems as $item) {
+            // Ensure the required data is present
+            if (!empty($item['item_serialno']) && isset($item['unit_cost'])) {
+                // Locate the specific line item
+                $lineItem = LineItem::where('rfq_id', $rfq_id)
+                    ->where('item_serialno', $item['item_serialno'])
+                    ->first();
+    
+                if ($lineItem) {
+                    $quantity = $lineItem->quantity;
+                    
+                    // Update the unit_cost
+                    $lineItem->unit_cost = $item['unit_cost'];
+                    $lineItem->unit_price = 0;
+                    $lineItem->total_price = 0;
+                    $lineItem->unit_quote = $item['unit_cost'];
+                    $lineItem->total_quote = $quantity * $item['unit_cost'];
+                    $lineItem->unit_margin = 0;
+                    $lineItem->total_margin = 0;
+                    $lineItem->unit_cost_naira = 0;
+                    $lineItem->total_cost_naira = 0;
+                    $lineItem->total_cost_naira = 0;
+                    // Fetch the quantity from the DB
+                    
+     
+                    // Calculate and update the total cost
+                    $lineItem->total_cost = $quantity * $item['unit_cost'];
+                    //dd($lineItem);
+                    // Save the updated line item
+                    $lineItem->save();
+                }
+            }
+        }
+    }
+    
+    
+    public function exportLineItemsTemplate($rfq_id)
+    {
+        $lineItems = LineItem::where('rfq_id', $rfq_id)->get(['item_serialno', 'item_name', 'mesc_code', 'item_description', 'quantity', 'uom', DB::raw("'' as unit_cost")]);
+
+        // Convert line items to an array with headers
+        $data = $lineItems->map(function ($item) {
+            return [
+                'item_serialno' => $item->item_serialno,
+                'item_name' => $item->item_name,
+                'mesc_code' => $item->mesc_code,
+                'description' => strip_tags($item->item_description),
+                'quantity' => $item->quantity,
+                'uom' => $item->uom,
+                'unit_cost' => '', // Keep empty
+            ];
+        });
+
+        $exportData = collect([
+            ['Serial No', 'Item Name', 'MESC Code', 'Description', 'Quantity', 'UOM', 'Unit Cost'], // Headers
+            ...$data->toArray(),
+        ]);
+
+        // Return Excel file
+        return Excel::download(new class($exportData) implements \Maatwebsite\Excel\Concerns\FromCollection {
+            private $exportData;
+
+            public function __construct($exportData)
+            {
+                $this->exportData = $exportData;
+            }
+
+            public function collection()
+            {
+                return collect($this->exportData);
+            }
+        }, 'line_items.xlsx');
+    }
      
 }

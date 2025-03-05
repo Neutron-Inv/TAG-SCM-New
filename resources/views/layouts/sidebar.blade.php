@@ -1,4 +1,4 @@
-<aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0" style="position: relative; width:96.5%; margin:auto;">
+<aside id="layout-menu" class="layout-menu-horizontal menu-horizontal menu bg-menu-theme flex-grow-0" style="position: relative; width:96.5%; margin: 0 auto;">
     <div class="container-xxl d-flex">
         <ul class="menu-inner">
         <li class="menu-item">
@@ -214,7 +214,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a class="menu-link" href="{{ route('po.report') }}">
+                        <a class="menu-link" href="{{ route('po.reports') }}">
                             <i class="icon-shopping_cart nav-icon"></i>
                             PO Reports
                         </a>

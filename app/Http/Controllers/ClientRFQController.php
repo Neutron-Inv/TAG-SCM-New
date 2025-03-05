@@ -17,6 +17,7 @@ use PHPExcel_Style_Border;
 use PDF; 
 use Dompdf\FontMetrics;
 use Illuminate\Http\UploadedFile;
+use Webklex\IMAP\Facades\Client;
 use App\Notifications\{EmployerRFQCreated, RFQAcknowledge, ShipperEmail};
 use App\Mail\{Quotation, ApproveBreakdown, Submission, QuotationTagEnergy, QuotationTagLines, QuotationEnabledSolution, QuotationEnabledContractors, QuotationTestCompany, ClientContactRFQCreated, QuoteRequest};
 
@@ -361,12 +362,20 @@ class ClientRFQController extends Controller
             {
                 return strtoupper(substr(md5(uniqid(rand())), 0, (-32 + $length)));
             }
-
+            
+            $cli = Clients::where('client_id', $client_id)->first();
+            
+                    
+                $new_rfq = ClientRfq::where('company_id', $cli->company_id)->count();
+                $new_ref = $new_rfq + 1;
+                if($cli->company_id == 2){
+                $new_ref = $new_ref + 366;
+                }
+                $new_ref = str_pad($new_ref, 4, '0', STR_PAD_LEFT);
+            
 
             $former_number = RfqNumbers::max('numbers');
             $new_rfq = ClientRfq::count();
-            $new_ref = $new_rfq + 1;
-            $cli = Clients::where('client_id', $client_id)->first();
             $date = date('dmy'); 
             $refrence_number = ($cli->short_code.''.$date.$new_ref);
 
@@ -583,7 +592,7 @@ class ClientRFQController extends Controller
             $ua = [];
             $ua['email'] = $ut;
             $split = $cut = explode("@", $ut);
-            $ua['name'] = strtoupper(str_replace(".","",$split[0]));
+            $ua['name'] = ucwords(str_replace("."," ",$split[0]));
             $users[$key] = (object)$ua;
         }
         try{
@@ -620,7 +629,7 @@ class ClientRFQController extends Controller
             }
             $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tq' => $tq, 'shi' => $shi, 'shiname' => $shiname, 'tempFilePath' => $tempFilePath, 'tempFileDirs' => $tempFileDirs, 'fileNames' => $fileNames, 'rfqcode' => $rfqcode, 'extra_note' => $extra_note, 'client_name' => $client_name, 'assigned' => $assigned];
             $when = now()->addMinutes(1);
-            Mail::to($rec_mail)->cc(str_replace(" ","",$users))->send( new Submission ($data));        
+            Mail::to($rec_mail)->cc($users)->send( new Submission ($data));        
             if($extra_note != ""){
 	        $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Sent Request Approval to '. $rec_mail . ' with an extra note stating: '.$extra_note.' and changed the status to Awaiting Approval <br/>'.$rfq->note;
             }else{
@@ -641,7 +650,7 @@ class ClientRFQController extends Controller
                     unlink($tempFileDir);
                 }
             }
-            return redirect()->back()->with("success", "You have sent the approval Successfully.");
+            return redirect()->back()->with("success", "You have Requested approval Successfully.");
         }catch(\Exception $e){
 
             return redirect()->back()->with("error", "Request Approval not sent, ". $e->getMessage());
@@ -684,7 +693,7 @@ class ClientRFQController extends Controller
             	   $ua = [];
                    $ua['email'] = $ut;
                    $split = $cut = explode("@", $ut);
-                   $ua['name'] = strtoupper(str_replace(".","",$split[0]));
+                   $ua['name'] = ucwords(str_replace("."," ",$split[0]));
                    $users[$key] = (object)$ua;
                 }
                 try{
@@ -746,9 +755,9 @@ class ClientRFQController extends Controller
                     
                     
                     if(empty($bcc)){
-                    Mail::to($rec_mail)->cc(str_replace(" ","",$users))->send( new Quotation ($data));               
+                    Mail::to($rec_mail)->cc($users)->send( new Quotation ($data));               
                     }else{
-                    Mail::to($rec_mail)->cc(str_replace(" ","",$users))->bcc($bcc)->send( new Quotation ($data));
+                    Mail::to($rec_mail)->cc($users)->bcc($bcc)->send( new Quotation ($data));
                     }
                     $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Sent Quotation  to '. $rec_mail . ' and changed the status to Quotation Submitted <br/><br/>'.$rfq->note;
                     DB::table('client_rfqs')->where(['rfq_id' => $rfq_id])->update(['note' => $newNote, 'status' => 'Quotation Submitted']);
@@ -857,7 +866,7 @@ class ClientRFQController extends Controller
                 Mail::to($emp->email)->cc(['contact@tagenergygroup.net', 'sales@tagenergygroup.net'])->send( new ApproveBreakdown ($data));   
                 return redirect()->route('rfq.edit', [$refrence_no])->with([
                     'refrence_no' => $refrence_no,
-                    'success' => 'You have approved the breakdown for approval successfully',
+                    'success' => 'You have approved the breakdown successfully',
                 ]);
             }else{
                 return redirect()->back()->with([
@@ -922,7 +931,7 @@ class ClientRFQController extends Controller
                 Mail::to($emp->email)->cc(['contact@tagenergygroup.net', 'sales@tagenergygroup.net'])->send( new ApproveBreakdown ($data));   
                 return redirect()->route('rfq.edit', [$refrence_no])->with([
                     'refrence_no' => $refrence_no,
-                    'success' => 'You have Not Approved the breakdown successfully',
+                    'success' => 'You have  Disapproved the breakdown successfully',
                 ]);
             }else{
                 return redirect()->back()->with([
@@ -1007,44 +1016,54 @@ class ClientRFQController extends Controller
         $date = date('dmy');
         //$former_number = RfqNumbers::max('numbers')->first();
         //$new_ref = $former_number + 1;
-        $new_rfq = ClientRfq::count();
-        $new_ref = $new_rfq + 1;
-        if(RfqNumbers::where(['numbers' => $new_ref, 'rfq' => 'RFQ'])->exists()){
-
-            // $bring = RfqNumbers::where(['numbers' => $date, 'rfq' => 'RFQ'])->orderBy('id', 'desc')->first();
-            // $new = $bring->rfq_number + 1;
-            // $numbs = new RfqNumbers([
-            //     "numbers" => $new_rfq,
-            //     "rfq" => 'RFQ',
-            //     "rfq_number" => $new,
-            // ]);
-            // $numbs->save();
-        }else{
-            $new = 1;
-            $numbs = new RfqNumbers([
-                "numbers" => $new_ref,
-                "rfq" => 'RFQ',
-                "rfq_number" => $new,
-            ]);$numbs->save();
-        }
-
-        if(Str::length($new) < 2){
-            $conc = '00'.$new;
-        }elseif(Str::length($new) == 2){
-            $conc = '0'.$new;
-        }else{
-            $conc = $new;
+        
+        $new_rfq = ClientRfq::where('company_id', $request->input('company_id'))->count();
+                $new_ref = $new_rfq + 1;
+                if($request->input('company_id') == 2){
+                $new_ref = $new_ref + 366;
+                }
+                $new_ref = str_pad($new_ref, 4, '0', STR_PAD_LEFT);
+        
+        if($request->input('company_id') == 1 || $request->input('company_id') == 2){
+            
+            if(RfqNumbers::where(['numbers' => $new_ref, 'rfq' => 'RFQ'])->exists()){
+    
+                // $bring = RfqNumbers::where(['numbers' => $date, 'rfq' => 'RFQ'])->orderBy('id', 'desc')->first();
+                // $new = $bring->rfq_number + 1;
+                // $numbs = new RfqNumbers([
+                //     "numbers" => $new_rfq,
+                //     "rfq" => 'RFQ',
+                //     "rfq_number" => $new,
+                // ]);
+                // $numbs->save();
+            }else{
+                $new = 1;
+                $numbs = new RfqNumbers([
+                    "numbers" => $new_ref,
+                    "rfq" => 'RFQ',
+                    "rfq_number" => $new,
+                ]);$numbs->save();
+            }
+    
+            if(Str::length($new) < 2){
+                $conc = '00'.$new;
+            }elseif(Str::length($new) == 2){
+                $conc = '0'.$new;
+            }else{
+                $conc = $new;
+            }
+        
         }
 
         $cli = Clients::where('client_id', $request->input('client_id'))->first();
         $refrence_number = substr($request->input("refrence_number"), 0, -4).''.$new_ref;
-        // dd($refrence_number);
+        //dd($refrence_number);
         $data = new ClientRfq([
             "client_id" => $request->input("client_id"),
             "company_id" => $request->input("company_id"),
             "status" => $request->input("status"),
             "employee_id" => $request->input("employee_id"),
-            "refrence_no" => $request->input("refrence_number"),
+            "refrence_no" => $refrence_number,
             "rfq_date" =>   $request->input("rfq_date"),
             "rfq_number" =>$request->input("rfq_number"),
             "product" => $request->input("product"),
@@ -1125,8 +1144,6 @@ class ClientRFQController extends Controller
             ];
             // $conc->notify(new ClientContactRfqCreated($arr));
 
-            $emp->notify(new EmployerRFQCreated($arr));
-
             $his = new RfqHistory([
                 "user_id" => Auth::user()->user_id,
                 "rfq_id" => $rfq_id,
@@ -1159,6 +1176,25 @@ class ClientRFQController extends Controller
             if (!is_dir($poDir)) {
                 mkdir($poDir, 0777, true);
             }
+            
+            try {
+                // Attempt to send the email
+                $emp->notify(new EmployerRFQCreated($arr));
+        
+                // Return success response
+                $respy = response()->json([
+                    'status' => 'success',
+                    'message' => 'Notification sent successfully.'
+                ], 200);
+            } catch (\Exception $e) {
+                // Log the error for debugging
+                error_log('Email Notification Error: ' . $e->getMessage());
+        
+                // Return error response
+                return redirect()->route("line.create",[$rfq->rfq_id])->with("error", "You Have Added The RQF Successfully, But notification not sent due to network issue.");
+            }
+
+
             return redirect()->route("line.create",[$rfq->rfq_id])->with("success", "You Have Added The RQF Successfully, Please Kindly Create the Line Item Below");
 
         } else {
@@ -1886,6 +1922,8 @@ class ClientRFQController extends Controller
                             "delivery_location" => $request->input("delivery_location"),
                             "delivery_terms" => $request->input("payment_term"),
                             "contact_id" => $request->input("contact_id"),
+                            "currency" => $request->input("currency"),
+                            "total_quote" => $request->input("total_quote"),
                             "po_value_foreign" => $po_value_foreign,
                             "po_value_naira" => $po_value_naira,
                             "payment_terms" => $request->input("payment_term"),
@@ -2149,14 +2187,15 @@ class ClientRFQController extends Controller
             $rfq = $this->model->show($rfq_id);
             $vendor = Vendors::where('vendor_id', $request->input("vendor_id"))->first();
             $vendor_contact = VendorContact::where('contact_id', $request->input("contact_id"))->first();
-            $mail_id = Str::random(30);
+            
 
+            
             //dd($vendor);
             if($request->input("send_all") == 1){
-                $line_items = LineItem::where('rfq_id', $rfq_id)->orderBy('item_serialno', 'asc')->get();
+                $line_items = LineItem::where('rfq_id', $rfq_id)->orderBy('created_at', 'asc')->get();
                 $line_items_input = [];
                 foreach($line_items as $line_item){
-                    $line_items_input = $line_item->item_serialno;
+                    $line_items_input[] = $line_item->item_serialno;
                 }
             }else {
                 // Retrieve the "line_items" input
@@ -2181,6 +2220,7 @@ class ClientRFQController extends Controller
                         }
                     }
                 }
+                $line_items_input = array_values($serial_numbers);
                 
                 // Now use `whereIn` to select items based on the expanded serial numbers array
                 $line_items = LineItem::where('rfq_id', $rfq_id)
@@ -2189,9 +2229,16 @@ class ClientRFQController extends Controller
                                       ->get();
             }
             
-             
+            $history_check = PricingHistory::where('rfq_id', $rfq_id)->
+            where('vendor_id', $request->input("vendor_id"))->
+            where('contact_id', $request->input('contact_id'))->
+            where('line_items', json_encode($line_items_input))->first();
+            if(isset($history_check) && $history_check->vendor_id != 266){
+                return redirect()->back()->with(["error" => "Same Request has been sent to ".$vendor->vendor_name." Before on ".$history_check->created_at." kindly follow up on previous request."]);
+            }
             
             $report_recipient = $request->input("report_recipient");
+            // dd($vendor->contact_email);
             $extra_note = $request->input('extra_note');
     
             $file = $request->quotation_file;
@@ -2225,7 +2272,12 @@ class ClientRFQController extends Controller
          
                     // Temporary file path to store the PDF
                     $tempFilePath = storage_path($pdfname . '.pdf');
-                    // Save the PDF temporarily
+                    // Save the PDF 
+                    //return $pdf->stream();
+                    if($request->input('preview') == 'yes'){
+                        return $pdf->stream();
+                    }
+                    
                     $pdf->save($tempFilePath);
                 }else{
                     $tempFilePath = "";
@@ -2243,6 +2295,25 @@ class ClientRFQController extends Controller
                 'email' => $vendor_contact->email,
                 'name' => $vendor_contact->first_name . ' ' . $vendor_contact->last_name
             ];
+
+            $users[] = (object) [
+                'email' => config('mail.email'),
+                'name' => "TAGFlow"
+            ];
+            
+            function generateCustomMailId()
+            {
+                $letters1 = strtoupper(Str::random(3)); // Generate 3 random letters
+                $digits = mt_rand(1000, 9999);         // Generate 4 random digits
+                $letters2 = strtoupper(Str::random(4)); // Generate 4 random letters
+            
+                return "{$letters1}-{$digits}-{$letters2}";
+            }
+            
+            // Usage
+            $mail_id = generateCustomMailId();
+            
+            $rfq_code = 'RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
             //dd($users);
             try{
                 
@@ -2275,7 +2346,7 @@ class ClientRFQController extends Controller
                 $mail_subject = "Request for Pricing Information: - " .$rfqcode." ".$rfq->description;
                 $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tempFilePath' => $tempFilePath, 'tempFileDirs' => $tempFileDirs, 'fileNames' => $fileNames, 'rfqcode' => $rfqcode, 'extra_note' => $extra_note, 'client_name' => $client_name, 'assigned' => $assigned, "vendor_contact" => $vendor_contact, "mail_id" => $mail_id];
                 $when = now()->addMinutes(1);
-                Mail::to('emmanuel.idowu@tagenergygroup.net')->cc('emmanuel@enabledgroup.net')->send( new QuoteRequest ($data));        
+                Mail::to($vendor->contact_email)->cc($users)->send( new QuoteRequest ($data));        
                 if($extra_note != ""){
     	        $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Sent Request for Quotation to '. $vendor->vendor_name . ' with an extra note stating: '.$extra_note.' and changed the status to Awaiting Pricing <br/>'.$rfq->note;
                 }else{
@@ -2304,23 +2375,11 @@ class ClientRFQController extends Controller
                 $pricing_history->contact_id = $request->input('contact_id');
                 $pricing_history->line_items = json_encode($line_items_input);
                 $pricing_history->mail_id = $mail_id;
+                $pricing_history->rfq_code = $rfq_code;
                 $pricing_history->status = "Awaiting Pricing";
+                $pricing_history->issued_by = Auth::user()->user_id;
 
                 $pricing_history->save();
-
-                $mail_tray = new MailTray([
-                    "rfq_id" => $rfq_id,
-                    "vendor_id" => $request->input('vendor_id'),
-                    "contact_id" => $request->input('contact_id'),
-                    "mail_id" =>  $mail_id,
-                    "subject" => $mail_subject,
-                    "body" => "Pricing Request",
-                    "recipient_email" => $vendor->contact_email,
-                    "cc_email" => $users,
-                    "date_sent" => date("Y-m-d H:i:s"),
-                    "sent_by" => Auth::user()->user_id,
-                ]);
-                $mail_tray->save();
 
                 return redirect()->back()->with("success", "You have sent the Request Successfully.");
             }catch(\Exception $e){
@@ -2331,9 +2390,290 @@ class ClientRFQController extends Controller
         }
     
         }
+        
+        
+        public function submitPoToVendor(Request $request)
+        {
+            $this->validate($request, [
+                'vendor_id' => ['required', 'string'],
+                'report_recipient' => ['required'],
+                'contact_id' => ['nullable'],
+                'line_items' => ['nullable'],
+                'send_all' => 'nullable',
+            ]);
+            
+            $rfq_id = $request->input("rfq_id");
+            $rfq = $this->model->show($rfq_id);
+            $vendor = Vendors::where('vendor_id', $request->input("vendor_id"))->first();
+            $vendor_contact = VendorContact::where('contact_id', $request->input("contact_id"))->first();
+            
 
+            
+            //dd($vendor);
+            if($request->input("send_all") == 1){
+                $line_items = LineItem::where('rfq_id', $rfq_id)->orderBy('created_at', 'asc')->get();
+                $line_items_input = [];
+                foreach($line_items as $line_item){
+                    $line_items_input[] = $line_item->item_serialno;
+                }
+            }else {
+                // Retrieve the "line_items" input
+                $line_items_input = $request->input("line_items");
+                
+                // Initialize an empty array to hold the serial numbers
+                $serial_numbers = [];
+            
+                if ($line_items_input) {
+                    // Split the input by commas to get each range or individual number
+                    $ranges = explode(',', $line_items_input);
+                    
+                    foreach ($ranges as $range) {
+                        // Check if the range contains a dash (e.g., "1-3")
+                        if (strpos($range, '-') !== false) {
+                            list($start, $end) = explode('-', $range);
+                            // Add all numbers in the range to the array
+                            $serial_numbers = array_merge($serial_numbers, range((int)$start, (int)$end));
+                        } else {
+                            // If there's no dash, just add the single number
+                            $serial_numbers[] = (int)$range;
+                        }
+                    }
+                }
+                $line_items_input = array_values($serial_numbers);
+                
+                // Now use `whereIn` to select items based on the expanded serial numbers array
+                $line_items = LineItem::where('rfq_id', $rfq_id)
+                                      ->whereIn('item_serialno', $serial_numbers)
+                                      ->orderBy('item_serialno', 'asc')
+                                      ->get();
+            }
+            
+            $history_check = PricingHistory::where('rfq_id', $rfq_id)->
+            where('vendor_id', $request->input("vendor_id"))->
+            where('contact_id', $request->input('contact_id'))->
+            where('line_items', json_encode($line_items_input))->first();
+            // if(isset($history_check) && $history_check->vendor_id != 266){
+            //     return redirect()->back()->with(["error" => "Same Request has been sent to ".$vendor->vendor_name." Before on ".$history_check->created_at." kindly follow up on previous request."]);
+            // }
+            
+            $report_recipient = $request->input("report_recipient");
+            // dd($vendor->contact_email);
+            $extra_note = $request->input('extra_note');
+    
+            $file = $request->quotation_file;
+            $arrFile = array();
+            $number = rand(1,200);
+            $refrence = $rfq->refrence_no;
+            $dest = date('Y'.'d'.'m').$refrence.$number;
+    
+            $cut = explode("; ", $report_recipient);
+            $users = [];
+    
+            if (ClientRfq::where('rfq_id', $rfq_id)->exists()) {
+                $ref = ClientRfq::where('rfq_id', $rfq_id)->first();
+                $rfq = $this->model->show($rfq_id);
+        
+                if (count($line_items) > 0) {
+                    $pdf = PDF::loadView('dashboard.printing.supplierPO', compact('rfq', 'line_items', 'vendor', 'vendor_contact'))->setPaper('a4', 'portrait');
+                     
+                          
+                //dd($line_items);
+                $cli_title = clis($rfq->client_id);
+                $resultt = json_decode($cli_title, true);
+                $client_name = $resultt[0]['client_name'];
+                $assigned_details = empDetails($rfq->employee_id);
+                $assigned = $assigned_details->full_name;
+                $pdfname = "TAG Energy Purchase Order for TE-" . $resultt[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no) . ", " . $rfq->description;
+                $rfqcode = "TE-". $resultt[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
+                
+                // Replace "/" with "-"
+                $pdfname = str_replace("/", "-", $pdfname);
+         
+                    // Temporary file path to store the PDF
+                    $tempFilePath = storage_path($pdfname . '.pdf');
+                    // Save the PDF 
+                    //return $pdf->stream();
+                    if($request->input('preview') == 'yes'){
+                        return $pdf->stream();
+                    }
+                    
+                    $pdf->save($tempFilePath);
+                }else{
+                    $tempFilePath = "";
+                }
 
+            foreach($cut as $key => $ut){
+                $ua = [];
+                $ua['email'] = $ut;
+                $split = $cut = explode("@", $ut);
+                $ua['name'] = ucwords(str_replace("."," ",$split[0]));
+                $users[$key] = (object)$ua;
+            }
 
+            $users[] = (object) [
+                'email' => $vendor_contact->email,
+                'name' => $vendor_contact->first_name . ' ' . $vendor_contact->last_name
+            ];
 
+            $users[] = (object) [
+                'email' => config('mail.email'),
+                'name' => "TAGFlow"
+            ];
+            
+            function generateCustomMailId()
+            {
+                $letters1 = strtoupper(Str::random(3)); // Generate 3 random letters
+                $digits = mt_rand(1000, 9999);         // Generate 4 random digits
+                $letters2 = strtoupper(Str::random(4)); // Generate 4 random letters
+            
+                return "{$letters1}-{$digits}-{$letters2}";
+            }
+            
+            // Usage
+            $mail_id = generateCustomMailId();
+            
+            $rfq_code = 'RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
+            //dd($users);
+            try{
+                
+                if ($request->hasFile('quotation_file')) { // Change to 'files' which corresponds to the input field name
+                    $files = $request->file('quotation_file'); // Get uploaded files
+            
+                    // Array to store temporary file paths
+                    $tempFileDirs = [];
+                    // Array to store original file names
+                    $fileNames = [];
+             
+                // Save uploaded files temporarily and get file paths
+                foreach ($files as $file) {
+                    // Generate a unique file name
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    // Move uploaded file to temporary storage path
+                    $tempFileDir = storage_path('temp') . '/' . $fileName;
+                    $file->move(storage_path('temp'), $fileName);
+                    // Store temporary file path in array
+                    $tempFileDirs[] = $tempFileDir;
+                    // Store original file name in array
+                    $fileNames[] = $file->getClientOriginalName();
+                    }
+                }else{
+                    $tempFileDirs = "";
+                    $fileNames = "";
+                }
+                //str_replace(" ","",$users) 
+                //$rec_mail
+                $mail_subject = "Request for Pricing Information: - " .$rfqcode." ".$rfq->description;
+                $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tempFilePath' => $tempFilePath, 'tempFileDirs' => $tempFileDirs, 'fileNames' => $fileNames, 'rfqcode' => $rfqcode, 'extra_note' => $extra_note, 'client_name' => $client_name, 'assigned' => $assigned, "vendor_contact" => $vendor_contact, "mail_id" => $mail_id];
+                $when = now()->addMinutes(1);
+                Mail::to($vendor->contact_email)->cc($users)->send( new QuoteRequest ($data));        
+                if($extra_note != ""){
+    	        $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Issued Purchase Order to '. $vendor->vendor_name . ' with an extra note stating: '.$extra_note.' and changed the status to PO Issued to Supplier <br/>'.$rfq->note;
+                }else{
+                $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Issued Purchase Order to '. $vendor->vendor_name . ' and changed the status to PO Issued to Supplier <br/>'.$rfq->note;
+                }
+                DB::table('client_rfqs')->where(['rfq_id' => $rfq_id])->update(['note' => $newNote, 'status' => 'Awaiting Pricing']);
+                $his = new RfqHistory([
+                    "user_id" => Auth::user()->user_id,
+                    "rfq_id" => $rfq_id,
+                    "action" => "Issued Po to $vendor->vendor_name",
+                ]); $his->save();
+                
+                unlink($tempFilePath);
+                
+                // Delete temporary files after email is sent
+                if($tempFileDirs != ""){
+                    foreach ($tempFileDirs as $tempFileDir) {
+                        unlink($tempFileDir);
+                    }
+                }
 
-}
+                $pricing_history = new PricingHistory();
+
+                $pricing_history->rfq_id = $request->input('rfq_id');
+                $pricing_history->vendor_id = $request->input('vendor_id');
+                $pricing_history->contact_id = $request->input('contact_id');
+                $pricing_history->line_items = json_encode($line_items_input);
+                $pricing_history->mail_id = $mail_id;
+                $pricing_history->rfq_code = $rfq_code;
+                $pricing_history->status = "Awaiting Pricing";
+                $pricing_history->issued_by = Auth::user()->user_id;
+
+                $pricing_history->save();
+
+                return redirect()->back()->with("success", "You have sent the Request Successfully.");
+            }catch(\Exception $e){
+    
+                return redirect()->back()->with("error", "Request Approval not sent, ". $e->getMessage());
+            }
+       
+        }
+    
+        }
+        
+        
+
+        public function checkNewEmails($rfq_id, $vendor_id, $contact_id)
+        {
+            // Step 1: Retrieve the subject from the "mail tray" table
+            $mailTray = PricingHistory::where('rfq_id', $rfq_id)
+                                ->where('vendor_id', $vendor_id)
+                                ->where('contact_id', $contact_id)
+                                ->first();
+        
+            if (!$mailTray) {
+                return response()->json(['error' => 'No mail tray found'], 404);
+            }
+        
+            $rfq_code = $mailTray->rfq_code;
+        
+            // Step 3: Connect to IMAP and search for emails matching the normalized subject
+            $client = Client::account('default');  // Use the configured IMAP client
+            $folder = $client->getFolder('INBOX'); // Specify the folder (in this case, inbox)
+        
+            // Step 4: Use search() to find emails with the normalized subject
+            $emails = $folder->query()->unseen()->text($rfq_code)->setFetchFlags(false)->markAsRead()->get();
+            //dd($emails);
+            // Step 5: If emails are found, retrieve their body content
+            $emailData = [];
+            foreach ($emails as $email) {
+                //$email->fetch();  // Fetch full email data (headers, body, etc.)
+
+                $ccEmails = [];
+
+                $num = 0;
+
+                while (isset($email->getCc()[$num]) && !empty($email->getCc()[$num]->mail)) {
+                    $ccEmails[] = $email->getCc()[$num]->mail;
+                    $num++;
+                }
+
+                $emailData[] = [
+                    'subject' => $email->getSubject()[0],
+                    'body' => $email->getHTMLBody(true),  // Use getHTMLBody() if you need HTML content
+                    'from' => $email->getFrom()[0]->mail,
+                    'date' => date("Y-m-d H:i:s", $email->getDate()[0]->timestamp),
+                ];
+
+                $mail_tray = new MailTray([
+                    "rfq_id" => $rfq_id,
+                    "vendor_id" => $vendor_id,
+                    "contact_id" => $contact_id,
+                    "mail_id" =>  $mailTray->mail_id,
+                    "subject" => $email->getSubject()[0],
+                    "body" => $email->getHTMLBody(true),
+                    "sent_from" => $email->getFrom()[0]->mail,
+                    "recipient_email" => $email->getTo()[0]->mail,
+                    "cc_email" => json_encode($ccEmails),
+                    "date_received" => date("Y-m-d H:i:s", $email->getDate()[0]->timestamp),
+                ]);
+
+                //dd($mail_tray);
+                $mail_tray->save();
+            }
+        
+            // Step 6: Return the email data (or store it as needed)
+            return $emailData;
+        }
+        
+
+    }

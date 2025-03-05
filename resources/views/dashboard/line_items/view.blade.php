@@ -494,20 +494,32 @@
                                 </table>
 
                             </div>
-                             @if(Auth::user()->hasRole('SuperAdmin'))
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-12">
                                 <div class="form-group">
                                         <button type="button" class="btn btn-primary" style="float: left; margin-bottom:1%;" data-toggle="modal" data-target="#UploadLineItems">Upload LineItems</button>                             
                                 </div>
-                            </div>
-                            @endif
-                            @if(Auth::user()->hasRole('SuperAdmin'))
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-12">
+                                @if(count($line_items) > 0)
                                 <div class="form-group">
-                                        <button type="button" class="btn btn-primary" style="float: right; margin-bottom:1%;" data-toggle="modal" data-target="#WeeklyReport">Send RFQ To Supplier</button>                             
+                                        <button type="button" class="btn btn-primary" style="float: left; margin-bottom:1%; margin:0 10px;" data-toggle="modal" data-target="#UpdateLineItems">Update LineItems Cost</button>                             
                                 </div>
+                                @endif
                             </div>
-                            @endif
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-12">
+                                @if(count(getPricingHistory($rfqs->rfq_id ))>0)
+                                <div class="form-group">
+                                    <a class="btn btn-primary" style="float: right; margin-bottom:1%; margin:0 10px;" href="{{route('pricing.index', $rfqs->rfq_id)}}">View Pricing History</a>                             
+                                </div>
+                                @endif
+                                @if(hasPo($rfqs->rfq_id ))
+                                <div class="form-group">
+                                        <button type="button" class="btn btn-primary" style="float: right; margin-bottom:1%;" data-toggle="modal" data-target="#IssuePo">Issue PO To Supplier</button>                             
+                                </div>
+                                @else
+                                <div class="form-group">
+                                        <button type="button" class="btn btn-primary" style="float: right; margin-bottom:1%;" data-toggle="modal" data-target="#supplierRfq">Send RFQ To Supplier</button>                             
+                                </div>
+                                @endif
+                            </div>
                         </div>
                     @endif
                         
@@ -524,7 +536,7 @@ $other_suppliers = getOtherSuppliers();
 @endphp
     
     <!-- Modal for RFQ to supplier -->
-        <div class="modal fade bd-example-modal-lg" id="WeeklyReport" tabindex="-1" role="dialog" aria-labelledby="customModalTwoLabel" aria-hidden="true">
+        <div class="modal fade bd-example-modal-lg" id="supplierRfq" tabindex="-1" role="dialog" aria-labelledby="customModalTwoLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -616,6 +628,7 @@ $other_suppliers = getOtherSuppliers();
                     </div>
                 </div>
                 <div class="modal-footer custom d-flex justify-content-end align-items-center">
+                    <button type="submit" name="preview" value="yes" target="blank" class="btn btn-link primary mr-3">View PDF</button>
                     <button type="button" class="btn btn-link danger mr-3" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-link success mr-2">Send RFQ</button>
                 </div>
@@ -624,6 +637,114 @@ $other_suppliers = getOtherSuppliers();
     </div>
 </div>
 
+    <!-- Modal for PO to supplier -->
+        <div class="modal fade bd-example-modal-lg" id="IssuePo" tabindex="-1" role="dialog" aria-labelledby="customModalTwoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customModalTwoLabel">Issue PO Supplier</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{route('po.toVendor')}}" class="" method="POST" enctype="multipart/form-data">
+                {{ csrf_field() }}
+                <div class="modal-body">
+
+                    <div class="row gutters">
+                        <div class="col-md-4 col-sm-4 col-4">
+                            <label for="recipient-name" class="col-form-label">Supplier:</label>
+                            <select class="form-control selectpicker" data-live-search="true" required name="vendor_id" onchange="fetchContactsPo(this.value)">
+                                <optgroup label="Chosen Supplier">
+                                    <option value="{{$rfq[0]->vendor_id}}">{{$selected_supplier}} </option>
+                                </optgroup>
+                                @if(count($recommended_suppliers) > 0)
+                                <optgroup label="Recommended Suppliers">
+                                    @foreach($recommended_suppliers as $recommended_supplier)
+                                    <option value="{{$recommended_supplier->vendor_id}}"> {{$recommended_supplier->vendor_name}}</option>
+                                    @endforeach
+                                </optgroup>
+                                @endif
+                                <optgroup label="Other Suppliers">
+                                    @foreach($other_suppliers as $other_supplier)
+                                    <option value="{{$other_supplier->vendor_id}}"> {{$other_supplier->vendor_name}}</option>
+                                    @endforeach
+                                </optgroup>
+                                <option value="">-- Select Supplier --</option>
+                            </select>
+                            @if ($errors->has('rec_email'))
+                                <div class="" style="color:red">{{ $errors->first('rec_email') }}</div>
+                            @endif
+                        </div>
+                        
+                        <div class="col-md-8 col-sm-8 col-8">
+                            <label for="recipient-name" class="col-form-label">CC Email:</label>
+                            <input type="text" class="form-control" id="recipient-email" name="report_recipient" value="sales@tagenergygroup.net; mary.nwaogwugwu@tagenergygroup.net">
+                            @if ($errors->has('report_recipient'))
+                                <div class="" style="color:red">{{ $errors->first('quotation_recipient') }}</div>
+                            @endif
+                        </div>
+                        
+                        <div class="col-md-5 col-sm-5 col-5">
+                            <label for="recipient-name" class="col-form-label">Contact:</label>
+                            <select id="PoContact" class="form-control selectpicker" data-live-search="true" required name="contact_id">
+                                <option value="">-- Select Contact --</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-7 col-sm-7 col-7">
+                            <label for="SupplierRFQ" class="col-form-label">RFQ Number</label>
+                            <select id="SupplierRFQ" class="form-control selectpicker" data-live-search="true" required name="supplier_rfq">
+                                <option value="">-- Select Contact --</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-12 col-sm-12 col-12">
+                            <label for="recipient-name" class="col-form-label">Line Items:</label>
+                            <input type="text" class="form-control" id="line_items" name="line_items" data-role="tagsinput" value="" placeholder="Enter a value such as 1-3, 5-7 signifying their serial number">
+                            @if ($errors->has('line_items'))
+                                <div class="" style="color:red">{{ $errors->first('line_items') }}</div>
+                            @endif
+                        </div>
+                        <input type="text" value="{{ $rfq[0]->rfq_id }}" name="rfq_id" hidden>
+                        <div class="col-md-7 col-sm-7 col-7" style="margin-top:5px;">
+                            <br/>
+                            <div class="form-check" style="margin-left:10px;">
+                                <input type="checkbox" class="form-check-input" id="send_all" name="send_all" value="1">
+                                <label for="send_all" class="form-check-label">Send all line items to supplier?</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+
+                                <div class="card m-0"><label for="extra_note">Extra Note:</label>
+                                    <textarea class="summernote" name="extra_note" placeholder="Please enter Extra Note Here">
+                                    </textarea>
+                                    @if ($errors->has('extra_note'))
+                                        <div class="" style="color:red">{{ $errors->first('extra_note') }}</div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        
+                         <div class="col-md-12 col-sm-12 col-12">
+                            <label for="additional-file" class="col-form-label">Additional File</label>
+
+                            <input type="file" class="form-control" id="additional-file" name="quotation_file[]" multiple>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer custom d-flex justify-content-end align-items-center">
+                    <button type="submit" name="preview" value="yes" target="blank" class="btn btn-link primary mr-3">View PDF</button>
+                    <button type="button" class="btn btn-link danger mr-3" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-link success mr-2">Issue PO</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
     <!-- Modal for Uploading Document for Line Items-->
@@ -649,7 +770,49 @@ $other_suppliers = getOtherSuppliers();
                             <h5 style="margin-top:10px;">Instructions</h5>
                             <ol>
                                 <li>Download the <a href="/storage/app/public/templates/Import_Line_Items.xlsx">template</a> file to use for uploading data.</li>
-                                <li>Enter your data in each column under the provided headers. **Do not delete or modify the headers.**</li>
+                                <li>Enter your data in each column under the provided headers. <span style="color:red;">**Do not delete or modify the headers.**</span></li>
+                                <li>Save your completed file on your device.</li>
+                                <li>Upload the saved file here.</li>
+                            </ol>
+                            <p>Acceptable formats are: <strong>CSV, XLSX, XLS</strong> (Excel)</p>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer custom d-flex justify-content-end align-items-center">
+                    <button type="button" class="btn btn-link danger mr-3" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-link success mr-2">Upload RFQ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Modal for Uploading Document to Update Line Items-->
+        <div class="modal fade bd-example-modal-lg" id="UpdateLineItems" tabindex="-1" role="dialog" aria-labelledby="customModalTwoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customModalTwoLabel">Upload Cost for LineItems</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{route('line.cost_upload')}}" class="" method="POST" enctype="multipart/form-data">
+                {{ csrf_field() }}
+                <div class="modal-body">
+                    <div class="row gutters">
+                         <div class="col-md-12 col-sm-12 col-12">
+                            <label for="additional-file" class="col-form-label">Updated Line Items Cost File</label>
+                            <input type="file" class="form-control" id="additional-file" name="document" accept=".csv, .xlsx, .xls">
+                            <input type="hidden" name="rfq_id" value="{{$rfqs->rfq_id}}">
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-12">
+                            <h5 style="margin-top:10px;">Instructions</h5>
+                            <ol>
+                                <li>Download this <a href="{{route('line.excel_export', $rfqs->rfq_id)}}">LineItems</a> file to update unit cost price.</li>
+                                <li>Enter your data in the column under the provided headers. <span style="color:red;">**Do not delete or modify the headers.**</span></li>
                                 <li>Save your completed file on your device.</li>
                                 <li>Upload the saved file here.</li>
                             </ol>
@@ -677,7 +840,7 @@ function fetchContacts(vendorId) {
     if (!vendorId) return; 
 
     $.ajax({
-        url: `/scmui/api/get-vendor-contact/${vendorId}`, 
+        url: `/api/get-vendor-contact/${vendorId}`, 
         method: 'GET',
         success: function(data) {
             // Loop through each contact and add it to the dropdown
@@ -694,6 +857,63 @@ function fetchContacts(vendorId) {
         }
     });
 }
+
+function fetchContactsPo(vendorId, rfqId) {
+    const contactDropdown = $('#PoContact');
+    contactDropdown.empty(); // Clear previous contacts
+    contactDropdown.append('<option value="">-- Select Contact --</option>');
+    var rfqId = {{ $rfqs->rfq_id }};
+    if (!vendorId) return; 
+
+    $.ajax({
+        url: `/api/get-vendor-contact/${vendorId}`, 
+        method: 'GET',
+        success: function(data) {
+            // Loop through each contact and add it to the dropdown
+            data.forEach(contact => {
+                contactDropdown.append(`<option value="${contact.contact_id}">${contact.first_name} ${contact.last_name}</option>`);
+            });
+
+            // Refresh the selectpicker for new options
+            contactDropdown.selectpicker('refresh');
+            contactDropdown.prop('disabled', false); 
+
+            //Call fetchSupplierRFQs after fetching contacts
+            fetchSupplierRFQs(rfqId, vendorId);
+        },
+        error: function(error) {
+            console.error('Error fetching contacts:', error);
+        }
+    });
+}
+
+function fetchSupplierRFQs(rfqId, vendorId) {
+    const rfqDropdown = $('#supplierRFQ');
+    rfqDropdown.empty(); // Clear previous contacts
+    rfqDropdown.append('<option value="">-- Select Contact --</option>');
+
+    if (!vendorId || !rfqId) return; 
+
+    $.ajax({
+        url: `/api/get-vendor-pricing/${rfqId}/${vendorId}`, 
+        method: 'GET',
+        success: function(data) {
+            // Loop through each contact and add it to the dropdown
+            data.forEach(pricing => {
+                contactDropdown.append(`<option value="${pricing.id}">${pricing.reference_number}</option>`);
+            });
+
+            // Refresh the selectpicker for new options
+            contactDropdown.selectpicker('refresh');
+            contactDropdown.prop('disabled', false); 
+        },
+        error: function(error) {
+            console.error('Error fetching contacts:', error);
+        }
+    });
+}
 </script>
+
+
 
 @endsection

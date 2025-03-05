@@ -156,6 +156,68 @@
                     <p style="text-align: center;"><br/> No Awaiting GRN</p>
             @endif
         </div>
+        
+        <br/>
+        <br/>
+        <br/>
+        <h5 style="text-align:center; padding:1%;"><b> RFQs for Jan 01, {{date('Y')}} till date </b></h5>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>COMPANY</th>
+                    <th>NO. OF RFQ <br/>RECEIVED </th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php $num =1; ?>
+                    @foreach ($rfqy as $rfq_detaily)
+                    <tr>
+                    <td> {{ $num++ }} </td>
+                    <td class="text-align"> {{ $rfq_detaily->client->client_name }} </td>
+                    <td class="text-align">{{ $rfq_detaily->count }} </td>
+                    </tr>
+                    @endforeach
+                    <tr>
+                        <td></td>
+                        <td> Total RFQs </td>
+                        <td>{{ $rfqtotaly }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <h5 style="text-align:center; padding:1%;"><b> POs for Jan 01, {{ date('Y') }} till date</b></h5>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>COMPANY</th>
+                    <th>NO. OF PO<br/> RECEIVED </th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php $num =1; ?>
+                    @foreach ($poy as $po_detaily)
+                    <tr>
+                    <td> {{ $num++ }} </td>
+                    <td class="text-align"> {{ $po_detaily->client->client_name }} </td>
+                    <td class="text-align">{{ $po_detaily->count }} </td>
+                    </tr>
+                    @endforeach
+                    <tr>
+                        <td></td>
+                        <td> Total PO(s) </td>
+                        <td>{{ $pototaly }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br/>
         <br/>
         <br/>
 
@@ -178,7 +240,7 @@
             @endif
             <p class="footey">PHONE: +234 1 342 8420 | +234 906 243 5410</p>
             <p class="footey">EMAIL: <a href="mailto:sales@tagenergygroup.net">sales@tagenergygroup.net</a></p>
-            <img src="https://scm.enabledjobs.com/admin/img/signature.jpg" alt="SCM" style="width: 100%;">
+            <img src="{{asset('admin/img/signature.jpg')}}" alt="SCM" style="width: 100%;">
         </div>
     </div>
 </body>

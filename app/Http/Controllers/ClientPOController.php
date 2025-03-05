@@ -154,17 +154,28 @@ class ClientPOController extends Controller
             foreach($line_items as $line){
                 $tq = ($line->quantity * $line->unit_cost) + $tq;
             }
+            // if(count($line_items) > 0){
+            //     $customPaper = array(0, 0, 566.929133858, 283.464566929 );
+            //     $pdf = PDF::loadView('dashboard.printing.supplier_quote', compact('rfq', 'line_items', 'sup', 'po', 'tq'))->setPaper('ledger', 'portrait');
+            //     $name = cops($rfq->company_id);
+            //     $fileName = "Purchase Order " .$rfq->refrence_no . ", ". $rfq->product.'.pdf';
+            //     $pdf->getDomPDF()->set_option("enable_php", true);
+            //     $output = $pdf->output();
+            //     $dir = base_path("email/po/".$rfq->refrence_no."/");
+            //     !file_exists(File::makeDirectory($dir, $mode = 0777, true, true));
+            //     $pdf->save($dir.$fileName);
+            //     return redirect()->route('po.pdf',[$po_id])->with("success", "PDF Generated successfully.");
+            // }else{
+            //     return redirect()->back()->with(['error' => "No Line Items was found"]);
+            // }
+            
             if(count($line_items) > 0){
-                $customPaper = array(0, 0, 566.929133858, 283.464566929 );
-                $pdf = PDF::loadView('dashboard.printing.supplier_quote', compact('rfq', 'line_items', 'sup', 'po', 'tq'))->setPaper('ledger', 'portrait');
-                $name = cops($rfq->company_id);
-                $fileName = "Purchase Order " .$rfq->refrence_no . ", ". $rfq->product.'.pdf';
-                $pdf->getDomPDF()->set_option("enable_php", true);
-                $output = $pdf->output();
-                $dir = base_path("email/po/".$rfq->refrence_no."/");
-                !file_exists(File::makeDirectory($dir, $mode = 0777, true, true));
-                $pdf->save($dir.$fileName);
-                return redirect()->route('po.pdf',[$po_id])->with("success", "PDF Generated successfully.");
+                
+                $pdf = PDF::loadView('dashboard.printing.supplier_quote', compact('rfq', 'line_items', 'sup', 'po', 'tq'))->setPaper('a4', 'portrait');
+                $fileName = "Purchase Order " .$rfq->refrence_no . ", ". $rfq->description.'.pdf';
+
+                return $pdf->stream();
+                
             }else{
                 return redirect()->back()->with(['error' => "No Line Items was found"]);
             }
@@ -655,6 +666,7 @@ class ClientPOController extends Controller
                 "po_date" => $request->input("po_date"),
                 "po_number" => $request->input("po_number"),
                 "delivery_due_date" => $request->input("delivery_due_date"),
+                "supplier_issued_date" => $request->input("supplier_issued_date"),
                 "delivery_location" => $request->input("delivery_location"),
                 "delivery_terms" => $request->input("delivery_terms"),
                 "contact_id" => $request->input("contact_id"),
@@ -724,29 +736,29 @@ class ClientPOController extends Controller
             ]);
             $deed = ClientRfq::where('rfq_id', $request->input("rfq_id"))->first();
     
-            $datu = ClientRfq::where('rfq_id', $deed->rfq_id)->update([
-                "employee_id" => $request->input("employee_id"),
-                "freight_charges" => $request->input("frieght_charges"),
-                "local_delivery" => $request->input("local_delivery"),
-                "fund_transfer" => $request->input("fund_transfer"),
-                "cost_of_funds" => $request->input("cost_of_funds"),
-                "wht" => $request->input("wht"),
-                "ncd" => $request->input("ncd"),
-                "other_cost" => $request->input("other_cost"),
-                "note" => $request->input("rfq_note"),
-                "description" => $request->input("description"),
-                "supplier_quote_usd" => $request->input("supplier_quote"),
-                "transport_mode" => $request->input("transport_mode"),
-                // "total_weight" => $request->input("total_weight"),
-                "contact_id" => $request->input("contact_id"),
-                "shipper_id" => $request->input("shipper_id"),
-                "currency" => $request->input("currency"),
-                'freight_cost_option' => $request->input("freight_cost_option"),
-                // 'freight_cost_option' => $request->input("freight_cost_option"),
+            // $datu = ClientRfq::where('rfq_id', $deed->rfq_id)->update([
+            //     "employee_id" => $request->input("employee_id"),
+            //     "freight_charges" => $request->input("frieght_charges"),
+            //     "local_delivery" => $request->input("local_delivery"),
+            //     "fund_transfer" => $request->input("fund_transfer"),
+            //     "cost_of_funds" => $request->input("cost_of_funds"),
+            //     "wht" => $request->input("wht"),
+            //     "ncd" => $request->input("ncd"),
+            //     "other_cost" => $request->input("other_cost"),
+            //     "note" => $request->input("rfq_note"),
+            //     "description" => $request->input("description"),
+            //     "supplier_quote_usd" => $request->input("supplier_quote"),
+            //     "transport_mode" => $request->input("transport_mode"),
+            //     // "total_weight" => $request->input("total_weight"),
+            //     "contact_id" => $request->input("contact_id"),
+            //     "shipper_id" => $request->input("shipper_id"),
+            //     "currency" => $request->input("currency"),
+            //     'freight_cost_option' => $request->input("freight_cost_option"),
+            //     // 'freight_cost_option' => $request->input("freight_cost_option"),
 
-            ]);
-            if ($this->model->update($data, $po_id) and ($log->save()) AND (!empty($datu))) {
-
+            // ]);
+            // if ($this->model->update($data, $po_id) and ($log->save()) AND (!empty($datu))) {
+                if ($this->model->update($data, $po_id) and ($log->save())) {
                 if(!empty($request->input("shipping_reliability"))){
 
                     ClientPo::where('po_id', $po_id)->update([

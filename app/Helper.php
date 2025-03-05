@@ -27,72 +27,81 @@
         ])->first();
     }
 
-    function Totalrfqs()
+    function Totalrfqs($company_id)
     {
         return \DB::table('client_rfqs')
+        ->where('company_id', $company_id)
         ->whereYear('rfq_date', date('Y'))
         ->count();
     }
 
-    function TotalrfqsAwaitingApproval()
+    function TotalrfqsAwaitingApproval($company_id)
     {
         return \DB::table('client_rfqs')
+        ->where('company_id', $company_id)
         ->whereYear('rfq_date', date('Y'))
         ->where('status', "Awaiting Approval")
         ->count();
     }
 
-    function TotalrfqsBidClosed()
+    function TotalrfqsBidClosed($company_id)
     {
         return \DB::table('client_rfqs')
+        ->where('company_id', $company_id)
         ->whereYear('rfq_date', date('Y'))
         ->where('status', "Bid Closed")
         ->count();
     }
 
-    function TotalrfqsApproved()
+    function TotalrfqsApproved($company_id)
     {
         return \DB::table('client_rfqs')
+        ->where('company_id', $company_id)
         ->whereYear('rfq_date', date('Y'))
         ->where('status', "Approved")
         ->count();
     }
 
-    function totalActiveRfqs()
+    function totalActiveRfqs($company_id)
     {
     return \DB::table('client_rfqs')
+        ->where('company_id', $company_id)
         ->whereYear('rfq_date', date('Y'))
         ->whereNotIn('status', ["approved", "PO Issued", "Quotation Submitted"])
         ->count();
     }
 
-    function TotalActivePos()
+    function TotalActivePos($company_id)
     {
     return \DB::table('client_pos')
+        ->where('company_id', $company_id)
         ->whereYear('po_date', date('Y'))
         ->whereNotIn('status', ["Declined", "PO On Hold", "PO Cancelled", ])
         ->count();
     }
 
-    function TotalposInTransit()
+    function TotalposInTransit($company_id)
     {
         return \DB::table('client_rfqs')
+        ->where('company_id', $company_id)
         ->whereYear('rfq_date', date('Y'))
         ->where('status', "In Transit")
         ->count();
     }
 
-    function TotalposDelivered()
+    function TotalposDelivered($company_id)
     {
         return \DB::table('client_rfqs')
+        ->where('company_id', $company_id)
         ->whereYear('rfq_date', date('Y'))
         ->where('status', "Delivered")
         ->count();
     }
 
-    function TotalposGRN()
+    function TotalposGRN($company_id)
     {
         return \DB::table('client_rfqs')
+        ->where('company_id', $company_id)
         ->whereYear('rfq_date', date('Y'))
         ->where('status', "Awaiting GRN")
         ->count();
@@ -121,9 +130,10 @@
         ->where('status', ["PO Issued"])
         ->count();
     }
-    function Totalpos()
+    function Totalpos($company_id)
     {
         return \DB::table('client_pos')
+        ->where('company_id', $company_id)
         ->whereYear('po_date', date('Y'))
         ->count();
     }
@@ -198,31 +208,117 @@
     
     function TopPerformer($company_id)
     {
-    return \DB::table('client_rfqs')
-        ->join('employers', 'client_rfqs.employee_id', '=', 'employers.employee_id')
-        ->whereYear('client_rfqs.rfq_date', date('Y'))
-        ->where('client_rfqs.company_id', $company_id)
-        ->where('client_rfqs.status', 'PO Issued')
-        ->groupBy('client_rfqs.employee_id', 'employers.full_name')
+    return \DB::table('client_pos')
+        ->join('employers', 'client_pos.employee_id', '=', 'employers.employee_id')
+        ->whereYear('client_pos.po_date', date('Y'))
+        ->where('client_pos.company_id', $company_id)
+        ->whereNot('client_pos.status', 'PO Cancelled')
+        ->groupBy('client_pos.employee_id', 'employers.full_name')
         ->orderByRaw('COUNT(*) DESC')
         ->value('employers.full_name');
     }
     
     function TopPerformerCount($company_id)
     {
-    return \DB::table('client_rfqs')
-        ->whereYear('rfq_date', date('Y'))
+    return \DB::table('client_pos')
+        ->whereYear('po_date', date('Y'))
         ->where('company_id', $company_id)
-        ->where('status', 'PO Issued')
+        ->whereNot('status', 'PO Cancelled')
         ->groupBy('employee_id')
         ->selectRaw('COUNT(*) as count')
         ->orderByRaw('COUNT(*) DESC')
         ->value('count');
     }
+    
+    function TotalPoCount($company_id)
+    {
+    return \DB::table('client_pos')
+        ->whereYear('po_date', date('Y'))
+        ->where('company_id', $company_id)
+        ->selectRaw('COUNT(*) as count')
+        ->value('count');
+    }
+    
+    function CompanyNetProfit2($company_id){
+        
+        return \DB::table('client_rfqs')
+        ->join('client_pos', 'client_rfqs.rfq_id', '=', 'client_pos.rfq_id')
+        ->where('client_rfqs.company_id', $company_id)
+        ->whereYear('client_pos.po_date', date('Y'))
+        ->sum('client_rfqs.net_percentage');
+    }
+    
+    function CompanyNetProfit($company_id) {
+        $results = \DB::table('client_rfqs')
+            ->join('client_pos', 'client_rfqs.rfq_id', '=', 'client_pos.rfq_id')
+            ->where('client_rfqs.company_id', $company_id)
+            ->whereYear('client_pos.po_date', date('Y'))
+            ->select(
+                'client_pos.currency',
+                \DB::raw('SUM(client_rfqs.net_percentage) AS total_net_profit')
+            )
+            ->groupBy('client_pos.currency')
+            ->get();
+    
+        // Calculate the expense for each currency
+        $net_profit = [];
+        foreach ($results as $result) {
+            $net_profit[] = [
+                'currency' => $result->currency,
+                'net_profit' => $result->total_net_profit,
+            ];
+        }
+    
+        return $net_profit;
+    }
+    
+    function TotalPoExpenses($company_id) {
+        $results = \DB::table('client_rfqs')
+            ->join('client_pos', 'client_rfqs.rfq_id', '=', 'client_pos.rfq_id')
+            ->where('client_rfqs.company_id', $company_id)
+            ->whereYear('client_pos.po_date', date('Y'))
+            ->select(
+                'client_pos.currency',
+                \DB::raw('SUM(client_rfqs.total_quote) AS total_po_value'),
+                \DB::raw('SUM(client_rfqs.net_percentage) AS total_net_profit')
+            )
+            ->groupBy('client_pos.currency')
+            ->get();
+    
+        // Calculate the expense for each currency
+        $expenses = [];
+        foreach ($results as $result) {
+            $expenses[] = [
+                'currency' => $result->currency,
+                'expense' => $result->total_po_value - $result->total_net_profit,
+            ];
+        }
+    
+        return $expenses;
+    }
+    
+    function getCurrencySymbol($currency) {
+        $currencySymbols = [
+            'USD' => '$',
+            'NGN' => '₦',
+            'EUR' => '€',
+            'GBP' => '£',
+            // Add more currencies as needed
+        ];
+        return $currencySymbols[$currency] ?? $currency; // Default to currency code if symbol not found
+    }
 
     function TotalpoQuoteForeign()
     {
     return \DB::table('client_pos')
+        ->whereYear('po_date', date('Y'))
+        ->sum('po_value_foreign');
+    }
+    
+    function TotalpoQuoteForeignCompany($company_id)
+    {
+    return \DB::table('client_pos')
+        ->where('company_id', $company_id)
         ->whereYear('po_date', date('Y'))
         ->sum('po_value_foreign');
     }
@@ -236,35 +332,20 @@
 
 
 
-    function getWordCounts($words)
+    function getWordCounts($company_id)
     {
         // Assuming the "client_rfqs" table has a "description" column
         $rows = DB::table('client_rfqs')
-            ->select(DB::raw('LOWER(description) as description'))
-            ->get();
-    
-        // Create an array to store the total counts for the specified words
-        $result = [];
-    
-        // Iterate over each row and accumulate the counts for the specified words
-        foreach ($rows as $row) {
-            $descriptions = strtolower($row->description);
-    
-            foreach ($words as $word) {
-                $lowerWord = strtolower($word);
-    
-                // Check if the word appears in the row
-                if (strpos($descriptions, $lowerWord) !== false) {
-                    // Increment the total count for the word
-                    $result[$word] = isset($result[$word]) ? $result[$word] + 1 : 1;
-                }
-            }
-        }
-    
-        // Sort the result array in descending order based on counts
-        arsort($result);
-    
-        return $result;
+        ->join('products', 'client_rfqs.product', '=', 'products.product_name') // Join based on the correct column
+        ->where('client_rfqs.company_id', $company_id) // Filter for the desired company
+        ->groupBy('products.product_name') // Group by product name
+        ->selectRaw('products.product_name, COUNT(client_rfqs.rfq_id) as rfq_count') // Select product name and RFQ count
+        ->orderBy('rfq_count', 'DESC')
+        ->take(7)
+        ->get();
+            
+        //dd($rows);
+        return $rows;
     }
 
     function getSupplierFiles($rfq_id, $vendor_id)
@@ -274,27 +355,30 @@
         ])->get();
     }
 
-    function getNewRfqs()
+    function getNewRfqs($company_id)
     {
         return \DB::table('client_rfqs')
+            ->where('company_id', $company_id)
             ->where('status', "RFQ Received")
             ->orderBy('rfq_date', 'desc') // Assuming there is a 'created_at' column
             ->take(2)
             ->get();
     }
 
-    function getAwaitingRfqs()
+    function getAwaitingRfqs($company_id)
     {
         return \DB::table('client_rfqs')
+            ->where('company_id', $company_id)
             ->where('status', "Awaiting Approval")
             ->orderBy('rfq_date', 'desc') // Assuming there is a 'created_at' column
             ->take(2)
             ->get();
     }
 
-    function getPOIssuedRfqs()
+    function getPOIssuedRfqs($company_id)
     {
         return \DB::table('client_rfqs')
+            ->where('company_id', $company_id)
             ->where('status', "PO Issued")
             ->orderBy('rfq_date', 'desc') // Assuming there is a 'created_at' column
             ->take(2)
@@ -372,6 +456,14 @@
         return \DB::table('companies')->where([
             "company_id" => $company_id
         ])->get();
+    }
+    
+    function companyByMail($mail)
+    {
+        $company = \DB::table('companies')->where('email', $mail)->first();
+        
+        // Check if a record was found and return the company_id; otherwise, return null
+        return $company ? $company->company_id : null;
     }
 
     function cops($company_id)
@@ -1415,11 +1507,51 @@ function getTotalPoc($client_id, $start_date = null, $end_date = null)
         ->get();
     }
     
+    function getproductsByCompany($company_id)
+    {
+        return \DB::table('products')->where('company_id',$company_id)->orderBy('product_name')
+        ->get();
+    }
+    
     function getcompanyproducts($company_id)
     {
         return \DB::table('products')->orderBy('product_name')->where('company_id', $company_id)
         ->get();
     }
+    
+    const FREIGHT_PRICING_DATA = [
+        'Europe' => [
+            ['weight_min' => 0, 'weight_max' => 50, 'charge' => 7.0],
+            ['weight_min' => 50, 'weight_max' => 100, 'charge' => 7.0],
+            ['weight_min' => 100, 'weight_max' => 150, 'charge' => 6.5],
+            ['weight_min' => 150, 'weight_max' => 15000, 'charge' => 6],
+        ],
+        'UK' => [
+            ['weight_min' => 0, 'weight_max' => 50, 'charge' => 6.5],
+            ['weight_min' => 50, 'weight_max' => 100, 'charge' => 6.5],
+            ['weight_min' => 100, 'weight_max' => 150, 'charge' => 6],
+            ['weight_min' => 150, 'weight_max' => 15000, 'charge' => 5.5],
+        ],
+        'US' => [
+            ['weight_min' => 0, 'weight_max' => 50, 'charge' => 8],
+            ['weight_min' => 50, 'weight_max' => 100, 'charge' => 8],
+            ['weight_min' => 100, 'weight_max' => 150, 'charge' => 7.5],
+            ['weight_min' => 150, 'weight_max' => 15000, 'charge' => 7],
+        ],
+        'China' => [
+            ['weight_min' => 0, 'weight_max' => 50, 'charge' => 11.5],
+            ['weight_min' => 50, 'weight_max' => 100, 'charge' => 10.5],
+            ['weight_min' => 100, 'weight_max' => 150, 'charge' => 9.5],
+            ['weight_min' => 150, 'weight_max' => 15000, 'charge' => 9],
+        ],
+        'Middle East' => [
+            ['weight_min' => 0, 'weight_max' => 50, 'charge' => 10.5],
+            ['weight_min' => 50, 'weight_max' => 100, 'charge' => 9.5],
+            ['weight_min' => 100, 'weight_max' => 150, 'charge' => 8.5],
+            ['weight_min' => 150, 'weight_max' => 15000, 'charge' => 8],
+        ],
+
+    ];
     
     function freight_pricing($location, $weight){
         $charge = "";
@@ -1476,6 +1608,21 @@ function getTotalPoc($client_id, $start_date = null, $end_date = null)
         return $charge;
     }
     
+    function get_freight_pricing($location, $weight) {
+        if (isset(FREIGHT_PRICING_DATA[$location])) {
+            foreach (FREIGHT_PRICING_DATA[$location] as $range) {
+                if ($weight > $range['weight_min'] && $weight <= $range['weight_max']) {
+                    return $range['charge'];
+                }
+            }
+        }
+        return "Invalid location or weight"; // Handle invalid input gracefully
+    }
+    
+    function get_all_pricing() {
+        return FREIGHT_PRICING_DATA;
+    }
+    
     function getRecommendedSuppliers($product){
         return \DB::table('vendors')->orderBy('vendor_name')->whereJsonContains('products', $product)->get(['vendor_id', 'vendor_name']);
     }
@@ -1510,5 +1657,65 @@ function getTotalPoc($client_id, $start_date = null, $end_date = null)
     
     function getVendorContacts($id){
         return \DB::table('vendor_contacts')->where('vendor_id', $id)->orderBy('first_name')->get(['contact_id','first_name', 'last_name']);
+    }
+
+    function getPricingHistory($rfq_id){
+        return \DB::table('pricing_history')->where('rfq_id', $rfq_id)->get();
+    }
+
+    function getVendorContact($contact_id){
+        return \DB::table('vendor_contacts')->where('contact_id', $contact_id)->first();
+    }
+    
+    function getVendorPricing($rfq_id, $vendor_id){
+        return \DB::table('pricing_history')->where('rfq_id', $rfq_id)->where('vendor_id',$vendor_id)->first();
+    }
+
+    function getMailDetails($mail_id){
+        // Update the 'read' status to 1
+        \DB::table('mail_tray')->where('id', $mail_id)->update(['read' => 1]);
+        return \DB::table('mail_tray')->where('id', $mail_id)->select(['id', 'subject', 'body', 'sent_from', 'date_received', 'recipient_email', 'cc_email'])->first();
+    }
+    
+    function hasPo($rfq_id)
+    {
+        return \DB::table('client_pos')->where([
+            "rfq_id" => $rfq_id
+        ])->exists();
+    }
+    
+    function rating_badge($rating)
+    {
+        if($rating < 1.5){
+            return 'danger';
+        }else if($rating < 2.5){
+            return 'warning';
+        }else if($rating < 3.5){
+            return 'primary';
+        }else if($rating < 4.5){
+            return 'info';
+        }else{
+            return 'success';
+        }
+    }
+
+    function formatNumber($value) {
+        if ($value < 1000) {
+            return number_format($value, 1);
+        } elseif ($value < 1000000) {
+            return number_format($value / 1000, 1) . 'k';
+        } else {
+            return number_format($value / 1000000, 1) . 'm';
+        }
+    }
+
+    function formatValue($value) {
+        if ($value < 1000) {
+            return number_format($value, 1);
+        } elseif ($value < 1000000) {
+            return number_format($value / 1000, 1) . 'k';
+        } else {
+            return number_format($value / 1000000, 1) . 'm';
+        }
     }
 ?>

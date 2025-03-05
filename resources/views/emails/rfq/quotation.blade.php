@@ -165,7 +165,7 @@
                                                 </span>
 
                                             </p>
-                                            <img src="https://scm.tagenergygroup.net/admin/img/signature.jpg" alt="SCM" style="max-width:632px !important;"> <br>
+                                            <img src="{{asset('admin/img/signature.jpg')}}" alt="SCM" style="max-width:550px !important;"> <br>
                                             </table>
                                     </td>
                                 </tr>

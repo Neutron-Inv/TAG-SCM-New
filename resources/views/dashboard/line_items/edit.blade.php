@@ -100,7 +100,7 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text" id="basic-addon6"><i class="icon-home" style="color:#28a745"></i></span>
                                                                 </div>
-                                                                <input type="number" class="form-control" required id="quantity" name="quantity" value="{{ $line_items->quantity ?? 0 }}"
+                                                                <input type="text" class="form-control" required id="quantity" name="quantity" value="{{ $line_items->quantity ?? 0 }}"
                                                                 placeholder="Enter Quantity" required
                                                                 aria-describedby="basic-addon6">
                                                             </div>

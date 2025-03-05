@@ -774,7 +774,7 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control percentage cloned_supplier_percent" name="intrest_percent[]" value="{{ $supplierCof['percent'] ?? '' }}" id="intrest_percent_{{ $counters }}" max="100" required placeholder="Enter Percent of Supplier Cost" type="text" aria-describedby="basic-addon3">
+                                                        <input class="form-control percentage cloned_supplier_percent" name="intrest_percent[]" value="{{ $supplierCof['percent'] ?? '' }}" id="intrest_percent_{{ $counters }}" max="100" placeholder="Enter Percent of Supplier Cost" type="text" aria-describedby="basic-addon3">
                                                     </div>
                                                 </div>
 
@@ -784,7 +784,7 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="intrest_rate[]" id="intrest_rate_{{ $counters }}" value="{{ $supplierCof['interest'] ?? '' }}" maxlength="11" required placeholder="Enter Interest Rate Supplier" type="text" aria-describedby="basic-addon3">
+                                                        <input class="form-control" name="intrest_rate[]" id="intrest_rate_{{ $counters }}" value="{{ $supplierCof['interest'] ?? '' }}" maxlength="11" placeholder="Enter Interest Rate Supplier" type="text" aria-describedby="basic-addon3">
                                                     </div>
                                                 </div>
 
@@ -794,7 +794,7 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="duration[]" id="duration_{{ $counters }}" value="{{ $supplierCof['duration'] ?? '' }}" required placeholder="Enter Duration Supplier" type="number" aria-describedby="basic-addon3">
+                                                        <input class="form-control" name="duration[]" id="duration_{{ $counters }}" value="{{ $supplierCof['duration'] ?? '' }}" placeholder="Enter Duration Supplier" type="number" aria-describedby="basic-addon3">
                                                     </div>
                                                 </div>
 
@@ -822,7 +822,7 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control percentage cloned_supplier_percent" name="intrest_percent[]" value="" id="intrest_percent_{{ $counters }}" max="100" required placeholder="Enter Percent of Supplier Cost" type="text" aria-describedby="basic-addon3">
+                                                        <input class="form-control percentage cloned_supplier_percent" name="intrest_percent[]" value="" id="intrest_percent_{{ $counters }}" max="100" placeholder="Enter Percent of Supplier Cost" type="text" aria-describedby="basic-addon3">
                                                     </div>
                                                 </div>
 
@@ -832,7 +832,7 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="intrest_rate[]" id="intrest_rate_{{ $counters }}" value="" maxlength="11" required placeholder="Enter Interest Rate Supplier" type="text" aria-describedby="basic-addon3">
+                                                        <input class="form-control" name="intrest_rate[]" id="intrest_rate_{{ $counters }}" value="" maxlength="11" placeholder="Enter Interest Rate Supplier" type="text" aria-describedby="basic-addon3">
                                                     </div>
                                                 </div>
 
@@ -842,7 +842,7 @@ label {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="duration[]" id="duration_{{ $counters }}" value="" required placeholder="Enter Duration Supplier" type="number" aria-describedby="basic-addon3">
+                                                        <input class="form-control" name="duration[]" id="duration_{{ $counters }}" value="" placeholder="Enter Duration Supplier" type="number" aria-describedby="basic-addon3">
                                                     </div>
                                                 </div>
 
@@ -926,7 +926,7 @@ label {
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
                                                         <input class="form-control percentage cloned_logistics_percent" name="percent_logistics[]" id="percent_logistics_{{ $counters }}"
-                                                        maxlength="11" value="{{ $logisticsCof['percent'] ?? '' }}" required max="100" type="text" placeholder="Enter Percent of Logistics Cost"
+                                                        maxlength="11" value="{{ $logisticsCof['percent'] ?? '' }}" max="100" type="text" placeholder="Enter Percent of Logistics Cost"
                                                         aria-describedby="basic-addon3">
                                                     </div>
                                                     @if ($errors->has('intrest_logistics'))
@@ -943,7 +943,7 @@ label {
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
                                                         <input class="form-control" name="intrest_logistics[]" id="intrest_logistics_{{ $counters }}"
-                                                        maxlength="11" value="{{ $logisticsCof['interest'] ?? '' }}" required placeholder="Enter Intrest Rate Logistics" type="text"
+                                                        maxlength="11" value="{{ $logisticsCof['interest'] ?? '' }}" placeholder="Enter Intrest Rate Logistics" type="text"
                                                         aria-describedby="basic-addon3">
                                                     </div>
                                                     @if ($errors->has('intrest_logistics'))
@@ -960,7 +960,7 @@ label {
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
                                                         </div>
                                                         <input class="form-control" name="duration_logistics[]" id="duration_logistics_{{ $counters }}" value="{{ $logisticsCof['duration'] ?? '' }}" placeholder="Enter Duration Logistics"
-                                                        type="number" required aria-describedby="basic-addon3">
+                                                        type="number" aria-describedby="basic-addon3">
                                                     </div>
                                                     @if ($errors->has('duration_logistics'))
                                                         <div class="" style="color:red">{{ $errors->first('duration_logistics') }}</div>
@@ -993,7 +993,7 @@ label {
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
                                                         <input class="form-control percentage cloned_logistics_percent" name="percent_logistics[]" id="percent_logistics_{{ $counters }}"
-                                                        maxlength="11" value="" required max="100" type="text" placeholder="Enter Percent of Logistics Cost"
+                                                        maxlength="11" value="" max="100" type="text" placeholder="Enter Percent of Logistics Cost"
                                                         aria-describedby="basic-addon3">
                                                     </div>
                                                     @if ($errors->has('intrest_logistics'))
@@ -1010,7 +1010,7 @@ label {
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                                                         </div>
                                                         <input class="form-control" name="intrest_logistics[]" id="intrest_logistics_{{ $counters }}"
-                                                        maxlength="11" value="" required placeholder="Enter Intrest Rate Logistics" type="text"
+                                                        maxlength="11" value="" placeholder="Enter Intrest Rate Logistics" type="text"
                                                         aria-describedby="basic-addon3">
                                                     </div>
                                                     @if ($errors->has('intrest_logistics'))
@@ -1027,7 +1027,7 @@ label {
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
                                                         </div>
                                                         <input class="form-control" name="duration_logistics[]" id="duration_logistics_{{ $counters }}" value="" placeholder="Enter Duration Logistics"
-                                                        type="number" required aria-describedby="basic-addon3">
+                                                        type="number" aria-describedby="basic-addon3">
                                                     </div>
                                                     @if ($errors->has('duration_logistics'))
                                                         <div class="" style="color:red">{{ $errors->first('duration_logistics') }}</div>
@@ -1100,7 +1100,7 @@ label {
                     <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                 </div>
                 <input class="form-control percentage cloned_others_percent" name="percent_others[]" id="percent_others_{{ $counters }}"
-                maxlength="11" value="{{ $othersCof['percent'] ?? '' }}" required max="100" type="text" placeholder="Enter Percent of Others Cost"
+                maxlength="11" value="{{ $othersCof['percent'] ?? '' }}" max="100" type="text" placeholder="Enter Percent of Others Cost"
                 aria-describedby="basic-addon3">
             </div>
             @if ($errors->has('percent_others'))
@@ -1117,7 +1117,7 @@ label {
                     <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                 </div>
                 <input class="form-control" name="intrest_others[]" id="intrest_others_{{ $counters }}"
-                maxlength="11" value="{{ $othersCof['interest'] ?? '' }}" required placeholder="Enter Intrest Rate Others" type="text"
+                maxlength="11" value="{{ $othersCof['interest'] ?? '' }}" placeholder="Enter Intrest Rate Others" type="text"
                 aria-describedby="basic-addon3">
             </div>
             @if ($errors->has('intrest_others'))
@@ -1134,7 +1134,7 @@ label {
                     <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
                 </div>
                 <input class="form-control" name="duration_others[]" id="duration_others_{{ $counters }}" value="{{ $othersCof['duration'] ?? '' }}" placeholder="Enter Duration Others"
-                type="number" required aria-describedby="basic-addon3">
+                type="number" aria-describedby="basic-addon3">
             </div>
             @if ($errors->has('duration_others'))
                 <div class="" style="color:red">{{ $errors->first('duration_others') }}</div>
@@ -1167,7 +1167,7 @@ $counters++;
                     <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                 </div>
                 <input class="form-control percentage cloned_others_percent" name="percent_others[]" id="percent_others_{{ $counters }}"
-                maxlength="11" value="" required max="100" type="text" placeholder="Enter Percent of Others Cost"
+                maxlength="11" value="" max="100" type="text" placeholder="Enter Percent of Others Cost"
                 aria-describedby="basic-addon3">
             </div>
             @if ($errors->has('percent_others'))
@@ -1184,7 +1184,7 @@ $counters++;
                     <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
                 </div>
                 <input class="form-control" name="intrest_others[]" id="intrest_others_{{ $counters }}"
-                maxlength="11" value="" required placeholder="Enter Intrest Rate Others" type="text"
+                maxlength="11" value="" placeholder="Enter Intrest Rate Others" type="text"
                 aria-describedby="basic-addon3">
             </div>
             @if ($errors->has('intrest_others'))
@@ -1201,7 +1201,7 @@ $counters++;
                     <span class="input-group-text" id="basic-addon3"><i class="icon-flash" style="color:#28a745"></i></span>
                 </div>
                 <input class="form-control" name="duration_others[]" id="duration_others_{{ $counters }}" value="" placeholder="Enter Duration Others"
-                type="number" required aria-describedby="basic-addon3">
+                type="number" aria-describedby="basic-addon3">
             </div>
             @if ($errors->has('duration_others'))
                 <div class="" style="color:red">{{ $errors->first('duration_others') }}</div>
@@ -2007,6 +2007,26 @@ $(document).ready(function() {
 
                                                 </div>
                                             </div>
+                                            
+                                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                                <div class="form-group">
+                                                    <label for="total_ddp">Total DDP / Exworks</label><div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="basic-addon3"><i class="icon-sound-mix" style="color:#28a745"></i></span>
+                                                        </div>
+                                                        <input class="form-control" name="total_ddp" id="total_ddp"
+                                                         value="" placeholder="" type="text"
+                                                        aria-describedby="basic-addon3" readonly>
+                                                    </div>
+
+                                                    @if ($errors->has('total_quote'))
+                                                        <div class="" style="color:red">{{ $errors->first('total_quote') }}</div>
+                                                    @endif
+
+                                                </div>
+                                                <!-- <input name="total_quote" id="total_quote" value="{{ $sumTotalQuote ?? '0'}}" type="hidden" aria-describedby="basic-addon3"> -->
+
+                                            </div>
                                         </fieldset>
 
                                         <fieldset class="row" style="background: #CAE7E3;">
@@ -2115,7 +2135,7 @@ $(document).ready(function() {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-book" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="certificates_offered" placeholder="Enter certificates offered by OEM" type="text" aria-describedby="basic-addon6" value="{{ $details->certificates_offered}}" maxlength="150">
+                                                        <input class="form-control" name="certificates_offered" placeholder="Enter certificates offered by OEM" type="text" aria-describedby="basic-addon6" value="{{ $details->certificates_offered}}" maxlength="550">
                                                     </div>
 
                                                     @if ($errors->has('certificates_offered'))
@@ -2131,7 +2151,7 @@ $(document).ready(function() {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-truck" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="delivery_location" placeholder="Enter Delivery Location" type="text" required aria-describedby="basic-addon6" value="{{ $details->delivery_location}}" maxlength="150">
+                                                        <input class="form-control" name="delivery_location" placeholder="Enter Delivery Location" type="text" aria-describedby="basic-addon6" value="{{ $details->delivery_location}}" maxlength="550">
                                                     </div>
 
                                                     @if ($errors->has('delivery_location'))
@@ -2140,13 +2160,13 @@ $(document).ready(function() {
 
                                                 </div>
                                             </div>
-                                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
                                                 <div class="form-group">
                                                     <label for="payment_term">Payment Term</label><div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon3"><i class="icon-truck" style="color:#28a745"></i></span>
                                                         </div>
-                                                        <input class="form-control" name="payment_term" placeholder="Enter Payment Term" type="text" required aria-describedby="basic-addon6" value="{{ $details->payment_term}}" maxlength="500">
+                                                        <textarea class="form-control" name="payment_term" placeholder="Enter Payment Term" type="text" required aria-describedby="basic-addon6" maxlength="1000">{{ $details->payment_term}}</textarea>
                                                     </div>
 
                                                     @if ($errors->has('delivery_location'))
@@ -2178,6 +2198,8 @@ $(document).ready(function() {
                                                             <option value="DAP" <?php if($details->incoterm == 'DAP'){echo 'selected';} ?>> DAP </option>
                                                             
                                                             <option value="FOB" <?php if($details->incoterm == 'FOB'){echo 'selected';} ?>> FOB </option>
+                                                            
+                                                            <option value="CPT" <?php if($details->incoterm == 'CPT'){echo 'selected';} ?>> CPT </option>
 
                                                         </select>
 
@@ -2949,7 +2971,7 @@ $(document).ready(function() {
                                                     
                                                     // After updating Total_Quote, call the main calculation function
                                                     calculateFundsTransferCharge();
-                                                }, 500); // Delay for 1 second (1000 milliseconds)
+                                                }, 1000); // Delay for 1 second (1000 milliseconds)
                                             }
                                             }
 
@@ -3039,6 +3061,7 @@ $(document).ready(function() {
                 const Total_Quote = ((MarkUp) * supplierQuote) + supplierQuote;
                 
                 console.log(subTotalCost);
+                console.log('total_quote = '+TotalDDP);
                 
                 $("#fund_transfer_charge").val(fundsTransferCharge.toFixed(2));
                 $("#vat_transfer_charge").val(vatcharge.toFixed(2));
@@ -3050,6 +3073,7 @@ $(document).ready(function() {
                 $("#net_value").val(GrossMargin.toFixed(2));
                 $("#percent_margin").val(PercentGrossMargin.toFixed(2));
                 $("#total_quote").val(Total_Quote.toFixed(2));
+                $("#total_ddp").val(TotalDDP.toFixed(2));
                 $("#percent_margin").val(PercentGrossMargin.toFixed(2));
             }, 500); // Delay for 1 second (1000 milliseconds)
         }

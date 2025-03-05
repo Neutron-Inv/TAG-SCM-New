@@ -233,14 +233,24 @@
                                     <table id="fixedHeader" class="monthlytable table">
                                     <thead style="color:black; font-weight:bold !important;"> <!-- Top-level header -->
                                     <tr>
-                                    <th colspan="1" style="text-align:center; background-color:white;"></th>
-                                    <th colspan="2" style="text-align:center; background-color:#8ea9db; border: 1px solid #000; font-weight: bold;">
-                                        {{clis($topclients[0])[0]->client_name}}</th>
-                                    <th colspan="2" style="text-align:center; background-color:#f4b084; border: 1px solid #000; font-weight: bold;">{{clis($topclients[1])[0]->client_name}}</th>
-                                    <th colspan="2" style="text-align:center; background-color:#ffd966; border: 1px solid #000; font-weight: bold;">{{clis($topclients[2])[0]->client_name}}</th>
-                                    <th colspan="2" style="text-align:center; background-color:#00b0f0; border: 1px solid #000; font-weight: bold;">{{clis($topclients[3])[0]->client_name}}</th>
-                                    <th colspan="2" style="text-align:center; background-color:#a5a5a5; border: 1px solid #000; font-weight: bold;">{{clis($topclients[4])[0]->client_name}}</th>
+                                        <th colspan="1" style="text-align:center; background-color:white;"></th>
+                                        <th colspan="2" style="text-align:center; background-color:#8ea9db; border: 1px solid #000; font-weight: bold;">
+                                            {{ isset($topclients[0]) ? optional(clis($topclients[0])[0])->client_name : '' }}
+                                        </th>
+                                        <th colspan="2" style="text-align:center; background-color:#f4b084; border: 1px solid #000; font-weight: bold;">
+                                            {{ isset($topclients[1]) ? optional(clis($topclients[1])[0])->client_name : '' }}
+                                        </th>
+                                        <th colspan="2" style="text-align:center; background-color:#ffd966; border: 1px solid #000; font-weight: bold;">
+                                            {{ isset($topclients[2]) ? optional(clis($topclients[2])[0])->client_name : '' }}
+                                        </th>
+                                        <th colspan="2" style="text-align:center; background-color:#00b0f0; border: 1px solid #000; font-weight: bold;">
+                                            {{ isset($topclients[3]) ? optional(clis($topclients[3])[0])->client_name : '' }}
+                                        </th>
+                                        <th colspan="2" style="text-align:center; background-color:#a5a5a5; border: 1px solid #000; font-weight: bold;">
+                                            {{ isset($topclients[4]) ? optional(clis($topclients[4])[0])->client_name : '' }}
+                                        </th>
                                     </tr>
+
                                     <tr>
                                     <th style="text-align:center; background-color:white; color:grey; font-weight: bold;">PRODUCTS</th>
                                     <th style="text-align:center; background-color:#8ea9db; border: 1px solid #000; font-weight: bold;">RFQ RECEIVED</th>
@@ -261,40 +271,61 @@
                                         
                                         <tr>
                                             <td style="font-weight:bold;text-align:left;">{{$item}}</td>
-                                            <td>{{ count(getProductRfq($topclients[0], $item)) ?? 0 }}</td>
-                                        <td>{{ count(getProductPo($topclients[0],$item)) ?? 0 }}</td>
-                                        <td>{{ count(getProductRfq($topclients[1], $item)) ?? 0 }}</td>
-                                        <td>{{ count(getProductPo($topclients[1],$item)) ?? 0 }}</td>
-                                        <td>{{ count(getProductRfq($topclients[2], $item)) ?? 0 }}</td>
-                                        <td>{{ count(getProductPo($topclients[2],$item)) ?? 0 }}</td>
-                                        <td>{{ count(getProductRfq($topclients[3], $item)) ?? 0 }}</td>
-                                        <td>{{ count(getProductPo($topclients[3],$item)) ?? 0 }}</td>
-                                        <td>{{ count(getProductRfq($topclients[4], $item)) ?? 0 }}</td>
-                                        <td>{{ count(getProductPo($topclients[4],$item)) ?? 0 }}</td>
+                                            <td>{{ isset($topclients[0]) ? count(getProductRfq($topclients[0], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[0]) ? count(getProductPo($topclients[0], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[1]) ? count(getProductRfq($topclients[1], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[1]) ? count(getProductPo($topclients[1], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[2]) ? count(getProductRfq($topclients[2], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[2]) ? count(getProductPo($topclients[2], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[3]) ? count(getProductRfq($topclients[3], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[3]) ? count(getProductPo($topclients[3], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[4]) ? count(getProductRfq($topclients[4], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[4]) ? count(getProductPo($topclients[4], $item) ?? []) : 0 }}</td>
                                         </tr>
+
                                         @endforeach
                                         
                                         
                                         <tr>
                                         <td style="font-weight:bold;text-align:left;">TOTAL</td>
-                                        <td>{{ count(getTotalRfq($topclients[0])) ?? 0 }}</td>
-                                        <td>{{ count(getTotalPo($topclients[0])) ?? 0 }}</td>
-                                        <td>{{ count(getTotalRfq($topclients[1])) ?? 0 }}</td>
-                                        <td>{{ count(getTotalPo($topclients[1])) ?? 0 }}</td>
-                                        <td>{{ count(getTotalRfq($topclients[2])) ?? 0 }}</td>
-                                        <td>{{ count(getTotalPo($topclients[2])) ?? 0 }}</td>
-                                        <td>{{ count(getTotalRfq($topclients[3])) ?? 0 }}</td>
-                                        <td>{{ count(getTotalPo($topclients[3])) ?? 0 }}</td>
-                                        <td>{{ count(getTotalRfq($topclients[4])) ?? 0 }}</td>
-                                        <td>{{ count(getTotalPo($topclients[4])) ?? 0 }}</td>
+                                        <td>{{ isset($topclients[0]) ? count(getTotalRfq($topclients[0], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[0]) ? count(getTotalPo($topclients[0], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[1]) ? count(getTotalRfq($topclients[1], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[1]) ? count(getTotalPo($topclients[1], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[2]) ? count(getTotalRfq($topclients[2], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[2]) ? count(getTotalPo($topclients[2], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[3]) ? count(getTotalRfq($topclients[3], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[3]) ? count(getTotalPo($topclients[3], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[4]) ? count(getTotalRfq($topclients[4], $item) ?? []) : 0 }}</td>
+                                            <td>{{ isset($topclients[4]) ? count(getTotalPo($topclients[4], $item) ?? []) : 0 }}</td>
                                         </tr>
                                         <tr>
-                                        <td style="font-weight:bold;text-align:left;">PO Conversion Rate</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[0])) > 0) ? number_format((count(getTotalPo($topclients[0])) / count(getTotalRfq($topclients[0])) * 100), 2) : 0.00 }}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[1])) > 0) ? number_format((count(getTotalPo($topclients[1])) / count(getTotalRfq($topclients[1])) * 100), 2) : 0.00 }}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[2])) > 0) ? number_format((count(getTotalPo($topclients[2])) / count(getTotalRfq($topclients[2])) * 100), 2) : 0.00}}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[3])) > 0) ? number_format((count(getTotalPo($topclients[3])) / count(getTotalRfq($topclients[3])) * 100), 2) : 0.00 }}%</td>
-                                        <td colspan="2" style="text-align:center; font-weight:bold;">{{ (count(getTotalRfq($topclients[4])) > 0) ? number_format((count(getTotalPo($topclients[4])) / count(getTotalRfq($topclients[4])) * 100), 2) : 0.00 }}%</td>
+                                            <td style="font-weight:bold;text-align:left;">PO Conversion Rate</td>
+                                            <td colspan="2" style="text-align:center; font-weight:bold;">
+                                                {{ isset($topclients[0]) && count($rfq = getTotalRfq($topclients[0]) ?? []) > 0 
+                                                    ? number_format((count($po = getTotalPo($topclients[0]) ?? []) / count($rfq) * 100), 2) 
+                                                    : 0.00 }}%
+                                            </td>
+                                            <td colspan="2" style="text-align:center; font-weight:bold;">
+                                                {{ isset($topclients[1]) && count($rfq = getTotalRfq($topclients[1]) ?? []) > 0 
+                                                    ? number_format((count($po = getTotalPo($topclients[1]) ?? []) / count($rfq) * 100), 2) 
+                                                    : 0.00 }}%
+                                            </td>
+                                            <td colspan="2" style="text-align:center; font-weight:bold;">
+                                                {{ isset($topclients[2]) && count($rfq = getTotalRfq($topclients[2]) ?? []) > 0 
+                                                    ? number_format((count($po = getTotalPo($topclients[2]) ?? []) / count($rfq) * 100), 2) 
+                                                    : 0.00 }}%
+                                            </td>
+                                            <td colspan="2" style="text-align:center; font-weight:bold;">
+                                                {{ isset($topclients[3]) && count($rfq = getTotalRfq($topclients[3]) ?? []) > 0 
+                                                    ? number_format((count($po = getTotalPo($topclients[3]) ?? []) / count($rfq) * 100), 2) 
+                                                    : 0.00 }}%
+                                            </td>
+                                            <td colspan="2" style="text-align:center; font-weight:bold;">
+                                                {{ isset($topclients[4]) && count($rfq = getTotalRfq($topclients[4]) ?? []) > 0 
+                                                    ? number_format((count($po = getTotalPo($topclients[4]) ?? []) / count($rfq) * 100), 2) 
+                                                    : 0.00 }}%
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -314,8 +345,22 @@
                 <br/>
                 <br/>
                 <br/>
-                
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+@php
+if(Auth::user()->hasRole('SuperAdmin')){
+$company_idtp = '2';
+}elseif(Auth::user()->hasRole('Admin')){
+$company_idtp = json_decode(companyByMail(Auth::user()->email));
+}else{
+$company_idtp = json_decode(empDet(Auth::user()->email))[0]->company_id;
+}
+
+if($company_idtp == 2){
+$hidden = "";
+}else{
+$hidden = "hidden";
+}
+@endphp
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" {{$hidden}}>
                     <div class="card">
                         <div class="card-body">
                             
@@ -382,7 +427,7 @@
                 <br/>
                 
                 
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" {{$hidden}}>
                     <div class="card">
                         <div class="card-body">
                             

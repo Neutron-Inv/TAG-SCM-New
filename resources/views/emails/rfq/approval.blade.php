@@ -555,7 +555,19 @@
                                 <br/>
                             @php $sn += 1 @endphp
                                 
-                            {{ $sn }}. Payment Term: <b>{{ $rfq->payment_term ?? '' }}</b> <br/>
+                            <?php $pay_count = 1; ?>    
+                            {{ $sn }}. Payment Term: @foreach (explode(';', $rfq->payment_term ?? '') as $payment_term)
+                                                    @if(preg_replace('/\D/','',$payment_term) != "")
+                                                    @if($pay_count > 1)
+                                                    <span style="margin-left:53px;">{{ trim($payment_term) }}</span><br/>
+                                                    @else
+                                                    {{ trim($payment_term) }}<br/>
+                                                    @endif
+                                                    <?php $pay_count++ ?>
+                                                    @endif
+                                                    @endforeach
+                            <br/>
+                            <!--{{ $rfq->payment_term ?? '' }} <br/>-->
                             @php $sn += 1 @endphp
                             
                             @if($rfq->vendor_id == '167')
@@ -607,7 +619,7 @@
                                                     </span>
 
                                                 </p>
-                                                <img src="https://scm.enabledjobs.com/admin/img/signature.jpg" alt="SCM" style="width: 100%;">
+                                                <img src="{{asset('admin/img/signature.jpg')}}" alt="SCM" style="width: 100%;">
                                                 <div style="text-align: center; font-size: 9px; color: #ffffff; background-color: white;" >
                                                     <p style="color: black; font-size: 9px;">
                                                         &copy; Enabled Business Solution - All rights reserved.

@@ -107,7 +107,7 @@
             <p class="footey">Procurement Associate</p>
             <p class="footey">PHONE: +234 1 342 8420 | +234 906 243 5410</p>
             <p class="footey">EMAIL: <a href="mailto:sales@tagenergygroup.net">sales@tagenergygroup.net</a></p>
-            <img src="https://scm.enabledjobs.com/admin/img/signature.jpg" alt="SCM" style="width: 100%;">
+            <img src="{{asset('admin/img/signature.jpg')}}" alt="SCM" style="width: 100%;">
         </div>
     </div>
 </body>

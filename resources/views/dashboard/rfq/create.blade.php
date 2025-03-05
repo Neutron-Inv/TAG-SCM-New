@@ -1,6 +1,14 @@
 <?php $title = 'Client RFQ'; ?>
 @extends('layouts.app')
-
+@php
+if(Auth::user()->hasRole('SuperAdmin')){
+$company_idtp = '2';
+}elseif(Auth::user()->hasRole('Admin')){
+$company_idtp = json_decode(companyByMail(Auth::user()->email));
+}else{
+$company_idtp = json_decode(empDet(Auth::user()->email))[0]->company_id;
+}
+@endphp
 @section('content')
     <div class="main-container">
 
@@ -112,7 +120,7 @@
                                                                     <span class="input-group-text" id="basic-addon2"><i class="icon-documents" style="color:#28a745"></i></span>
                                                                 </div>
                                         @php
-                                        $products = getproducts();
+                                        $products = getproductsByCompany($company_idtp);
                                         @endphp
                                         <select class="form-control selectpicker" data-live-search="true" required name="product">
                                              <option value="">-- Select Product --</option>

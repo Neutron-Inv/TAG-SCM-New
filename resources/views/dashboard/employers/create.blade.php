@@ -8,7 +8,7 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard </a></li>
                 <li class="breadcrumb-item active"><a href="{{ route('employer.create') }}">
-                    @if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')))
+                    @if (Gate::allows('SuperAdmin', auth()->user()))
                         Add Employee
                     @else
                          Details
@@ -33,7 +33,7 @@
         <!-- Content wrapper start -->
         <div class="content-wrapper">
             <div class="row gutters">
-                @if (Gate::allows('SuperAdmin', auth()->user()) OR (Auth::user()->hasRole('Admin')))
+                @if (Gate::allows('SuperAdmin', auth()->user()))
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card">
                         <div class="card-body">
@@ -113,6 +113,7 @@
                                                 <select class="form-control selectpicker" data-live-search="true" required name="role">
                                                     <option data-tokens="Employee" value="Employer"> Employee</option>
                                                     <option data-tokens="HOD" value="HOD"> Head of Department</option>
+                                                    <option data-tokens="Admin" value="Admin"> Admin </option>
 												</select>
                                             </div>
 

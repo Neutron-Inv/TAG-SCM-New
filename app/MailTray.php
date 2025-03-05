@@ -18,7 +18,10 @@ class MailTray extends Pivot
         'subject',
         'body',
         'recipient_email',
+        'sent_from',
         'cc_email',
+        'date_received',
+        'date_sent',
         'sent_by'
     ];
 

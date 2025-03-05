@@ -64,6 +64,10 @@ class GRNReminder extends Command
                                 ->where('type', 'GRN Reminder')
                                 ->latest('created_at')
                                 ->first();
+            $automation_check_14days = Automation::where('po_id',$po->po_id)
+                                ->where('type', '14-days GRN Reminder')
+                                ->latest('created_at')
+                                ->first();
             if(!$automation_check && Carbon::parse($po->actual_delivery_date)->diffInDays(Carbon::now()) >= 3){
                 Log::info($po->po_id.' Automation checked and hasnt had its GRN Reminder Sent');
                 $rfq = ClientRfq::where('rfq_id',$po->rfq_id)->first();
@@ -127,7 +131,7 @@ class GRNReminder extends Command
                     Log::info($po->po_id."Email not sent: " . $e->getMessage());
                     $this->error("Email not sent: " . $e->getMessage());
                 }
-            }elseif($automation_check->created_at->diffInDays(Carbon::now()) >= 14){
+            }elseif($automation_check->created_at->diffInDays(Carbon::now()) >= 14 && !$automation_check_14days){
                 // Log::info('GRNReminder last sent reminder more than 14days');
                 $rfq = ClientRfq::where('rfq_id',$po->rfq_id)->first();
                 $cli_title = clis($po->client_id);
@@ -139,12 +143,14 @@ class GRNReminder extends Command
                 $assigned = $assigned_details->full_name;
                 $rfqcode = "TE-". $resultt[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
 
-                $rec_mail = $contact_email;
+                
                 //$rec_mail = 'emmanuel.idowu@tagenergygroup.net';
                 $cc_mail = 'sales@tagenergygroup.net';
                 //$cc_mail = 'emmanuel@enabledgroup.net';
                 $employee = Employers::where('employee_id', $rfq->employee_id)->first();
                 // $bcc_mail = $employee->email;
+                
+                $rec_mail = $employee->email;
                 
                 $bcc_mail = [
                     $employee->email,

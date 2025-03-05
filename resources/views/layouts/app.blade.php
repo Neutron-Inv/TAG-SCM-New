@@ -12,7 +12,7 @@ data-template="horizontal-menu-template">
     <meta name="keywords" content="">
     <meta name="author" content="Enabled Solutions">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title> {{$title . ' | SCM'}} </title>
+    <title> {{$title . ' | '. config('app.name')}} </title>
     <meta name="description" content="SCM">
     <meta name="author" content="Enabled Solutions">
     <link rel="shortcut icon" href="{{asset('images/favicon.ico')}}" />
@@ -92,14 +92,14 @@ data-template="horizontal-menu-template">
             display: flex;
             flex-wrap: wrap;
         }
-        
+         
         .bootstrap-tagsinput .label-info {
             margin-right: 2px;
             color: #fff;
             background-color: #28c76f !important;
             padding: 3px;
             border-radius: 10px;
-        }
+        } 
     </style>
     @if (strpos($title, 'TAG Energy Quotation') !== false)
          <style type="">
@@ -161,7 +161,15 @@ data-template="horizontal-menu-template">
       </style>
     {{-- <link rel="stylesheet" href="{{asset('admin/printer.css')}}" type="text/css" media="print" /> --}}
 <head>
-
+@php
+if(Auth::user()->hasRole('SuperAdmin')){
+$company_id = '2';
+}elseif(Auth::user()->hasRole('Admin')){
+$company_id = json_decode(companyByMail(Auth::user()->email));
+}else{
+$company_id = json_decode(empDet(Auth::user()->email))[0]->company_id;
+}
+@endphp
 <body class="">
 <div class="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
       <div class="layout-container">
@@ -172,7 +180,7 @@ data-template="horizontal-menu-template">
             <div class="navbar-brand app-brand demo d-none d-xl-flex py-0 me-4">
               <a href="index.html" class="app-brand-link gap-2">
                 <span class="app-brand-logo">
-                  <img src="{{asset('admin/assets/img/tag-flow.png')}}" class="mb-2 ml-2 mt-1" width="60">
+                  <img src="{{asset('admin/assets/img/tag-flow.png')}}" class="mb-2 ml-2 mt-1" width="200" style="width:100px !important;">
                 </span>
                 <!-- <span class="app-brand-text demo menu-text fw-bold"></span> -->
               </a>
@@ -239,7 +247,7 @@ data-template="horizontal-menu-template">
         </div> 
 
         @include('layouts.sidebar')
-        <main>
+        <main style="min-height: 80vh;">
             @yield('content')
             </main>
         <footer class="main-footer" style="background:#28c76f !important;">&copy; {{ date('Y') }} Enabled Business Solutions. All Rights Reserved</footer>
@@ -298,7 +306,7 @@ data-template="horizontal-menu-template">
     <!-- Page JS -->
     <script src="{{asset('admin/assets/js/dashboards-analytics.js')}}"></script>
     <script src="{{asset('admin/assets/js/dashboards-ecommerce.js')}}"></script>
-
+    <script src="{{asset('admin/assets/js/app-email.js')}}"></script>
 
     <script src="{{asset('admin/js/main.js')}}"></script>
     <script>

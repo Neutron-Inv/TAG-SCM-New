@@ -43,3 +43,19 @@ Route::prefix('rfq')->group(function () {
     // Return a response 
     return response()->json($contact);
 });
+
+Route::get('/get-vendor-pricing/{rfq}/{vendorId}', function($rfq, $vendorId) {
+    // Call the helper function
+    $pricing = getVendorPricing($rfq, $vendorId);  // the helper function
+
+    // Return a response 
+    return response()->json($pricing);
+});
+
+Route::get('/get-mail-details/{id}', function($id) {
+    // Call the helper function
+    $mail = getMailDetails($id);  // the helper function
+
+    // Return a response 
+    return response()->json($mail);
+});

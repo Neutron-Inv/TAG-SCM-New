@@ -41,7 +41,7 @@ class ClientController extends Controller
             $rfq = ClientRfq::where('company_id', $company->company_id)->orderBy('created_at','desc')->get();
             $po = ClientPo::where('company_id', $company->company_id)->orderBy('created_at','desc')->get();
             $ng_states = NgState::orderby('name', 'asc')->get();
-            $countries = Country::orderby('nicename', 'asc')->get();
+            $countries = Country::orderby('name', 'asc')->get();
             return view('dashboard.clients.index')->with([
                 'client' => $client, "company" => $company, 'rfq' => $rfq, 'po' => $po, "ng_states" => $ng_states, "countries" => $countries
             ]);
@@ -166,13 +166,13 @@ class ClientController extends Controller
 
             $this->validate($request, [
                 'company_id' => ['required', 'string', 'max:199'],
-                'client_name' => ['required', 'string', 'max:199', 'unique:clients'],
+                'client_name' => ['required', 'string', 'max:199'],
                 'address' => ['required', 'string', 'max:199'],
                 'state' => ['required', 'string', 'max:199'],
                 'city' => ['required', 'string', 'max:199'],
                 'country_code' => ['required', 'string', 'max:199'],
-                'phone' => ['required', 'string', 'max:20', 'unique:clients'],
-                'email' => ['required', 'email', 'max:199', 'unique:clients'],
+                'phone' => ['required', 'string', 'max:20'],
+                'email' => ['required', 'email', 'max:199'],
                 'short_code' => ['required', 'string', 'max:6'],
                 'company_vendor_code' => ['required', 'string', 'max:20']
             ]);
@@ -234,18 +234,18 @@ class ClientController extends Controller
                 $last_name = (isset($cut[1])) ? $cut[1] : $cut[0];
 
 
-                $datum = new User([
+                // $datum = new User([
 
-                    "email" => $request->input("email"),
-                    "last_name" => $last_name,
-                    "password" => Hash::make($request->input("email")),
-                    "first_name" => $first_name,
-                    "phone_number" => $request->input("phone"),
-                    "user_activation_code" => 1, "role" => $role
-                ]);
+                //     "email" => $request->input("email"),
+                //     "last_name" => $last_name,
+                //     "password" => Hash::make($request->input("email")),
+                //     "first_name" => $first_name,
+                //     "phone_number" => $request->input("phone"),
+                //     "user_activation_code" => 1, "role" => $role
+                // ]);
 
-                if ($data->save() and ($log->save()) AND ($datum->save())) {
-                    $datum->assignRole($role);
+                if ($data->save() and ($log->save())) {
+                    //$datum->assignRole($role);
                     if($request->hasFile('client_file')) {
                         $file = $request->client_file;
                         foreach ($file as $images) {
@@ -408,7 +408,7 @@ class ClientController extends Controller
                 $company = Companies::where('company_id', $employer->company_id)->first();
                 $client = Clients::where('company_id', $company->company_id)->orderBy('client_name', 'asc')->get();
                 $ng_states = NgState::orderby('name', 'asc')->get();
-                $countries = Country::orderby('nicename', 'asc')->get();
+                $countries = Country::orderby('name', 'asc')->get();
 
                 return view('dashboard.clients.edit')->with([
                     'client' => $client, "company" => $company, 'cli' => $cli
