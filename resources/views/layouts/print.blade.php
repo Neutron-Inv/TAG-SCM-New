@@ -19,7 +19,7 @@
         @import url('https://fonts.cdnfonts.com/css/agency-fb');
         /* General styles for body */
         body {
-            margin-bottom: 40px; /* Adjust the value as needed */
+            margin-bottom: 40px !important; /* Adjust the value as needed */
         }
         
         /* Typography settings for common elements */
