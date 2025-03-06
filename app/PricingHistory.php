@@ -28,6 +28,11 @@ class PricingHistory extends Pivot
         'rated_by',
         'issued_by',
         'misc_cost',
+        'weight',
+        'dimension',
+        'hs_codes',
+        'general_terms',
+        'notes_to_pricing',
     ];
 
     // protected $casts = [

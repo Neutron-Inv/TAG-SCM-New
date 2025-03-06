@@ -41,13 +41,13 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-header">
-								<div class="card-title">Please fill the below form to Rate {{ $pricing->vendor->vendor_name }} on this Request ({{$pricing->rfq_code}}) </div>
+								<div class="card-title">Please fill the below form to Rate <b> {{ $pricing->vendor->vendor_name }} </b> on this Request<b> ({{$pricing->rfq_code}}) </b></div>
 							</div>
                             <form action="{{ route('pricing.update', $pricing->id) }}" class="" method="POST">
                                 {{ csrf_field() }}
                                 <div class="row gutters">
                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-                                        <fieldset class="row" style="background: #efd1ff; padding:10px;">
+                                        <fieldset class="row" style="background: #ffd1d1; padding:10px;">
                                             <legend> <i class="icon-history mt-6" style="color:#000"></i> Supplier RFQ Rating </legend>
                                      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
@@ -154,9 +154,9 @@
                             </div>
 
                             <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-                                <fieldset class="row" style="background: #d5f9e4;">
+                                <fieldset class="row" style="background: #d5eaf9;">
                                     <legend> <i class="icon-history mt-6" style="color:#000"></i> Quote Information and Miscellaneous </legend>
-                                    <div class="col-xl-5 col-lg-5 col-md-6 col-sm-6 col-12">
+                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label for="nameOnCard">Total Quote</label>
                                             <div class="input-group">
@@ -168,7 +168,7 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="col-xl-5 col-lg-5 col-md-6 col-sm-6 col-12">
+                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label for="nameOnCard">Supplier Reference Number</label>
                                             <div class="input-group">
@@ -176,6 +176,18 @@
                                                     <span class="input-group-text" id="basic-addon6"><i class="icon-list" style="color:#28a745"></i></span>
                                                 </div>
                                                 <input class="form-control" type="text" name="reference_number" placeholder="Enter Supplier Reference Number" value="{{ $pricing->reference_number ? $pricing->reference_number : ''}}" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="lead_time">Lead Time</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon6"><i class="icon-list" style="color:#28a745"></i></span>
+                                                </div>
+                                                <input class="form-control" type="text" name="lead_time" placeholder="Enter Lead Time" value="{{ $pricing->lead_time ? $pricing->lead_time : ''}}" />
                                             </div>
                                         </div>
                                     </div>
@@ -228,6 +240,110 @@
                                     </div>
                                     </fieldset>
                                 </div>
+
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <fieldset class="row" style="background: #f8f9d5;">
+                                        <legend> <i class="icon-history mt-6" style="color:#000"></i>Notes to Pricing</legend>
+                                        
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label for="general_terms">General Terms</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon6"><i class="icon-list" style="color:#28a745"></i></span>
+                                                    </div>
+                                                    <textarea id="general_terms" name="general_terms" class="form-control" placeholder="Enter General Terms (if applicable)"> {{ $pricing->general_terms ? $pricing->general_terms : ''}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label for="notes_to_pricing">Notes to Pricing</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon6"><i class="icon-list" style="color:#28a745"></i></span>
+                                                    </div>
+                                                    <textarea id="notes_to_pricing" name="notes_to_pricing" class="form-control" placeholder="Enter Notes to Pricing (if applicable)"> {{ $pricing->notes_to_pricing ? $pricing->notes_to_pricing : ''}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label for="weight">Estimated Weight</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon6"><i class="icon-package" style="color:#28a745"></i></span>
+                                                    </div>
+                                                    <input id="weight" class="form-control" type="text" name="weight" placeholder="Enter Estimated Weight" value="{{ $pricing->weight ? $pricing->weight : ''}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label for="dimension">Estimated Dimension</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon6"><i class="icon-box" style="color:#28a745"></i></span>
+                                                    </div>
+                                                    <input id="dimension" class="form-control" type="text" name="dimension" placeholder="Enter Estimated Dimension" value="{{ $pricing->dimension ? $pricing->dimension : ''}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label for="hs_code">HS Codes</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon6"><i class="icon-clipboard" style="color:#28a745"></i></span>
+                                                    </div>
+                                                    <input id="hs_code" class="form-control" type="text" name="hs_codes" placeholder="Enter HS Codes" value="{{ $pricing->hs_codes ? $pricing->hs_codes : ''}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label for="delivery_time">Delivery Time</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon6"><i class="icon-clock" style="color:#28a745"></i></span>
+                                                    </div>
+                                                    <input id="delivery_time" class="form-control" type="text" name="delivery_time" placeholder="Enter Estimated Time" value="{{ $pricing->delivery_time ? $pricing->delivery_time : ''}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label for="delivery_location">Delivery Location</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon6"><i class="icon-location" style="color:#28a745"></i></span>
+                                                    </div>
+                                                    <input id="delivery_location" class="form-control" type="text" name="delivery_location" placeholder="Enter Delivery Location" value="{{ $pricing->delivery_location ? $pricing->delivery_location : ''}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label for="payment_term">Payment Terms</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon6"><i class="icon-wallet" style="color:#28a745"></i></span>
+                                                    </div>
+                                                    <input id="payment_term" class="form-control" type="text" name="payment_term" placeholder="Enter Payment Terms" value="{{ $pricing->payment_term ? $pricing->payment_term : ''}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        
+                                        </fieldset>
+                                    </div>
 
                                     {{-- <input type="hidden" name="contact_id" value="{{$conc->contact_id}}"> --}}
                                     

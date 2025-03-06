@@ -84,7 +84,12 @@ class PricingHistoryController extends Controller
                 'total_quote' => $request->input('total_quote'),
                 'reference_number' => $request->input('reference_number'),
                 'misc_cost' => $json_supplier,
-                'rated_by' => $user_id
+                'weight' => $request->input('weight'),
+                'dimension' => $request->input('dimension'),
+                'hs_codes' => $request->input('hs_codes'),
+                'general_terms' => $request->input('general_terms'),
+                'notes_to_pricing' => $request->input('notes_to_pricing'),
+                'rated_by' => $user_id,
             ]);
     
             return redirect()->back()->with('success', 'Supplier rating updated successfully.');
