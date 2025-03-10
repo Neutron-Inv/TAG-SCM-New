@@ -32,6 +32,9 @@ class ClientPoReport extends Mailable
         $client = $this->data['client'];
         $client_id = $this->data['client_id'];
         $clients_det = $this->data['clients_det'];
-        $mail = $this->subject($clients_det->client_name.' ' ."PO STATUS UPDATE")->markdown('emails.po.clientporeport')->with(compact('clients','client','client_id','clients_det'));
+        if($client_id == "114"){
+            $clients_det->client_name = "NLNG";
+        }
+        $mail = $this->subject('TAG Energy '.$clients_det->client_name.' ' ."Orders Status Update Report")->markdown('emails.po.clientporeport')->with(compact('clients','client','client_id','clients_det'));
     }
 }

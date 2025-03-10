@@ -28,7 +28,7 @@ hr {
                                                 <p style="font-size: 11.0pt;font-family: Calibri, sans-serif; color: black;"> 
                                                     Dear Sir/Madam,<br/>
                         							<br>Good day, I trust this mail finds you well.<br/>
-                                                    <br/>Please see below {{ $clients_det->client_name}} PO Status Update.
+                                                    <br/>Please see below {{ $clients_det->client_name}} Orders Status Update.
                                                     <br/> <br/> 
                                                     Thank you.
                                                 </p><br/>
@@ -73,7 +73,7 @@ hr {
                                 <th style="width: 3%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;text-align: center;">S/N</th>
                                 <th style="width: 10%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;"> PO No </th>
                                 <th style="width: 15%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;"> PO Issued to <br/>Supplier Date </th>
-                                <th style="width: 15%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;"> Delivery Date </th>
+                                <th style="width: 15%; text-align: center; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;"> PO Expected Delivery Date</th>
                                 <th style="width: 55%; text-align: left; padding: 5px 5px; border: 1px solid black; white-space: nowrap; vertical-align: top; font-size: 9.0pt; font-family: Calibri, sans-serif;">Status </th>
                                 </tr>
                             </thead>
