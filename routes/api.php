@@ -52,6 +52,14 @@ Route::get('/get-vendor-pricing/{rfq}/{vendorId}', function($rfq, $vendorId) {
     return response()->json($pricing);
 });
 
+Route::get('/get-pricing-lineitems/{pricingId}', function($pricingId) {
+    // Call the helper function
+    $pricing = getPricingLineItems($pricingId);  // the helper function
+
+    // Return a response 
+    return response()->json($pricing);
+});
+
 Route::get('/get-mail-details/{id}', function($id) {
     // Call the helper function
     $mail = getMailDetails($id);  // the helper function

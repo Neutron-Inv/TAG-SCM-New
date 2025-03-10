@@ -49,13 +49,13 @@ $result = json_decode($cli_title, true);
                              
 
                                     <p style=" color:black; width:500px; font-family: Calibri, sans-serif; font-size:7pt; margin-top: -35px; margin-bottom:1px; font-weight: 700; line-height: 180%; font-weight: 400;">
-                                        <b> {{ $vendor->short_code. ' Rfx: '. $rfq->rfq_number}} </b>
+                                        <b> {{ $vendor->short_code. ' Rfx: '. $pricing->reference_number}} </b>
                                     </p>
                                         
                                     <br/>
                                         
                                     <p class="producttag" style="color: black; margin-top: -25px; line-height: 80%; font-size:7px; width:330px !important">
-                                        We are pleased to issue this purchase order in response to the pricing in your quotation {{$rfq->rfq_number}}<br/>
+                                        We are pleased to issue this purchase order in response to the pricing in your quotation {{$pricing->reference_number}}<br/>
                                         By this letter, we request that you commence the immediate supply and ensure compliance as per your quotation<br/>
                                         and the specification.
                         				<br/>

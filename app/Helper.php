@@ -1668,7 +1668,11 @@ function getTotalPoc($client_id, $start_date = null, $end_date = null)
     }
     
     function getVendorPricing($rfq_id, $vendor_id){
-        return \DB::table('pricing_history')->where('rfq_id', $rfq_id)->where('vendor_id',$vendor_id)->first();
+        return \DB::table('pricing_history')->where('rfq_id', $rfq_id)->where('vendor_id',$vendor_id)->get(['id','reference_number', 'line_items']);
+    }
+
+    function getPricingLineItems($pricingId){
+        return \DB::table('pricing_history')->where('id', $pricingId)->first('line_items');
     }
 
     function getMailDetails($mail_id){

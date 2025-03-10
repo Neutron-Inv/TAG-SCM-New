@@ -642,7 +642,7 @@ $other_suppliers = getOtherSuppliers();
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="customModalTwoLabel">Issue PO Supplier</h5>
+                <h5 class="modal-title" id="customModalTwoLabel">Issue PO to Supplier</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -654,7 +654,7 @@ $other_suppliers = getOtherSuppliers();
                     <div class="row gutters">
                         <div class="col-md-4 col-sm-4 col-4">
                             <label for="recipient-name" class="col-form-label">Supplier:</label>
-                            <select class="form-control selectpicker" data-live-search="true" required name="vendor_id" onchange="fetchContactsPo(this.value)">
+                            <select id="supplier_vendor" class="form-control selectpicker" data-live-search="true" required name="vendor_id" onchange="fetchContactsPo(this.value)">
                                 <optgroup label="Chosen Supplier">
                                     <option value="{{$rfq[0]->vendor_id}}">{{$selected_supplier}} </option>
                                 </optgroup>
@@ -693,15 +693,15 @@ $other_suppliers = getOtherSuppliers();
                         </div>
                         
                         <div class="col-md-7 col-sm-7 col-7">
-                            <label for="SupplierRFQ" class="col-form-label">RFQ Number</label>
-                            <select id="SupplierRFQ" class="form-control selectpicker" data-live-search="true" required name="supplier_rfq">
-                                <option value="">-- Select Contact --</option>
+                            <label for="supplier_rfq" class="col-form-label">RFQ Number</label>
+                            <select id="supplier_rfq" class="form-control selectpicker" data-live-search="true" required name="supplier_rfq" onchange="fetchLineItems(this.value)">
+                                <option value="">-- Select Reference Number --</option>
                             </select>
                         </div>
                         
                         <div class="col-md-12 col-sm-12 col-12">
                             <label for="recipient-name" class="col-form-label">Line Items:</label>
-                            <input type="text" class="form-control" id="line_items" name="line_items" data-role="tagsinput" value="" placeholder="Enter a value such as 1-3, 5-7 signifying their serial number">
+                            <input type="text" class="form-control" id="pricing_items" name="line_items" data-role="tagsinput" value="" placeholder="Enter a value such as 1-3, 5-7 signifying their serial number">
                             @if ($errors->has('line_items'))
                                 <div class="" style="color:red">{{ $errors->first('line_items') }}</div>
                             @endif
@@ -831,6 +831,15 @@ $other_suppliers = getOtherSuppliers();
 </div>
 
 <script>
+$(document).ready(function() {
+    // Replace 'vendorId' with the actual ID you want to load on page load
+    const vendorId = $('#supplier_vendor').val();
+    var rfqId = {{ $rfqs->rfq_id }};
+    console.log('ready to execute') // Or any default vendor ID
+    fetchContactsPo(vendorId);
+    console.log(vendorId,rfqId) // Or any default vendor ID
+});
+
 // Function to fetch contacts based on selected supplier
 function fetchContacts(vendorId) {
     const contactDropdown = $('#contact');
@@ -888,9 +897,9 @@ function fetchContactsPo(vendorId, rfqId) {
 }
 
 function fetchSupplierRFQs(rfqId, vendorId) {
-    const rfqDropdown = $('#supplierRFQ');
+    const rfqDropdown = $('#supplier_rfq');
     rfqDropdown.empty(); // Clear previous contacts
-    rfqDropdown.append('<option value="">-- Select Contact --</option>');
+    rfqDropdown.append('<option value="">-- Select Reference Number --</option>');
 
     if (!vendorId || !rfqId) return; 
 
@@ -900,18 +909,88 @@ function fetchSupplierRFQs(rfqId, vendorId) {
         success: function(data) {
             // Loop through each contact and add it to the dropdown
             data.forEach(pricing => {
-                contactDropdown.append(`<option value="${pricing.id}">${pricing.reference_number}</option>`);
+                rfqDropdown.append(`<option value="${pricing.id}">${pricing.reference_number}</option>`);
             });
 
             // Refresh the selectpicker for new options
-            contactDropdown.selectpicker('refresh');
-            contactDropdown.prop('disabled', false); 
+            rfqDropdown.selectpicker('refresh');
+            rfqDropdown.prop('disabled', false); 
         },
         error: function(error) {
             console.error('Error fetching contacts:', error);
         }
     });
 }
+
+function fetchLineItems(pricingId) {
+    console.log('Entered function');
+    console.log('Input field:', $('#pricing_items'));
+    const lineItemsInput = $('#pricing_items');
+    lineItemsInput.val(''); // Clear previous line items
+
+    if (!pricingId) {
+        console.log('Disabled return');
+        lineItemsInput.prop('disabled', true);
+        return;
+    }
+
+    lineItemsInput.prop('disabled', true);
+    console.log('About to make AJAX request');
+
+    $.ajax({
+        url: `/api/get-pricing-lineitems/${pricingId}`,
+        method: 'GET',
+        success: function(response) {
+            console.log('AJAX response:', response);
+
+            // Ensure response contains expected data
+            if (response && response.line_items) {
+                try {
+                    let parsedItems = JSON.parse(response.line_items);
+                    if (Array.isArray(parsedItems)) {
+                        // Sort the array numerically
+                        parsedItems.sort((a, b) => a - b);
+
+                        // Group consecutive numbers
+                        let groupedItems = [];
+                        let start = parsedItems[0];
+                        let end = parsedItems[0];
+
+                        for (let i = 1; i <= parsedItems.length; i++) {
+                            if (parsedItems[i] === end + 1) {
+                                end = parsedItems[i];
+                            } else {
+                                groupedItems.push(start === end ? `${start}` : `${start}-${end}`);
+                                start = parsedItems[i];
+                                end = parsedItems[i];
+                            }
+                        }
+
+                        // Join the grouped items and update the input
+                        lineItemsInput.tagsinput('removeAll');
+                        lineItemsInput.tagsinput('add', groupedItems.join(', '));
+                        console.log('Successfully updated input field:', lineItemsInput.val());
+                    } else {
+                        console.error('Parsed line_items is not an array:', parsedItems);
+                    }
+                } catch (error) {
+                    console.error('Error parsing line_items:', error);
+                }
+            } else {
+                console.error('Unexpected response format:', response);
+            }
+
+            lineItemsInput.prop('disabled', false);
+        },
+        error: function(error) {
+            console.error(`Error fetching line items for pricing ID ${pricingId}:`, error);
+            lineItemsInput.prop('disabled', false);
+        }
+    });
+}
+
+
+
 </script>
 
 

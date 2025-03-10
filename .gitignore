@@ -26,3 +26,13 @@ Homestead.json
 *.sql
 
 document/
+client-files/
+company-logo/
+email/
+excel/
+inventory-file/
+nulljson/
+pat/
+pdf/
+Reports/
+supplier-document/

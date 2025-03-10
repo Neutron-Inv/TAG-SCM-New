@@ -2397,11 +2397,13 @@ class ClientRFQController extends Controller
             $this->validate($request, [
                 'vendor_id' => ['required', 'string'],
                 'report_recipient' => ['required'],
+                'supplier_rfq' => ['required'],
                 'contact_id' => ['nullable'],
                 'line_items' => ['nullable'],
                 'send_all' => 'nullable',
             ]);
             
+            $pricing = PricingHistory::where('id', $request->supplier_rfq)->first();
             $rfq_id = $request->input("rfq_id");
             $rfq = $this->model->show($rfq_id);
             $vendor = Vendors::where('vendor_id', $request->input("vendor_id"))->first();
@@ -2474,7 +2476,7 @@ class ClientRFQController extends Controller
                 $rfq = $this->model->show($rfq_id);
         
                 if (count($line_items) > 0) {
-                    $pdf = PDF::loadView('dashboard.printing.supplierPO', compact('rfq', 'line_items', 'vendor', 'vendor_contact'))->setPaper('a4', 'portrait');
+                    $pdf = PDF::loadView('dashboard.printing.supplierPO', compact('rfq', 'line_items', 'vendor', 'vendor_contact','pricing'))->setPaper('a4', 'portrait');
                      
                           
                 //dd($line_items);
@@ -2563,7 +2565,7 @@ class ClientRFQController extends Controller
                 //str_replace(" ","",$users) 
                 //$rec_mail
                 $mail_subject = "Request for Pricing Information: - " .$rfqcode." ".$rfq->description;
-                $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tempFilePath' => $tempFilePath, 'tempFileDirs' => $tempFileDirs, 'fileNames' => $fileNames, 'rfqcode' => $rfqcode, 'extra_note' => $extra_note, 'client_name' => $client_name, 'assigned' => $assigned, "vendor_contact" => $vendor_contact, "mail_id" => $mail_id];
+                $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tempFilePath' => $tempFilePath, 'tempFileDirs' => $tempFileDirs, 'fileNames' => $fileNames, 'rfqcode' => $rfqcode, 'extra_note' => $extra_note, 'client_name' => $client_name, 'assigned' => $assigned, "vendor_contact" => $vendor_contact, "mail_id" => $mail_id, "pricing"=>$pricing];
                 $when = now()->addMinutes(1);
                 Mail::to($vendor->contact_email)->cc($users)->send( new QuoteRequest ($data));        
                 if($extra_note != ""){

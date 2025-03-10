@@ -20,7 +20,7 @@ $result = json_decode($cli_title, true);
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4" style="position: relative;margin-left:23px;padding-right: 15px;padding-left: 15px;">
                         <div class="invoice-logo" style="font-size: 1.2rem;color: #074b9c;font-weight: 700; margin-left: 10px; margin-bottom:15px;">
                                 @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $log = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
+                                    @php $log = config('app.url').'/company-logo'.'/'.$rfq->company_id.'/'.$item->company_logo; @endphp
                                     <img src="{{$log}}" style="width: 101px;" alt="{{$log}}">
                                 @endforeach
                         </div>
@@ -161,7 +161,7 @@ $result = json_decode($cli_title, true);
                         <div style="page-break-inside: avoid;">
                             <b>Best Regards </b> <br/>
                                 @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $logsign = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->signature; @endphp
+                                    @php $logsign = config('app.url').'/company-logo'.'/'.$rfq->company_id.'/'.$item->signature; @endphp
                                     <img src="{{ $logsign }}" width="80" style="margin-left:0px; margin-top:5px;padding-bottom:10px;" alt="SCM Solutions">
                                 @endforeach
                              <br/><br/>

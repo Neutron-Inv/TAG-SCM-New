@@ -33,6 +33,10 @@ class PricingHistory extends Pivot
         'hs_codes',
         'general_terms',
         'notes_to_pricing',
+        'delivery_time',
+        'delivery_location',
+        'payment_term',
+        'lead_time',
     ];
 
     // protected $casts = [
