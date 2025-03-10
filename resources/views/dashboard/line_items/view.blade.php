@@ -507,12 +507,15 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-12">
                                 @if(count(getPricingHistory($rfqs->rfq_id ))>0)
                                 <div class="form-group">
-                                    <a class="btn btn-primary" style="float: right; margin-bottom:1%; margin:0 10px;" href="{{route('pricing.index', $rfqs->rfq_id)}}">View Pricing History</a>                             
+                                    <a class="btn btn-primary" style="float: right; margin-bottom:1%;" href="{{route('pricing.index', $rfqs->rfq_id)}}">View Pricing History</a>                             
                                 </div>
                                 @endif
                                 @if(hasPo($rfqs->rfq_id ))
                                 <div class="form-group">
-                                        <button type="button" class="btn btn-primary" style="float: right; margin-bottom:1%;" data-toggle="modal" data-target="#IssuePo">Issue PO To Supplier</button>                             
+                                    <button type="button" class="btn btn-primary" style="float: right; margin-bottom:1%; margin: 0px 10px;" data-toggle="modal" data-target="#supplierRfq">Send RFQ To Supplier</button>                             
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary" style="float: right; margin-bottom:1%;" data-toggle="modal" data-target="#IssuePo">Issue PO To Supplier</button>                             
                                 </div>
                                 @else
                                 <div class="form-group">
@@ -628,6 +631,10 @@ $other_suppliers = getOtherSuppliers();
                     </div>
                 </div>
                 <div class="modal-footer custom d-flex justify-content-end align-items-center">
+                    <div class="form-check" style="float:left; position: absolute; left:2%;">
+                        <input type="checkbox" class="form-check-input" id="send_mail" name="send_mail" value="1" checked>
+                        <label for="send_mail" class="form-check-label">Send mail?</label>
+                    </div>
                     <button type="submit" name="preview" value="yes" target="blank" class="btn btn-link primary mr-3">View PDF</button>
                     <button type="button" class="btn btn-link danger mr-3" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-link success mr-2">Send RFQ</button>

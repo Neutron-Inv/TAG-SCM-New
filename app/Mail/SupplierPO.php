@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class QuoteRequest extends Mailable
+class SupplierPO extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -39,6 +39,7 @@ class QuoteRequest extends Mailable
         $fileNames = $this->data['fileNames'];
         $rfqcode = $this->data['rfqcode'];
         $mail_id = $this->data['mail_id'];
+        $pricing = $this->data['pricing'];
         $company_id = $rfq->company_id;
         if($company_id == 1){
             $sender =  'contact@enabledsolutions.net';
@@ -61,7 +62,7 @@ class QuoteRequest extends Mailable
             $reply = $name->email;
         }
         $mail = $this->replyTo($reply, $company->company_name)->subject("Request for Pricing Information: - " .$rfqcode." ".$rfq->description.", mail-id: ".$mail_id)->markdown('emails.rfq.SupplierRequest')
-        ->with(compact('rfq', 'sender', 'reply', 'extra_note', 'vendor_contact'));
+        ->with(compact('rfq', 'sender', 'reply', 'extra_note', 'vendor_contact', 'pricing'));
         
         if($tempFilePath != ""){
             $mail->attach($tempFilePath);

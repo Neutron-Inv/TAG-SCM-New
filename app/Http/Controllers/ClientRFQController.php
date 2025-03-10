@@ -19,7 +19,7 @@ use Dompdf\FontMetrics;
 use Illuminate\Http\UploadedFile;
 use Webklex\IMAP\Facades\Client;
 use App\Notifications\{EmployerRFQCreated, RFQAcknowledge, ShipperEmail};
-use App\Mail\{Quotation, ApproveBreakdown, Submission, QuotationTagEnergy, QuotationTagLines, QuotationEnabledSolution, QuotationEnabledContractors, QuotationTestCompany, ClientContactRFQCreated, QuoteRequest};
+use App\Mail\{Quotation, ApproveBreakdown, Submission, QuotationTagEnergy, QuotationTagLines, QuotationEnabledSolution, QuotationEnabledContractors, QuotationTestCompany, ClientContactRFQCreated, QuoteRequest, SupplierPO};
 
 class ClientRFQController extends Controller
 {
@@ -2343,10 +2343,13 @@ class ClientRFQController extends Controller
                 }
                 //str_replace(" ","",$users) 
                 //$rec_mail
+                if($request->input('send_mail') == '1'){
                 $mail_subject = "Request for Pricing Information: - " .$rfqcode." ".$rfq->description;
                 $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tempFilePath' => $tempFilePath, 'tempFileDirs' => $tempFileDirs, 'fileNames' => $fileNames, 'rfqcode' => $rfqcode, 'extra_note' => $extra_note, 'client_name' => $client_name, 'assigned' => $assigned, "vendor_contact" => $vendor_contact, "mail_id" => $mail_id];
                 $when = now()->addMinutes(1);
+
                 Mail::to($vendor->contact_email)->cc($users)->send( new QuoteRequest ($data));        
+                }
                 if($extra_note != ""){
     	        $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Sent Request for Quotation to '. $vendor->vendor_name . ' with an extra note stating: '.$extra_note.' and changed the status to Awaiting Pricing <br/>'.$rfq->note;
                 }else{
@@ -2567,13 +2570,13 @@ class ClientRFQController extends Controller
                 $mail_subject = "Request for Pricing Information: - " .$rfqcode." ".$rfq->description;
                 $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tempFilePath' => $tempFilePath, 'tempFileDirs' => $tempFileDirs, 'fileNames' => $fileNames, 'rfqcode' => $rfqcode, 'extra_note' => $extra_note, 'client_name' => $client_name, 'assigned' => $assigned, "vendor_contact" => $vendor_contact, "mail_id" => $mail_id, "pricing"=>$pricing];
                 $when = now()->addMinutes(1);
-                Mail::to($vendor->contact_email)->cc($users)->send( new QuoteRequest ($data));        
+                Mail::to($vendor->contact_email)->cc($users)->send( new SupplierPO ($data));        
                 if($extra_note != ""){
     	        $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Issued Purchase Order to '. $vendor->vendor_name . ' with an extra note stating: '.$extra_note.' and changed the status to PO Issued to Supplier <br/>'.$rfq->note;
                 }else{
                 $newNote = date('d/m/Y') .' ' . Auth::user()->first_name . ' '. Auth::user()->last_name .' Issued Purchase Order to '. $vendor->vendor_name . ' and changed the status to PO Issued to Supplier <br/>'.$rfq->note;
                 }
-                DB::table('client_rfqs')->where(['rfq_id' => $rfq_id])->update(['note' => $newNote, 'status' => 'Awaiting Pricing']);
+                DB::table('client_rfqs')->where(['rfq_id' => $rfq_id])->update(['n  ote' => $newNote, 'status' => 'Awaiting Pricing']);
                 $his = new RfqHistory([
                     "user_id" => Auth::user()->user_id,
                     "rfq_id" => $rfq_id,
