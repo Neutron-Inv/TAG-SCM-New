@@ -82,7 +82,8 @@ set_time_limit(900);
                             style="font-size:5pt;font-family: Calibri,sans-serif;margin-top: 0;widows: 1;line-height: 180%;font-weight: 400;">
                             <strong style="font-weight: bolder;">Ref No:
                                 TE-{{ $vendor->vendor_code }}-{{ preg_replace('/[^0-9]/', '', $rfq->refrence_no ?? '') }}
-                            </strong></p><br />
+                            </strong>
+                        </p><br />
                         <div class="line"
                             style="width: 170px;height: 0.7px;background-color: #000;float:right;margin-top:-27px;margin-right:-10px;">
                         </div>
@@ -155,21 +156,19 @@ set_time_limit(900);
 
 
                                 <tbody style="font-family: Calibri, sans-serif;">
-
-                                    <?php $num = 1;
-                                    $wej = []; ?>
+                                    @php
+                                        $num = 1;
+                                        $wej = [];
+                                        $subtotal = 0;
+                                    @endphp
                                     @foreach ($line_items as $items)
-                                        @php
-                                            $unit_cost = $items->unit_cost;
-                                            $percent = $items->unit_frieght;
-                                            $unitMargin = ($percent / 100) * $items->unit_cost;
-                                        @endphp
                                         <tr
                                             style="font-family: Calibri, sans-serif; font-weight: 400; border: none !important; margin-bottom:0px;page-break-inside: auto;">
                                             <td class="list"
                                                 style="vertical-align: top;padding-top: 2px; background-color: #EBF1DE !important; text-align: center; font-family: Calibri, sans-serif;">
                                                 <p style="font-family: Calibri, sans-serif;">
-                                                    <b>{{ $items->item_serialno }} </b></p>
+                                                    <b>{{ $items->item_serialno }} </b>
+                                                </p>
                                             </td>
                                             <td style="padding-top: 2px; line-height:1.3;">
 
@@ -184,17 +183,12 @@ set_time_limit(900);
 
                                             <td
                                                 style="font-weight: 400; padding-top: 2px; text-align: center;font-family: Calibri, sans-serif; vertical-align:top;">
-                                                <b> {{ $items->uom ?? '' }} </b></td>
-
-                                            @php
-                                                $unit_cost = $items->unit_cost;
-                                                $percent = $rfq->percent_margin;
-                                                $unitMargin = $percent * $items->unit_cost;
-                                            @endphp
-
+                                                <b> {{ $items->uom ?? '' }} </b>
+                                            </td>
                                             <td
                                                 style="font-weight: 400; padding-top: 2px; text-align: center; font-family: Calibri, sans-serif; vertical-align:top;">
-                                                <b> {{ $items->quantity ?? 0 }} </b></td>
+                                                <b> {{ $items->quantity ?? 0 }} </b>
+                                            </td>
 
                                             <td style="font-weight: 400; padding-top: 2px; font-family: Calibri, sans-serif; vertical-align:top;"
                                                 align="center"><b> {{ number_format($items->unit_cost, 2) ?? 0 }}</b> </td>
@@ -206,7 +200,10 @@ set_time_limit(900);
                                                 array_push($wej, $tot);
                                             @endphp
                                         </tr>
-                                        <?php $num++; ?>
+                                        @php
+                                            $subtotal += $items->total_cost;
+                                            $num++;
+                                        @endphp
                                     @endforeach
 
                                     <tr style="font-family: Calibri, sans-serif; margin-bottom:0px;">
@@ -231,8 +228,18 @@ set_time_limit(900);
                                                 border-top-color: #000000; text-align: center; width: 100.5%; font-family: Calibri, sans-serif;margin-top:2px;">
                                                 <strong> Sub total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     <span style="text-align: right;">
-                                                        {{ number_format(array_sum($wej), 2) }} </span></strong>
+                                                        {{ number_format($subtotal, 2) }} </span></strong>
                                             </p>
+
+                                            @if ($pricing->misc_cost)
+                                                @foreach (json_decode($pricing->misc_cost) as $index => $misc)
+                                                    <p>
+                                                        <strong> {{ $misc->desc }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            <span style="text-align: right;">
+                                                                {{ number_format($misc->amount, 2) }} </span></strong>
+                                                    </p>
+                                                @endforeach
+                                            @endif
 
                                             <p style="text-align: center; width: 105%; font-family: Calibri, sans-serif;">
                                                 <b> &nbsp;Total </b>
