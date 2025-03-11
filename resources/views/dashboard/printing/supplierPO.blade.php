@@ -290,10 +290,10 @@ set_time_limit(900);
                             </p>
                             @if ($pricing->general_terms != null)
                                 <p
-                                    style="color:black; font-weight: bold; margin-left: 0px; margin-bottom: 10px; font-size: 5pt !important; font-family: Calibri, sans-serif;">
+                                    style="color:black; font-weight: bold; margin-left: 0px; margin-bottom: 10px; font-size: 5pt !important; font-family: Calibri, sans-serif;line-height:1.3 !important;">
                                     <span style="font-size: 7px !important;">GENERAL TERMS & CONDITIONS</span><br />
                                     <span
-                                        style="font-size: 5pt !important; font-family: Calibri, sans-serif; page-break-inside: avoid; line-height:4px;">
+                                        style="font-size: 5pt !important; font-family: Calibri, sans-serif; page-break-inside: avoid;">
                                         {!! htmlspecialchars_decode($pricing->general_terms) !!}</span>
                                 </p>
                             @endif
