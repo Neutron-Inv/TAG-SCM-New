@@ -229,7 +229,8 @@ set_time_limit(900);
                                                     style="border-top: solid; border-width:1px !important;border-top-color: #000000; ">
                                                     <td style="text-align: left;"><strong>Sub total</strong></td>
                                                     <td style="text-align: right;">
-                                                        <strong>{{ number_format($subtotal, 2) }}</strong></td>
+                                                        <strong>{{ number_format($subtotal, 2) }}</strong>
+                                                    </td>
                                                 </tr>
 
                                                 <!-- Miscellaneous Costs -->
@@ -237,9 +238,11 @@ set_time_limit(900);
                                                     @foreach (json_decode($pricing->misc_cost) as $index => $misc)
                                                         <tr>
                                                             <td style="text-align: left;">
-                                                                <strong>{{ $misc->desc }}</strong></td>
+                                                                <strong>{{ $misc->desc }}</strong>
+                                                            </td>
                                                             <td style="text-align: right;">
-                                                                <strong>{{ number_format($misc->amount, 2) }}</strong></td>
+                                                                <strong>{{ number_format($misc->amount, 2) }}</strong>
+                                                            </td>
                                                         </tr>
                                                         @php
                                                             $other_cost += $misc->amount;
@@ -329,11 +332,18 @@ set_time_limit(900);
 
                                     {{ $sn }}. <b>Payment Terms:</b> {{ $pricing->payment_term ?? '' }}.
                                     <br />
-                                    @php$sn++;
-                                        $employee = empDetails($rfq->employee_id);
+                                    @php
+                                        $sn++;
                                     @endphp
+                                    @foreach (emps($rfq->employee_id) as $emp)
+                                        @php
+                                            $userDe = userEmail($emp->email);
+                                        @endphp
+                                    @endforeach
 
-                                    {{ $sn }}. <b>Contact:</b> {{ $employee->full_name }}, +234 906 243 5412,
+                                    {{ $sn }}. <b>Contact:</b>
+                                    {{ $userDe->first_name . ' ' . strtoupper($userDe->last_name) ?? ' ' }}, +234 906 243
+                                    5412,
                                     sales@tagenergygroup.net<br />
                                     @php $sn += 1 @endphp
 
