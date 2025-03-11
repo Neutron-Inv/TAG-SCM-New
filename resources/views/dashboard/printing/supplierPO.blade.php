@@ -214,47 +214,51 @@ set_time_limit(900);
                                         </td>
 
                                         @php
-                                            $sumTotalQuote = sumTotalQuote($rfq->rfq_id);
-                                            $ship = 0;
+                                            $other_cost = 0;
                                         @endphp
                                         <td style="background-color:white;"> </td>
                                         <td style="background-color:white;"> </td>
 
                                         <td colspan="3"
-                                            style="background-color:white; font-family: Calibri, sans-serif; margin-left: 96px;"
+                                            style="background-color:white; font-family: Calibri, sans-serif; margin-left: 80px;"
                                             align="left">
-                                            <p
-                                                style="border-bottom: solid; border-bottom-color: #000000; border-top: solid; border-width:1px !important; white-space:nowrap !important;
-                                                border-top-color: #000000; text-align: center; width: 100.5%; font-family: Calibri, sans-serif;margin-top:2px;">
-                                                <strong> Sub total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    <span style="text-align: right;">
-                                                        {{ number_format($subtotal, 2) }} </span></strong>
-                                            </p>
 
-                                            @if ($pricing->misc_cost)
-                                                @foreach (json_decode($pricing->misc_cost) as $index => $misc)
-                                                    <p>
-                                                        <strong> {{ $misc->desc }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            <span style="text-align: right;">
-                                                                {{ number_format($misc->amount, 2) }} </span></strong>
-                                                    </p>
-                                                @endforeach
-                                            @endif
+                                            <table
+                                                style="width: 100%; margin: 2px 0; font-size:7px; color:black; margin-right:20px !important;">
+                                                <tr
+                                                    style="border-top: solid; border-width:1px !important;border-top-color: #000000; ">
+                                                    <td style="text-align: left;"><strong>Sub total</strong></td>
+                                                    <td style="text-align: right;">
+                                                        <strong>{{ number_format($subtotal, 2) }}</strong></td>
+                                                </tr>
 
-                                            <p style="text-align: center; width: 105%; font-family: Calibri, sans-serif;">
-                                                <b> &nbsp;Total </b>
-                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <strong><span
-                                                        style="text-align: right;">{{ number_format($sumTotalQuote + $ship, 2) ?? 0 }}</span>
-                                                </strong>
-                                            </p>
-                                            <p
-                                                style="border-bottom: double; border-bottom-color: #000000; border-top: single; border-top-color: #000000; width: 100.5%;">
-                                            </p><br />
-                                            <p
-                                                style="border-bottom: double; border-bottom-color: #000000; border-top-color: #000000; width: 100.5%; margin-bottom:0px;">
-                                            </p><br />
+                                                <!-- Miscellaneous Costs -->
+                                                @if ($pricing->misc_cost)
+                                                    @foreach (json_decode($pricing->misc_cost) as $index => $misc)
+                                                        <tr>
+                                                            <td style="text-align: left;">
+                                                                <strong>{{ $misc->desc }}</strong></td>
+                                                            <td style="text-align: right;">
+                                                                <strong>{{ number_format($misc->amount, 2) }}</strong></td>
+                                                        </tr>
+                                                        @php
+                                                            $other_cost += $misc->amount;
+                                                        @endphp
+                                                    @endforeach
+                                                @endif
+
+                                                <!-- Total -->
+                                                <tr
+                                                    style="border-bottom: double; border-bottom-color: #000000; border-top: solid; border-bottom-width:1px; border-top-width:0.5px !important;border-top-color: #000000;">
+                                                    <td style="text-align: left;"><strong>Total</strong></td>
+                                                    <td style="text-align: right;">
+                                                        <strong>{{ number_format($subtotal + $other_cost, 2) ?? 0 }}</strong>
+                                                    </td>
+                                                </tr>
+
+                                            </table>
                                         </td>
+
                                     </tr>
 
                                 </tbody>
@@ -264,33 +268,30 @@ set_time_limit(900);
 
 
                             <p
-                                style="font-size: 5pt!important; font-family: Calibri, sans-serif; margin-left:0px; margin-top:0px; color:red; font-weight:bold; line-height:11px;">
-                                @foreach (explode(';', $rfq->estimated_package_weight ?? '') as $est_weight)
+                                style="font-size: 5pt!important; font-family: Calibri, sans-serif; margin-left:0px; margin-top:0px; margin-bottom: 10px; color:red; font-weight:bold; line-height:11px;">
+                                @foreach (explode(';', $pricing->weight ?? '') as $est_weight)
                                     @if (preg_replace('/\D/', '', $est_weight) != '')
                                         ESTIMATED PACKAGED WEIGHT: {{ trim($est_weight) }}<br />
                                     @endif
                                 @endforeach
-                                @foreach (explode(';', $rfq->estimated_package_dimension ?? '') as $est_dim)
+                                @foreach (explode(';', $pricing->dimension ?? '') as $est_dim)
                                     @if (preg_replace('/\D/', '', $est_dim) != '')
                                         ESTIMATED PACKAGED DIMENSION: {{ trim($est_dim) }}<br />
                                     @endif
                                 @endforeach
-                                @foreach (explode(';', $rfq->hs_codes ?? '') as $hs_code)
+                                @foreach (explode(';', $pricing->hs_codes ?? '') as $hs_code)
                                     @if ($hs_code != 'N/A')
                                         HS CODE: {{ trim($hs_code) }}<br />
                                     @endif
                                 @endforeach
-                                @if ($rfq->certificates_offered != null || $rfq->certificates_offered == '')
-                                    CERTIFICATE OFFERED: {{ strtoupper($rfq->certificates_offered) }}
-                                @endif
                             </p>
-                            @if ($rfq->technical_note != null)
+                            @if ($pricing->general_terms != null)
                                 <p
-                                    style="color:red; font-weight: bold; margin-left: 0px; font-size: 5pt !important; font-family: Calibri, sans-serif;">
-                                    <b>Technical Notes: </b>
+                                    style="color:black; font-weight: bold; margin-left: 0px; margin-bottom: 10px; font-size: 5pt !important; font-family: Calibri, sans-serif;">
+                                    <span style="font-size: 7px !important;">GENERAL TERMS & CONDITIONS</span><br />
                                     <span
                                         style="font-size: 5pt !important; font-family: Calibri, sans-serif; page-break-inside: avoid;">
-                                        {!! htmlspecialchars_decode($rfq->technical_note) !!}</span>
+                                        {!! htmlspecialchars_decode($pricing->general_terms) !!}</span>
                                 </p>
                             @endif
 
@@ -308,120 +309,96 @@ set_time_limit(900);
                                 <p
                                     style="font-size: 5pt !important; font-family: Calibri, sans-serif !important; margin-left:0px; font-weight:400; line-height:1.3; white-space:nowrap;">
                                     <b style="color:red;">Notes to Pricing: </b><br />
-                                    {{ $sn }}. Delivery:
-                                    {{ $rfq->estimated_delivery_time ?? '17-19 weeks' }}.<br />
-                                    @php $sn += 1 @endphp
-
-                                    @if ($rfq->transport_mode == 'Undecided' or $rfq->incoterm == 'Ex Works')
-                                    @else
-                                        {{ $sn }}. Mode of transportation: {{ $rfq->transport_mode ?? '' }}
-                                        <br />
-                                        @php $sn += 1 @endphp
-                                    @endif
-                                    {{ $sn }}. Delivery Location: {{ $rfq->delivery_location ?? '' }}
-                                    <br />
-                                    @php $sn += 1 @endphp
-
-                                    {{ $sn }}. Where Legalisation of C of O and/or invoices are required,
-                                    additional cost will apply
-                                    and will be charged at cost. <br />
-                                    @php $sn += 1 @endphp
-
-                                    {{ $sn }}. Validity: This quotation is valid for {{ $rfq->validity ?? '' }}.
-                                    <br />
-                                    @php $sn += 1 @endphp
-
-                                    {{ $sn }}. FORCE MAJEURE: On notification of any event with impact on
-                                    delivery schedule, We will extend delivery schedule.<br />
-                                    @php $sn += 1 @endphp
-
-                                    @if ($rfq->incoterm != 'DDP')
-                                        {{ $sn }}. Storage Charges: Storage fees at 1% of the total invoice value
-                                        will apply (weekly) for all orders left at OEM's facility for more than 2 weeks.
-                                        <br />
-                                        The storage charges shall in no case exceed 10% (ten percent) of the TOTAL INVOICE
-                                        AMOUNT.
-                                        <br />
-                                        @php $sn += 1 @endphp
-                                    @endif
-
-                                    {{ $sn }}. Pricing: Prices quoted are in {{ $rfq->currency ?? 'USD' }}
-                                    <br />
-                                    @php $sn += 1 @endphp
-
-                                    {{ $sn }}. Prices are based on quantity quoted <br />
-                                    @php $sn += 1 @endphp
-
-                                    {{ $sn }}. A revised quotation will be submitted for confirmation in the
-                                    event of a partial order. <br />
-                                    @php $sn += 1 @endphp
-
-                                    {{ $sn }}. Oversized Cargo: {{ $rfq->oversized ?? 'NO' }} <br />
-                                    @php $sn += 1 @endphp
-
-                                    {{ $sn }}. Pricing is exclusive of VAT.
-                                    <br />
-                                    @php $sn += 1 @endphp
-                                    <?php $pay_count = 1; ?>
-                                    {{ $sn }}. Payment Term: @foreach (explode(';', $rfq->payment_term ?? '') as $payment_term)
-                                        @if (preg_replace('/\D/', '', $payment_term) != '')
-                                            @if ($pay_count > 1)
-                                                <span style="margin-left:53px;">{{ trim($payment_term) }}</span><br />
-                                            @else
-                                                {{ trim($payment_term) }}<br />
-                                            @endif
-                                            <?php $pay_count++; ?>
+                                    @foreach (explode(';', $pricing->notes_to_pricing ?? '') as $notes)
+                                        @if (trim($notes) != '')
+                                            <span style="font-weight:bold; color:red;"> {{ $loop->iteration }}.
+                                                {{ trim($notes) }}</span><br />
                                         @endif
+                                        @php
+                                            $sn++;
+                                        @endphp
                                     @endforeach
+
+                                    {{ $sn }}. <b>Delivery:</b> {{ $pricing->delivery_time ?? '' }}
                                     <br />
-                                    <!--{{ $rfq->payment_term ?? '' }} <br/>-->
+                                    @php $sn++ @endphp
+
+                                    {{ $sn }}. <b>Delivery Location:</b> {{ $pricing->delivery_location }}
+                                    <br />
+                                    @php $sn++ @endphp
+
+                                    {{ $sn }}. <b>Payment Terms:</b> {{ $pricing->payment_term ?? '' }}.
+                                    <br />
+                                    @php$sn++;
+                                        $employee = empDetails($rfq->employee_id);
+                                    @endphp
+
+                                    {{ $sn }}. <b>Contact:</b> {{ $employee->full_name }}, +234 906 243 5412,
+                                    sales@tagenergygroup.net<br />
                                     @php $sn += 1 @endphp
 
-                                    @if ($rfq->incoterm != 'DDP')
-                                        <span style="font-weight:bold;"> {{ $sn }}. Client is to provide
-                                            evidence of VAT remittance to the Tax authority before order is
-                                            processed.</span>
-                                        <br />
-                                        @php $sn += 1 @endphp
-                                    @endif
-
-                                    @if ($rfq->vendor_id == '167')
-                                        {{ $sn }}. Goods will be cleared in South Africa by Bosch Authorised
-                                        Export Agent. <br /><br />
-                                    @else
-                                        <br />
-                                    @endif
-
-                                    <b>Best Regards </b> <br />
-                                </p>
-                                @foreach (getLogo($rfq->company_id) as $item)
-                                    @php $logsign = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->signature; @endphp
-                                    <img src="{{ $logsign }}" width="80"
-                                        style="margin-left:0px; margin-top:5px;padding-bottom:10px;"
-                                        alt="{{ config('app.name') }}">
-                                @endforeach
-                                <br /><br />
-                                <div class="line"
-                                    style="width: 100px;height: 0.7px;background-color: #000;float:left;margin-top:-27px;margin-right:-10px;">
-                                </div>
-                                <div style="margin-top:-25px;">
-                                    <p style="margin-top:0px; margin-left:0px; color:black; font-size:5pt !important;">
-                                        @foreach (emps($rfq->employee_id) as $emp)
-                                            @php
-                                                $email = $emp->email;
-                                                $userDe = userEmail($email);
-                                            @endphp
-                                            <b>{{ $userDe->first_name . ' ' . strtoupper($userDe->last_name) ?? ' ' }} </b>
+                                <p style="font-size: 5pt !important; ">Please kindly endorse below with your signature and
+                                    company stamp to accept this order.</p>
+                                <div class="row flex">
+                                    <div class="col-6" style="float:left;">
+                                        <b>Best Regards </b> <br />
+                                        </p>
+                                        @foreach (getLogo($rfq->company_id) as $item)
+                                            @php $logsign = 'https://scm.tagenergygroup.net/company-logo'.'/'.$rfq->company_id.'/'.$item->signature; @endphp
+                                            <img src="{{ $logsign }}" width="80"
+                                                style="margin-left:0px; margin-top:5px;padding-bottom:10px;"
+                                                alt="{{ config('app.name') }}">
                                         @endforeach
-                                    </p>
-                                    <p style="margin-top: -5px; font-size:5pt !important;"></p>
-                                    <p style="margin-top: -8px; font-size:5pt !important;"><b>
-                                            @foreach (comp($rfq->company_id) as $comps)
-                                                {{ 'For: ' . $comps->company_name ?? ' Company Name' }}
-                                            @endforeach
-                                        </b>
-                                    </p>
+                                        <br /><br />
+                                        <div class="line"
+                                            style="width: 100px;height: 0.7px;background-color: #000;float:left;margin-top:-27px;margin-right:-10px;">
+                                        </div>
+                                        <div style="margin-top:-25px;">
+                                            <p
+                                                style="margin-top:0px; margin-left:0px; color:black; font-size:5pt !important;">
+                                                @foreach (emps($rfq->employee_id) as $emp)
+                                                    @php
+                                                        $email = $emp->email;
+                                                        $userDe = userEmail($email);
+                                                    @endphp
+                                                    <b>{{ $userDe->first_name . ' ' . strtoupper($userDe->last_name) ?? ' ' }}
+                                                    </b>
+                                                @endforeach
+                                            </p>
+                                            <p style="margin-top: -5px; font-size:5pt !important;"></p>
+                                            <p style="margin-top: -8px; font-size:5pt !important;"><b>
+                                                    @foreach (comp($rfq->company_id) as $comps)
+                                                        {{ 'For: ' . $comps->company_name ?? ' Company Name' }}
+                                                    @endforeach
+                                                </b>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6" style="float:right; margin-right:-190px;">
+                                        <b>Accepted By; </b> <br />
+                                        </p>
+                                        <div style="height:85px; margin-top:5px;padding-bottom:10px;"></div>
+
+                                        <div class="line"
+                                            style="width: 100px;height: 0.7px;background-color: #000;float:left;margin-top:-27px;margin-right:-10px;">
+                                        </div>
+                                        <div style="margin-top:-25px;">
+                                            <p
+                                                style="margin-top:0px; margin-left:0px; color:black; font-size:5pt !important;">
+                                                <b>Name/Title/Signature</b>
+                                            </p>
+                                            <p style="margin-top: -5px; font-size:5pt !important;"></p>
+                                            <p style="margin-top: -8px; font-size:5pt !important;"><b>
+                                                    @php $vendor = SupplierDetails($pricing->vendor_id); @endphp
+                                                    {{ 'For: ' . $vendor->vendor_name ?? ' Company Name' }}
+                                                </b>
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>
