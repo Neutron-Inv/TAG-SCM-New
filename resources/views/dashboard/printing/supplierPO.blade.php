@@ -288,7 +288,7 @@ set_time_limit(900);
                                     @endif
                                 @endforeach
                             </p>
-                            @if ($pricing->general_terms != null)
+                            @if (!empty($pricing->general_terms))
                                 <p
                                     style="color:black; font-weight: bold; margin-left: 0px; margin-bottom: 10px; font-size: 5pt !important; font-family: Calibri, sans-serif;">
                                     <span style="font-size: 7px !important;">GENERAL TERMS & CONDITIONS</span><br />
