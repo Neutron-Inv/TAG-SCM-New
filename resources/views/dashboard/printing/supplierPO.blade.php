@@ -229,8 +229,7 @@ set_time_limit(900);
                                                     style="border-top: solid; border-width:1px !important;border-top-color: #000000; ">
                                                     <td style="text-align: left;"><strong>Sub total</strong></td>
                                                     <td style="text-align: right;">
-                                                        <strong>{{ number_format($subtotal, 2) }}</strong>
-                                                    </td>
+                                                        <strong>{{ number_format($subtotal, 2) }}</strong></td>
                                                 </tr>
 
                                                 <!-- Miscellaneous Costs -->
@@ -238,11 +237,9 @@ set_time_limit(900);
                                                     @foreach (json_decode($pricing->misc_cost) as $index => $misc)
                                                         <tr>
                                                             <td style="text-align: left;">
-                                                                <strong>{{ $misc->desc }}</strong>
-                                                            </td>
+                                                                <strong>{{ $misc->desc }}</strong></td>
                                                             <td style="text-align: right;">
-                                                                <strong>{{ number_format($misc->amount, 2) }}</strong>
-                                                            </td>
+                                                                <strong>{{ number_format($misc->amount, 2) }}</strong></td>
                                                         </tr>
                                                         @php
                                                             $other_cost += $misc->amount;
@@ -267,7 +264,7 @@ set_time_limit(900);
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-xl-8 col-lg-8col-md-8 col-sm-8" style="margin-top:-45px;">
+                        <div class="col-xl-8 col-lg-8col-md-8 col-sm-8" style="margin-top:-30px;">
 
 
                             <p
@@ -288,7 +285,7 @@ set_time_limit(900);
                                     @endif
                                 @endforeach
                             </p>
-                            @if (!empty(strip_tags($pricing->general_terms)))
+                            @if ($pricing->general_terms != null)
                                 <p
                                     style="color:black; font-weight: bold; margin-left: 0px; margin-bottom: 10px; font-size: 5pt !important; font-family: Calibri, sans-serif;">
                                     <span style="font-size: 7px !important;">GENERAL TERMS & CONDITIONS</span><br />
@@ -332,18 +329,11 @@ set_time_limit(900);
 
                                     {{ $sn }}. <b>Payment Terms:</b> {{ $pricing->payment_term ?? '' }}.
                                     <br />
-                                    @php
-                                        $sn++;
+                                    @php$sn++;
+                                        $employee = empDetails($rfq->employee_id);
                                     @endphp
-                                    @foreach (emps($rfq->employee_id) as $emp)
-                                        @php
-                                            $userDe = userEmail($emp->email);
-                                        @endphp
-                                    @endforeach
 
-                                    {{ $sn }}. <b>Contact:</b>
-                                    {{ $userDe->first_name . ' ' . strtoupper($userDe->last_name) ?? ' ' }}, +234 906 243
-                                    5412,
+                                    {{ $sn }}. <b>Contact:</b> {{ $employee->full_name }}, +234 906 243 5412,
                                     sales@tagenergygroup.net<br />
                                     @php $sn += 1 @endphp
 
