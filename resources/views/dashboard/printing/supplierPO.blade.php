@@ -293,7 +293,7 @@ set_time_limit(900);
                                     style="color:black; font-weight: bold; margin-left: 0px; margin-bottom: 10px; font-size: 5pt !important; font-family: Calibri, sans-serif;">
                                     <span style="font-size: 7px !important;">GENERAL TERMS & CONDITIONS</span><br />
                                     <span
-                                        style="font-size: 5pt !important; font-family: Calibri, sans-serif; page-break-inside: avoid;">
+                                        style="font-size: 5pt !important; font-family: Calibri, sans-serif; page-break-inside: avoid; line-height:4px;">
                                         {!! htmlspecialchars_decode($pricing->general_terms) !!}</span>
                                 </p>
                             @endif
