@@ -264,7 +264,7 @@ set_time_limit(900);
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-xl-8 col-lg-8col-md-8 col-sm-8" style="margin-top:-30px;">
+                        <div class="col-xl-8 col-lg-8col-md-8 col-sm-8" style="margin-top:-45px;">
 
 
                             <p
