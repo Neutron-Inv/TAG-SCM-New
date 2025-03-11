@@ -224,7 +224,7 @@ set_time_limit(900);
                                             align="left">
 
                                             <table
-                                                style="width: 100%; margin: 2px 0; font-size:7px; color:black; margin-right:20px !important;">
+                                                style="width: 100%; margin: 2px 0; \ color:black; margin-right:20px !important;">
                                                 <tr
                                                     style="border-top: solid; border-width:1px !important;border-top-color: #000000; ">
                                                     <td style="text-align: left;"><strong>Sub total</strong></td>
@@ -293,7 +293,7 @@ set_time_limit(900);
                                     style="color:black; font-weight: bold; margin-left: 0px; margin-bottom: 10px; font-size: 5pt !important; font-family: Calibri, sans-serif;line-height:1.3 !important;">
                                     <span style="font-size: 7px !important;">GENERAL TERMS & CONDITIONS</span><br />
                                     <span
-                                        style="font-size: 5pt !important; font-family: Calibri, sans-serif; page-break-inside: avoid;">
+                                        style="font-size: 7px !important; font-family: Calibri, sans-serif; page-break-inside: avoid;">
                                         {!! htmlspecialchars_decode($pricing->general_terms) !!}</span>
                                 </p>
                             @endif
