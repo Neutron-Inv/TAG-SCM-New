@@ -38,7 +38,7 @@
         <p class="email-text" style="color:black !important;">Good day, I trust you are well.</p>
         <p class="email-text" style="color:black !important;">Please acknowledge receipt (sign, stamp, and revert with a
             scanned copy) of our attached Purchase Order with regards to your quotation (see below correspondences) for
-            the purchase of {{ $rfq->description }}
+            the purchase of {{ $pricing->description }}
             <br /><br />
             @if ($extra_note != '')
                 {!! $extra_note !!}

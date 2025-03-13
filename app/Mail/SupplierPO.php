@@ -62,7 +62,7 @@ class SupplierPO extends Mailable
             $sender = $name->email;
             $reply = $name->email;
         }
-        $mail = $this->replyTo($reply, $company->company_name)->subject("Purchase Order for the Supply of " . $rfq->description . ": " . $rfqcode . " mail-id: " . $mail_id)->markdown('emails.po.SupplierPO')
+        $mail = $this->replyTo($reply, $company->company_name)->subject("Purchase Order for the Supply of " . $pricing->description . ": " . $rfqcode . " mail-id: " . $mail_id)->markdown('emails.po.SupplierPO')
             ->with(compact('rfq',  'user', 'extra_note', 'sender', 'reply', 'vendor_contact', 'pricing'));
 
         if ($tempFilePath != "") {

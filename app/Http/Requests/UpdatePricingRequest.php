@@ -16,6 +16,7 @@ class UpdatePricingRequest extends FormRequest
         return [
             'response_time' => 'required|integer|min:1|max:5',
             'pricing' => 'required|integer|min:1|max:5',
+            'description' => 'required|string',
             'conformity' => 'required|integer|min:1|max:5',
             'accuracy' => 'required|integer|min:1|max:5',
             'negotiation' => 'required|integer|min:1|max:5',

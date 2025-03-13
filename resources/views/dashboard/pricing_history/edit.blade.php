@@ -195,6 +195,21 @@
                                         <fieldset class="row" style="background: #d5eaf9;">
                                             <legend> <i class="icon-history mt-6" style="color:#000"></i> Quote
                                                 Information and Miscellaneous </legend>
+                                            <div class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="nameOnCard">Description</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="basic-addon6"><i
+                                                                    class="icon-list" style="color:#28a745"></i></span>
+                                                        </div>
+                                                        <input class="form-control" type="text" name="description"
+                                                            placeholder="Enter Description"
+                                                            value="{{ $pricing->description ? $pricing->description : '' }}"
+                                                            required />
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <label for="nameOnCard">Total Quote</label>
@@ -212,7 +227,7 @@
 
                                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label for="nameOnCard">Supplier Reference Number</label>
+                                                    <label for="nameOnCard">Supplier RFQ Number</label>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="basic-addon6"><i

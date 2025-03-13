@@ -17,6 +17,21 @@ use Illuminate\Support\Facades\Log;
 
 class PoService
 {
+    public function processPoSubmission($request)
+    {
+        $rfq = $this->getRfq($request->input('rfq_id'));
+        $vendor = $this->getVendor($request->input('vendor_id'));
+        $vendor_contact = $this->getVendorContact($request->input('contact_id'));
+        $line_items = $this->getLineItems($request->input('rfq_id'), $request->input('line_items'), $request->input('send_all'));
+        $pricing = $this->getPricing($request->supplier_rfq);
+        $client = $this->getClient($rfq->client_id);
+        $company = $this->getCompany($rfq->company_id);
+        $assigned_details = empDetails($rfq->employee_id);
+        $assigned = $assigned_details->full_name;
+
+        return $this->prepareMailData($rfq, $company, $vendor, $vendor_contact, $line_items, $request->input('extra_note'), $client->client_name, $request->input('report_recipient'), $assigned, $pricing, $request->input('quotation_file'), $pricing->mail_id, auth()->user());
+    }
+
     public function getRfq($rfq_id)
     {
         return ClientRfq::where('rfq_id', $rfq_id)->first();
@@ -46,7 +61,6 @@ class PoService
     {
         return Companies::findorfail($company_id);
     }
-
     public function getLineItems($rfq_id, $line_items_input, $send_all)
     {
         if ($send_all == 1) {
@@ -96,7 +110,7 @@ class PoService
             $fileNames = [];
         }
 
-        $rfqcode = "TE-" . $vendor->vendor_code . '-' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
+        $rfqcode = "Purchase Order TE-" . $vendor->vendor_code . '-' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
         $data = [
             'rfq' => $rfq,
             'company' => $company,

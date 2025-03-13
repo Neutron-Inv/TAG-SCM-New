@@ -34,6 +34,7 @@ class PricingService
             // Update record
             $pricing->update([
                 'response_time' => $data['response_time'],
+                'description' => $data['description'],
                 'pricing' => $data['pricing'],
                 'conformity' => $data['conformity'],
                 'accuracy' => $data['accuracy'],

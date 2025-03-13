@@ -897,18 +897,9 @@ class ClientPOController extends Controller
     }
     public function submitPoToVendor(Request $request)
     {
-        $rfq = $this->poService->getRfq($request->input('rfq_id'));
-        $vendor = $this->poService->getVendor($request->input('vendor_id'));
-        $vendor_contact = $this->poService->getVendorContact($request->input('contact_id'));
-        $line_items = $this->poService->getLineItems($request->input('rfq_id'), $request->input('line_items'), $request->input('send_all'));
-        $pricing = $this->poService->getPricing($request->supplier_rfq);
-        $client = $this->poService->getClient($rfq->client_id);
-        $company = $this->poService->getClient($rfq->company_id);
-        $assigned_details = empDetails($rfq->employee_id);
-        $assigned = $assigned_details->full_name;
-        $data = $this->poService->prepareMailData($rfq, $company, $vendor, $vendor_contact, $line_items, $request->input('extra_note'), $client->client_name, $request->input('report_recipient'), $assigned, $pricing, $request->input('quotation_file'), $pricing->mail_id, auth()->user());
+        $data = $this->poService->processPoSubmission($request);
         SendPoToSupplier::dispatch($data);
 
-        return redirect()->back()->with(['success' => "PO submitted successfully."]);
+        return redirect()->back()->with(['success' => "PO submitted successfully"]);
     }
 }
