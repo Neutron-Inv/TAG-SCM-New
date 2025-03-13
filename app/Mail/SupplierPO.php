@@ -29,6 +29,7 @@ class SupplierPO extends Mailable
     public function build()
     {
         $rfq = $this->data['rfq'];
+        $user = $this->data['user'];
         $assigned = $this->data['assigned'];
         $client_name = $this->data['client_name'];
         $company = $this->data['company'];
@@ -41,45 +42,44 @@ class SupplierPO extends Mailable
         $mail_id = $this->data['mail_id'];
         $pricing = $this->data['pricing'];
         $company_id = $rfq->company_id;
-        if($company_id == 1){
+        if ($company_id == 1) {
             $sender =  'contact@enabledsolutions.net';
-            $reply ='contact@enabledsolutions.net';
-        }elseif($company_id == 2){
+            $reply = 'contact@enabledsolutions.net';
+        } elseif ($company_id == 2) {
             $sender = 'sales@tagenergygroup.net';
             $reply = 'sales@tagenergygroup.net';
-        }elseif($company_id == 3){
+        } elseif ($company_id == 3) {
             $sender = 'contact@gloriousempiretech.com';
             $reply = 'contact@gloriousempiretech.com';
-        }elseif($company_id == 15){
+        } elseif ($company_id == 15) {
             $sender = 'contact@enabledgroup.net';
             $reply = 'contact@enabledgroup.net';
-        }elseif($company_id == 20){
+        } elseif ($company_id == 20) {
             $sender = 'sales@taglinesng.com';
             $reply = 'sales@taglinesng.net';
-        }else{
+        } else {
             $name = cops($company_id);
             $sender = $name->email;
             $reply = $name->email;
         }
-        $mail = $this->replyTo($reply, $company->company_name)->subject("Request for Pricing Information: - " .$rfqcode." ".$rfq->description.", mail-id: ".$mail_id)->markdown('emails.rfq.SupplierRequest')
-        ->with(compact('rfq', 'sender', 'reply', 'extra_note', 'vendor_contact', 'pricing'));
-        
-        if($tempFilePath != ""){
+        $mail = $this->replyTo($reply, $company->company_name)->subject("Purchase Order for the Supply of " . $rfq->description . ": " . $rfqcode . " mail-id: " . $mail_id)->markdown('emails.po.SupplierPO')
+            ->with(compact('rfq',  'user', 'extra_note', 'sender', 'reply', 'vendor_contact', 'pricing'));
+
+        if ($tempFilePath != "") {
             $mail->attach($tempFilePath);
-            }
-        
-        if($tempFileDirs != ""){
+        }
+
+        if ($tempFileDirs != "") {
             // Attach files to the email
             for ($i = 0; $i < count($tempFileDirs); $i++) {
                 $mail->attach($tempFileDirs[$i], ['as' => $fileNames[$i]]);
             }
         }
-        
+
         $mail->withSwiftMessage(function ($message) use ($mail_id) {
             $message->getHeaders()->addTextHeader('X-rfq-id', $mail_id);
         });
-        
-        //dd($mail);
+
         // $mail->from($sender);
         return $mail;
     }

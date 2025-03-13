@@ -15,6 +15,7 @@ class PricingHistory extends Pivot
         'vendor_id',
         'contact_id',
         'line_items',
+        'description',
         'conformity',
         'total_quote',
         'accuracy',
@@ -52,7 +53,7 @@ class PricingHistory extends Pivot
     {
         return $this->belongsTo('App\User', 'issued_by', 'user_id');
     }
-    
+
     public function rater()
     {
         return $this->belongsTo('App\User', 'rated_by', 'user_id');
@@ -62,15 +63,15 @@ class PricingHistory extends Pivot
     {
         return $this->hasMany('App\MailTray', 'mail_id', 'mail_id');
     }
-    
+
     public function finalRating()
     {
         return round(
             ($this->response_time * 0.20) +
-            ($this->pricing * 0.25) +
-            ($this->accuracy * 0.20) +
-            ($this->conformity * 0.20) +
-            ($this->negotiation * 0.15), 
+                ($this->pricing * 0.25) +
+                ($this->accuracy * 0.20) +
+                ($this->conformity * 0.20) +
+                ($this->negotiation * 0.15),
             2 // Rounds to 2 decimal places
         );
     }

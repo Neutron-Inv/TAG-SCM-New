@@ -2545,7 +2545,7 @@ class ClientRFQController extends Controller
         $cut = explode("; ", $report_recipient);
         $users = [];
 
-        if (ClientRfq::where('rfq_id', $rfq_id)->exists()) {
+        if (ClientPo::where('rfq_id', $rfq_id)->exists()) {
             $ref = ClientRfq::where('rfq_id', $rfq_id)->first();
             $rfq = $this->model->show($rfq_id);
             $po = ClientPo::where('rfq_id', $rfq_id)->first();
@@ -2560,8 +2560,8 @@ class ClientRFQController extends Controller
                 $client_name = $resultt[0]['client_name'];
                 $assigned_details = empDetails($rfq->employee_id);
                 $assigned = $assigned_details->full_name;
-                $pdfname = "TAG Energy Purchase Order for TE-" . $resultt[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no) . ", " . $rfq->description;
-                $rfqcode = "TE-" . $resultt[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
+                $pdfname = "TAG Energy Purchase Order for TE-" . $vendor->vendor_code . '' . preg_replace('/[^0-9]/', '', $rfq->refrence_no) . ", " . $rfq->description;
+                $rfqcode = "TE-" . $vendor->vendor_code . '-' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
 
                 // Replace "/" with "-"
                 $pdfname = str_replace("/", "-", $pdfname);
@@ -2592,25 +2592,15 @@ class ClientRFQController extends Controller
                 'name' => $vendor_contact->first_name . ' ' . $vendor_contact->last_name
             ];
 
-            $users[] = (object) [
-                'email' => config('mail.email'),
-                'name' => "TAGFlow"
-            ];
+            // $users[] = (object) [
+            //     'email' => config('mail.email'),
+            //     'name' => "TAGFlow"
+            // ];
 
-            function generateCustomMailId()
-            {
-                $letters1 = strtoupper(Str::random(3)); // Generate 3 random letters
-                $digits = mt_rand(1000, 9999);         // Generate 4 random digits
-                $letters2 = strtoupper(Str::random(4)); // Generate 4 random letters
-
-                return "{$letters1}-{$digits}-{$letters2}";
-            }
 
             // Usage
-            $mail_id = generateCustomMailId();
+            $mail_id = $pricing->mail_id;
 
-            $rfq_code = 'RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no);
-            //dd($users);
             try {
 
                 if ($request->hasFile('quotation_file')) { // Change to 'files' which corresponds to the input field name
@@ -2639,9 +2629,7 @@ class ClientRFQController extends Controller
                 }
                 //str_replace(" ","",$users) 
                 //$rec_mail
-                $mail_subject = "Request for Pricing Information: - " . $rfqcode . " " . $rfq->description;
                 $data = ["rfq" => $rfq, 'company' => Companies::where('company_id', $rfq->company_id)->first(), 'tempFilePath' => $tempFilePath, 'tempFileDirs' => $tempFileDirs, 'fileNames' => $fileNames, 'rfqcode' => $rfqcode, 'extra_note' => $extra_note, 'client_name' => $client_name, 'assigned' => $assigned, "vendor_contact" => $vendor_contact, "mail_id" => $mail_id, "pricing" => $pricing];
-                $when = now()->addMinutes(1);
                 Mail::to($vendor->contact_email)->cc($users)->send(new SupplierPO($data));
                 if ($extra_note != "") {
                     $newNote = date('d/m/Y') . ' ' . Auth::user()->first_name . ' ' . Auth::user()->last_name . ' Issued Purchase Order to ' . $vendor->vendor_name . ' with an extra note stating: ' . $extra_note . ' and changed the status to PO Issued to Supplier <br/>' . $po->note;
@@ -2665,18 +2653,10 @@ class ClientRFQController extends Controller
                     }
                 }
 
-                $pricing_history = new PricingHistory();
 
-                $pricing_history->rfq_id = $request->input('rfq_id');
-                $pricing_history->vendor_id = $request->input('vendor_id');
-                $pricing_history->contact_id = $request->input('contact_id');
-                $pricing_history->line_items = json_encode($line_items_input);
-                $pricing_history->mail_id = $mail_id;
-                $pricing_history->rfq_code = $rfq_code;
-                $pricing_history->status = "Awaiting Pricing";
-                $pricing_history->issued_by = Auth::user()->user_id;
+                $pricing->status = "PO Issued to Supplier";
 
-                $pricing_history->save();
+                $pricing->save();
 
                 return redirect()->back()->with("success", "You have sent the Request Successfully.");
             } catch (\Exception $e) {

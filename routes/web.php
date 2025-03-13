@@ -19,16 +19,16 @@ Route::get('/approval', function () {
     $reply = 'tolajide74@gmail.com';
     $line_items = App\LineItem::where(['rfq_id' => 1138])->get();
     $tq = 0;
-    foreach($line_items as $line){
+    foreach ($line_items as $line) {
         $tq = ($line->quantity * $line->unit_cost) + $tq;
     }
-    
-    return view('emails.rfq.approval')->with(['rfq' => $rfq, 'reply' => $reply, 'tq' =>$tq]);
+
+    return view('emails.rfq.approval')->with(['rfq' => $rfq, 'reply' => $reply, 'tq' => $tq]);
 });
 Route::get('quotation-email', function () {
     $rfq = App\ClientRfq::find(1138);
     $reply = 'tolajide74@gmail.com';
-    return view('emails.rfq.quotation')->with(['rfq' => $rfq,'reply' => $reply]);
+    return view('emails.rfq.quotation')->with(['rfq' => $rfq, 'reply' => $reply]);
 });
 Route::get('/', function () {
     return view('auth.login');
@@ -45,7 +45,7 @@ Route::get('get-recommended-suppliers/{product}', "VendorController@getRecommend
 Auth::routes(['verify' => true]);
 Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified"]], function () {
 
-    Route::group(['middleware' => ['web','auth','role:SuperAdmin|Admin|Employer|HOD|Contact|Shipper|Client|Supplier|Warehouse User']], function () {
+    Route::group(['middleware' => ['web', 'auth', 'role:SuperAdmin|Admin|Employer|HOD|Contact|Shipper|Client|Supplier|Warehouse User']], function () {
 
         Route::get("/", "DashboardController@index")->name("dashboard.index");
 
@@ -95,9 +95,8 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified
             Route::get("/edit/{contact_id}", "ClientContactController@edit")->name("contact.edit");
             Route::get("/delete/{contact_id}", "ClientContactController@destroy")->name("contact.delete");
             Route::post("/update/{contact_id}", "ClientContactController@update")->name("contact.update");
-
         });
-        
+
         Route::group(["prefix" => "vendor-contacts"], function () {
             Route::get("/populate-data", "VendorContactController@loading")->name("vcontact.loading");
             Route::get("/", "VendorContactController@list")->name("vcontact.list");
@@ -145,15 +144,14 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified
             // Route::get("/recyclebin", "ShipperController@bin")->name("client.restore");
             // Route::get("/restore/{client_id}", "ShipperController@restore")->name("client.undelete");
         });
-        
+
         Route::group(["prefix" => "rfq-documents"], function () {
             Route::post("/save-file", "LineItemController@saveFiles")->name("saveFiles");
             Route::get("/delete-file/{id}/{vendor_id}", "LineItemController@removeFile")->name("removeFile");
         });
-
     });
 
-    Route::group(['middleware' => ['auth','role:SuperAdmin|Admin|Warehouse User']], function () {
+    Route::group(['middleware' => ['auth', 'role:SuperAdmin|Admin|Warehouse User']], function () {
         Route::group(["prefix" => "users"], function () {
             Route::get("/", "UsersController@index")->name("users.index");
             Route::post("/save", "UsersController@store")->name("users.save");
@@ -187,7 +185,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified
             Route::get("/details/{inventory_id}", "InventoryController@show")->name("inventory.details");
         });
     });
-    Route::group(['middleware' => ['auth','role:SuperAdmin|Admin']], function () {
+    Route::group(['middleware' => ['auth', 'role:SuperAdmin|Admin']], function () {
 
         Route::group(["prefix" => "industries"], function () {
             Route::get("/", "IndustryController@index")->name("industry.index");
@@ -247,10 +245,9 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified
             Route::get("/clients", "ClientRFQController@clientChart")->name("rfq.chart.client");
             Route::get("/employers", "ClientRFQController@employerChart")->name("rfq.chart.employer");
         });
-
     });
 
-    Route::group(['middleware' => ['auth','role:SuperAdmin|Admin|Employer|Contact|Shipper|Client|HOD|Supplier']], function () {
+    Route::group(['middleware' => ['auth', 'role:SuperAdmin|Admin|Employer|Contact|Shipper|Client|HOD|Supplier']], function () {
 
         Route::group(["prefix" => "request-for-quotation"], function () {
 
@@ -281,15 +278,13 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified
             Route::get("/decline-breakdown/{refrence_no}", "ClientRFQController@disapproveReason")->name("rfq.disapprove");
             Route::post("/decline-breakdown-submit", "ClientRFQController@disapproveBreakdown")->name("rfq.disapproveQuote");
 
-            Route::get('/pdf/{refrence_no}','ClientRFQController@printPriceQuote')->name('print.Quote');
-            Route::get('/bha/{refrence_no}','ClientRFQController@printBHAQuote')->name('bha.Quote');
+            Route::get('/pdf/{refrence_no}', 'ClientRFQController@printPriceQuote')->name('print.Quote');
+            Route::get('/bha/{refrence_no}', 'ClientRFQController@printBHAQuote')->name('bha.Quote');
 
             Route::post("/generate-report", "ClientRFQController@generateReport")->name("rfq.gen.report");
             Route::get("/download-pdf/{rfq_id}", "ClientRFQController@downloadQuote")->name("rfq.downloadQuote");
             Route::post("/send-rfq-to-vendor", "ClientRFQController@submitRfqToVendor")->name("rfq.toVendor");
-            Route::post("/send-po-to-vendor", "ClientRFQController@submitPoToVendor")->name("po.toVendor");
-            
-            
+            Route::post("/send-po-to-vendor", "ClientPOController@submitPoToVendor")->name("po.toVendor");
         });
 
         Route::group(["prefix" => "purchase-order"], function () {
@@ -304,7 +299,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified
             Route::get("/delete/{id}", "ClientPOController@destroy")->name("po.delete");
             Route::post("/update/{id}", "ClientPOController@update")->name("po.update");
             Route::get("/list/{rfq_id}", "ClientPOController@new")->name("po.new.details");
-           
+
             Route::get("/deleteFile/{rfq_id}/{filename}", "ClientPOController@removeFile")->name("remove.po.file");
             Route::get("/deleteAllFiles/{rfq_id}/", "ClientPOController@removeAllFile")->name("removeall.po.file");
             Route::get("/reports", "ClientPOController@report")->name("po.reports");
@@ -336,7 +331,7 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified
             Route::post("/sendClientPoReport", "ReportController@sendClientPoReport")->name("po.report.sendClientPoReport");
             Route::post("/sendRfqReport", "ReportController@sendRfqReport")->name("po.report.rfqreport");
         });
-        
+
         Route::group(["prefix" => "products"], function () {
             Route::get("/", "ProductController@index")->name("product.index");
             Route::post("/save", "ProductController@store")->name("product.save");
@@ -381,10 +376,9 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified
             Route::get("/pick/{supplier_quote_id}", "SupplierQuoteController@choose")->name("sup.quote.chose");
             Route::get("/unpick/{supplier_quote_id}", "SupplierQuoteController@unchoose")->name("sup.quote.unchose");
         });
-
     });
 
-    Route::group(['middleware' => ['auth','role:SuperAdmin|Admin|HOD|Employer']], function () {
+    Route::group(['middleware' => ['auth', 'role:SuperAdmin|Admin|HOD|Employer']], function () {
 
         Route::group(["prefix" => "line-items"], function () {
 
@@ -400,7 +394,6 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified
             Route::post("/upload-rfq/", "LineItemController@uploadLineitems")->name("line.upload");
             Route::post("/update-lineitems-cost/", "LineItemController@updateLineitemsCost")->name("line.cost_upload");
             Route::get("/export-lineitems-template/{rfq_id}", "LineItemController@exportLineItemsTemplate")->name("line.excel_export");
-            
         });
 
         Route::group(["prefix" => "issues"], function () {
@@ -413,13 +406,11 @@ Route::group(["prefix" => "dashboard", "middleware" => ["web", 'auth', "verified
         });
     });
 
-    Route::group(['middleware' => ['auth','role:Supplier']], function () {
+    Route::group(['middleware' => ['auth', 'role:Supplier']], function () {
 
         Route::group(["prefix" => "line-items"], function () {
 
             Route::get("/list/{rfq_id}", "LineItemController@list")->name("line.list");
-
         });
     });
-
 });
