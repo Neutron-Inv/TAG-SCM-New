@@ -1,8 +1,8 @@
 <?php
 $cli_title = clis($rfq->client_id);
 $result = json_decode($cli_title, true);
-
-$title = 'TAG Energy Quotation TE-' . $result[0]['short_code'] . '-RFQ' . preg_replace('/[^0-9]/', '', $rfq->refrence_no) . ', ' . $rfq->description;
+// $vendor = SupplierDetails($vendor_contact->contact_id);
+$title = 'TAG Energy Quotation TE-' . $vendor->vendor_code . '-' . preg_replace('/[^0-9]/', '', $rfq->refrence_no) . ', ' . $pricing->description;
 set_time_limit(900);
 ?>
 @extends('layouts.print')
@@ -56,7 +56,7 @@ set_time_limit(900);
 
                             <p
                                 style=" color:black; width:500px; font-family: Calibri, sans-serif; font-size:7pt; margin-top: -35px; margin-bottom:1px; font-weight: 700; line-height: 180%; font-weight: 400;">
-                                <b> {{ $vendor->short_code . ' Rfx: ' . $pricing->reference_number }} </b>
+                                <b> {{ $vendor->vendor_code . ' Rfx: ' . $pricing->reference_number }} </b>
                             </p>
 
                             <br />
