@@ -40,7 +40,7 @@ class SendPoToSupplier implements ShouldQueue
             $tempFilePath = storage_path($this->data['rfqcode'] . '.pdf');
             $pdf->save($tempFilePath);
             $this->data['tempFilePath'] = $tempFilePath;
-
+            $tempFileDirs = $this->data['tempFileDirs'];
             // Prepare CC recipients
             $users = [];
             foreach ($this->data['report_recipient'] as $recipient) {
@@ -60,6 +60,16 @@ class SendPoToSupplier implements ShouldQueue
 
             // Cleanup
             unlink($tempFilePath);
+            \Log::info("Temporary file deleted: " . $tempFilePath);
+
+            if (!empty($tempFileDirs)) {
+                foreach ($tempFileDirs as $filePath) {
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                        \Log::info("Additional temporary file deleted: " . $filePath);
+                    }
+                }
+            }
             \Log::info("Job completed successfully.");
         } catch (\Exception $e) {
             \Log::error("Error processing PO submission: " . $e->getMessage());
